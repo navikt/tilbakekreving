@@ -14,7 +14,9 @@ import io.ktor.http.appendPathSegments
 import no.nav.app.HentKravdetaljerFeil
 import no.nav.app.InnkrevingsoppdragClient
 import no.nav.domain.Kravdetaljer
+import no.nav.domain.Kravidentifikator
 import no.nav.infrastructure.client.skatteetaten.json.KravdetaljerResponseJson
+import no.nav.infrastructure.client.skatteetaten.json.KravidentifikatortypeQuery
 import org.slf4j.LoggerFactory
 
 class SkatteetatenInnkrevingsoppdragHttpClient(
@@ -23,22 +25,19 @@ class SkatteetatenInnkrevingsoppdragHttpClient(
 ) : InnkrevingsoppdragClient {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override suspend fun hentKravdetaljer(
-        kravidentifikator: String,
-        kravidentifikatortype: String,
-    ): Either<HentKravdetaljerFeil, Kravdetaljer> =
+    override suspend fun hentKravdetaljer(kravidentifikator: Kravidentifikator): Either<HentKravdetaljerFeil, Kravdetaljer> =
         either {
             val httpResponse =
                 client.get("$baseUrl/api/innkreving/innkrevingsoppdrag/v1/innkrevingsoppdrag") {
                     url {
-                        appendPathSegments(kravidentifikator)
+                        appendPathSegments(kravidentifikator.id)
                     }
                     accept(ContentType.Application.Json)
 
                     headers {
-                        append("Klientid", "NAV/1.0")
+                        append("Klientid", "NAV/2.0")
                     }
-                    parameter("kravidentifikatortype", kravidentifikatortype)
+                    parameter("kravidentifikatortype", KravidentifikatortypeQuery.from(kravidentifikator))
                 }
 
             if (httpResponse.status.value !in 200..299) {
