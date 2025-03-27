@@ -1,0 +1,59 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: "tilbakekreving"
+  namespace: "utenlandsadresser"
+  labels:
+    "team": "utenlandsadresser"
+  annotations:
+    "start.nais.io/created-by": "Odd Gunnar Fatland"
+    "start.nais.io/creationTimestamp": "2025-03-26T15:48:06.559796741"
+spec:
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: java
+    logging:
+      destinations:
+        - id: "elastic"
+  ingresses:
+    {{#each ingresses}}
+    - {{this}}
+    {{/each}}
+  image: {{ image }}
+  maskinporten:
+    enabled: true
+    scopes:
+      consumes:
+				{{#each maskinporten.scopes.consumes}}
+				- name: {{this.name}}
+				{{/each}}
+  env:
+    {{#each env}}
+    - name: {{@key}}
+      value: {{this}}
+    {{/each}}
+  liveness:
+    failureThreshold: 3
+    initialDelay: 10
+    path: "/internal/isalive"
+    periodSeconds: 10
+    timeout: 1
+  readiness:
+    failureThreshold: 3
+    initialDelay: 10
+    path: "/internal/isready"
+    periodSeconds: 10
+    timeout: 1
+  replicas:
+    min: {{replicas.min}}
+    max: {{replicas.max}}
+    scalingStrategy:
+      cpu:
+        thresholdPercentage: {{replicas.scalingStrategy.cpu.thresholdPercentage}}
+  resources:
+    limits:
+      memory: 1Gi
+    requests:
+      cpu: {{resources.requests.cpu}}
+      memory: {{resources.requests.memory}}

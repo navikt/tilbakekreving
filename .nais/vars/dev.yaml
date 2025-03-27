@@ -1,0 +1,22 @@
+ingresses:
+  - "https://tilbakekreving.intern.dev.nav.no"
+
+env:
+  JDK_JAVA_OPTIONS: "-XX:+UseParallelGC -XX:ActiveProcessorCount=4"
+
+maskinporten:
+	scopes:
+  	consumes:
+			- name: "skatteetaten:innkrevingsoppdrag"
+
+replicas:
+  min: 1
+  max: 2
+  scalingStrategy:
+    cpu:
+      thresholdPercentage: 100
+
+resources:
+  requests:
+    cpu: 5m
+    memory: 440Mi
