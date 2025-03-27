@@ -9,6 +9,11 @@ maskinporten:
   	consumes:
 			- name: "skatteetaten:innkrevingsoppdrag"
 
+accessPolicy:
+	outbound:
+		external:
+			- host: api-test.sits.no # Skatteetaten
+
 replicas:
   min: 1
   max: 2

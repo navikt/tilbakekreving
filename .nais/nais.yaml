@@ -8,6 +8,7 @@ metadata:
   annotations:
     "start.nais.io/created-by": "Odd Gunnar Fatland"
     "start.nais.io/creationTimestamp": "2025-03-26T15:48:06.559796741"
+    texas.nais.io/enabled: "true"
 spec:
   observability:
     autoInstrumentation:
