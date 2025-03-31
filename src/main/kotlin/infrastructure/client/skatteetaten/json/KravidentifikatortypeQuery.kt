@@ -10,8 +10,8 @@ enum class KravidentifikatortypeQuery {
     companion object {
         fun from(kravidentifikator: Kravidentifikator) =
             when (kravidentifikator) {
-                is Kravidentifikator.NavsKravidentifikator -> OPPDRAGSGIVERS_KRAVIDENTIFIKATOR
-                is Kravidentifikator.SkatteetatensKravidentifikator -> SKATTEETATENS_KRAVIDENTIFIKATOR
+                is Kravidentifikator.Nav -> OPPDRAGSGIVERS_KRAVIDENTIFIKATOR
+                is Kravidentifikator.Skatteetaten -> SKATTEETATENS_KRAVIDENTIFIKATOR
             }
     }
 }

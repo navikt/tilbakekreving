@@ -10,7 +10,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import kotlinx.datetime.LocalDate
-import no.nav.createHttpClient
+import no.nav.setup.createHttpClient
 import no.nav.domain.Kravdetaljer
 import no.nav.domain.Kravgrunnlag
 import no.nav.domain.Kravidentifikator
@@ -68,7 +68,7 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
 
                 val result =
                     skatteetatenInnkrevingsoppdragHttpClient.hentKravdetaljer(
-                        Kravidentifikator.NavsKravidentifikator(
+                        Kravidentifikator.Nav(
                             kravidentifikator,
                         ),
                     )

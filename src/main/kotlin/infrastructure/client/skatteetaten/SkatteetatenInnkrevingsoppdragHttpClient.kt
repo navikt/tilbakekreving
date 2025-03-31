@@ -11,8 +11,7 @@ import io.ktor.client.request.parameter
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.appendPathSegments
-import no.nav.app.HentKravdetaljerFeil
-import no.nav.app.InnkrevingsoppdragClient
+import no.nav.app.HentKravdetaljer
 import no.nav.domain.Kravdetaljer
 import no.nav.domain.Kravidentifikator
 import no.nav.infrastructure.client.skatteetaten.json.KravdetaljerResponseJson
@@ -22,10 +21,12 @@ import org.slf4j.LoggerFactory
 class SkatteetatenInnkrevingsoppdragHttpClient(
     private val baseUrl: String,
     private val client: HttpClient,
-) : InnkrevingsoppdragClient {
+) : HentKravdetaljer {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override suspend fun hentKravdetaljer(kravidentifikator: Kravidentifikator): Either<HentKravdetaljerFeil, Kravdetaljer> =
+    override suspend fun hentKravdetaljer(
+        kravidentifikator: Kravidentifikator,
+    ): Either<HentKravdetaljer.HentKravdetaljerFeil, Kravdetaljer> =
         either {
             val httpResponse =
                 client.get("$baseUrl/api/innkreving/innkrevingsoppdrag/v1/innkrevingsoppdrag") {
@@ -46,7 +47,7 @@ class SkatteetatenInnkrevingsoppdragHttpClient(
                     httpResponse.status.toString(),
                     httpResponse.bodyAsText(),
                 )
-                raise(HentKravdetaljerFeil.FeilVedHentingAvKravdetaljer)
+                raise(HentKravdetaljer.HentKravdetaljerFeil.FeilVedHentingAvKravdetaljer)
             }
 
             httpResponse.body<KravdetaljerResponseJson>().toDomain()

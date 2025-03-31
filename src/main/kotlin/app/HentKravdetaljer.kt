@@ -4,10 +4,10 @@ import arrow.core.Either
 import no.nav.domain.Kravdetaljer
 import no.nav.domain.Kravidentifikator
 
-interface InnkrevingsoppdragClient {
+interface HentKravdetaljer {
     suspend fun hentKravdetaljer(kravidentifikator: Kravidentifikator): Either<HentKravdetaljerFeil, Kravdetaljer>
-}
 
-sealed class HentKravdetaljerFeil {
-    data object FeilVedHentingAvKravdetaljer : HentKravdetaljerFeil()
+    sealed class HentKravdetaljerFeil {
+        data object FeilVedHentingAvKravdetaljer : HentKravdetaljerFeil()
+    }
 }

@@ -11,7 +11,7 @@ import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.content.TextContent
 import io.ktor.http.headersOf
-import no.nav.createHttpClient
+import no.nav.setup.createHttpClient
 import no.nav.infrastructure.client.maskinporten.json.TexasTokenResponseJson
 
 class TexasMaskinportenClientTest :

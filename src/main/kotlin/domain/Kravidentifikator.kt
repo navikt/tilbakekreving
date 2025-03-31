@@ -3,11 +3,11 @@ package no.nav.domain
 sealed class Kravidentifikator {
     abstract val id: String
 
-    data class NavsKravidentifikator(
+    data class Nav(
         override val id: String,
     ) : Kravidentifikator()
 
-    data class SkatteetatensKravidentifikator(
+    data class Skatteetaten(
         override val id: String,
     ) : Kravidentifikator()
 }

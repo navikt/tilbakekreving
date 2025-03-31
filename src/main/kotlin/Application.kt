@@ -1,12 +1,15 @@
 package no.nav
 
-import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import no.nav.infrastructure.client.maskinporten.TexasMaskinportenClient
+import no.nav.infrastructure.client.skatteetaten.SkatteetatenInnkrevingsoppdragHttpClient
+import no.nav.plugin.MaskinportenAuthHeaderPlugin
+import no.nav.route.configureRouting
+import no.nav.setup.createHttpClient
+import no.nav.setup.loadConfiguration
 
 fun main() {
     embeddedServer(
@@ -18,12 +21,18 @@ fun main() {
 }
 
 fun Application.module() {
-    val tilbakekrevingConfig = loadConfiguration()
-    val maskinportenClient =
-        HttpClient(CIO) {
-            install(ContentNegotiation) {
-                json()
+    val appEnv = AppEnv.getFromEnvVariable("NAIS_CLUSTER_NAME")
+    val tilbakekrevingConfig = loadConfiguration(appEnv)
+    val maskinportenClient = createHttpClient(CIO.create())
+    val texasClient = TexasMaskinportenClient(maskinportenClient, tilbakekrevingConfig.nais.naisTokenEndpoint)
+    val skatteetatenClient =
+        createHttpClient(CIO.create()) {
+            install(MaskinportenAuthHeaderPlugin) {
+                accessTokenProvider = texasClient
             }
         }
-    configureRouting()
+    val skatteetatenInnkrevingsoppdragHttpClient =
+        SkatteetatenInnkrevingsoppdragHttpClient(tilbakekrevingConfig.skatteetaten.baseUrl, skatteetatenClient)
+    configureRouting(skatteetatenInnkrevingsoppdragHttpClient)
 }
+

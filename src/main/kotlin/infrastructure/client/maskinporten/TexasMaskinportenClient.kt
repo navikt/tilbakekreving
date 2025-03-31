@@ -22,10 +22,10 @@ import org.slf4j.LoggerFactory
 class TexasMaskinportenClient(
     private val httpClient: HttpClient,
     private val baseUrl: String,
-) {
+) : AccessTokenProvider {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    suspend fun getAccessToken(vararg scopes: String): Either<GetAccessTokenError, TexasTokenResponseJson> =
+    override suspend fun getAccessToken(vararg scopes: String): Either<AccessTokenProvider.GetAccessTokenError, String> =
         either {
             val response =
                 httpClient.post(baseUrl) {
@@ -41,13 +41,17 @@ class TexasMaskinportenClient(
 
             if (response.status.value !in 200..299) {
                 logger.error("Failed to get access token from Texas: ${response.status} - ${response.bodyAsText()}")
-                raise(GetAccessTokenError.FailedToGetAccessToken)
+                raise(AccessTokenProvider.GetAccessTokenError.FailedToGetAccessToken)
             } else {
-                response.body<TexasTokenResponseJson>()
+                response.body<TexasTokenResponseJson>().accessToken
             }
         }
 }
 
-sealed class GetAccessTokenError {
-    data object FailedToGetAccessToken : GetAccessTokenError()
+interface AccessTokenProvider {
+    suspend fun getAccessToken(vararg scopes: String): Either<GetAccessTokenError, String>
+
+    sealed class GetAccessTokenError {
+        data object FailedToGetAccessToken : GetAccessTokenError()
+    }
 }
