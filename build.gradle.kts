@@ -21,10 +21,12 @@ repositories {
 }
 
 dependencies {
-    val ktorVersion = "3.1.1"
+    val ktorVersion = "3.1.2"
     implementation("io.ktor:ktor-server-core:$ktorVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-server-config-yaml:$ktorVersion")
+    implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
@@ -54,4 +56,7 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-json:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-ktor:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-arrow:$kotestVersion")
+
+    val mockkVersion = "1.13.17"
+    testImplementation("io.mockk:mockk:$mockkVersion")
 }

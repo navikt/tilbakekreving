@@ -4,10 +4,13 @@ import io.ktor.client.engine.cio.CIO
 import io.ktor.server.application.Application
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import io.ktor.server.routing.route
 import no.nav.infrastructure.client.maskinporten.TexasMaskinportenClient
 import no.nav.infrastructure.client.skatteetaten.SkatteetatenInnkrevingsoppdragHttpClient
+import no.nav.infrastructure.route.configureRouting
+import no.nav.infrastructure.route.hentKravdetaljer
 import no.nav.plugin.MaskinportenAuthHeaderPlugin
-import no.nav.route.configureRouting
+import no.nav.setup.configureSerialization
 import no.nav.setup.createHttpClient
 import no.nav.setup.loadConfiguration
 
@@ -33,6 +36,13 @@ fun Application.module() {
         }
     val skatteetatenInnkrevingsoppdragHttpClient =
         SkatteetatenInnkrevingsoppdragHttpClient(tilbakekrevingConfig.skatteetaten.baseUrl, skatteetatenClient)
-    configureRouting(skatteetatenInnkrevingsoppdragHttpClient)
-}
 
+    configureSerialization()
+    configureRouting {
+        route("/internal") {
+            route("/kravdetaljer") {
+                hentKravdetaljer(skatteetatenInnkrevingsoppdragHttpClient)
+            }
+        }
+    }
+}
