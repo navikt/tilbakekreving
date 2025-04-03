@@ -26,9 +26,9 @@ spec:
     enabled: true
     scopes:
       consumes:
-				{{#each maskinporten.scopes.consumes}}
-				- name: {{this.name}}
-				{{/each}}
+        {{#each maskinporten.scopes.consumes}}
+        - name: {{this.name}}
+        {{/each}}
   env:
     {{#each env}}
     - name: {{@key}}
