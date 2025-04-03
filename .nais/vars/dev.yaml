@@ -1,5 +1,5 @@
 ingresses:
-  - "https://tilbakekreving.intern.dev.nav.no"
+  - "https://utenlandsadresser-tilbakekreving.intern.dev.nav.no"
 
 env:
   JDK_JAVA_OPTIONS: "-XX:+UseParallelGC -XX:ActiveProcessorCount=4"
