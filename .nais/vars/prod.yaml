@@ -5,14 +5,14 @@ env:
   JDK_JAVA_OPTIONS: "-XX:+UseParallelGC -XX:ActiveProcessorCount=4"
 
 maskinporten:
-	scopes:
-  	consumes:
-			- name: "skatteetaten:innkrevingsoppdrag"
+  scopes:
+    consumes:
+      - name: "skatteetaten:innkrevingsoppdrag"
 
 accessPolicy:
-	outbound:
-		external:
-			- host: api.skatteetaten.no # Skatteetaten
+  outbound:
+    external:
+      - host: api.skatteetaten.no # Skatteetaten
 
 replicas:
   min: 1
