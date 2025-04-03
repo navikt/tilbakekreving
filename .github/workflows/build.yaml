@@ -1,49 +1,49 @@
 name: "Reusable Build"
 on:
-	workflow_call:
-		inputs:
-			team:
-				required: true
-				type: string
-			service_name:
-				required: false
-				type: string
-			docker_context:
-				required: true
-				type: string
-			dockerfile:
-				required: true
-				type: string
-		outputs:
-			image:
-				description: "Image tag that will be pushed"
-				value: ${{ jobs.build.outputs.image }}
+  workflow_call:
+    inputs:
+      team:
+        required: true
+        type: string
+      service_name:
+        required: false
+        type: string
+      docker_context:
+        required: true
+        type: string
+      dockerfile:
+        required: true
+        type: string
+    outputs:
+      image:
+        description: "Image tag that will be pushed"
+        value: ${{ jobs.build.outputs.image }}
 
 jobs:
-	build:
-		name: "Build and test"
-		runs-on: "ubuntu-20.04"
-		permissions:
-			id-token: "write"
-		outputs:
-			image: ${{ steps.docker-build-push.outputs.image }}
-		steps:
-			- uses: "actions/checkout@v4"
-			- uses: "gradle/actions/wrapper-validation@v3"
-			- uses: "actions/setup-java@v4"
-				with:
-					java-version: "21"
-					distribution: "temurin"
-			- uses: "gradle/actions/setup-gradle@v3"
-			- name: "Compile and run tests"
-				run: "./gradlew ${{ inputs.service_name }}:test ${{ inputs.service_name }}:installDist"
-			- uses: "nais/docker-build-push@v0"
-				if: github.ref == 'refs/heads/main'
-				id: docker-build-push
-				with:
-					docker_context: ${{ inputs.docker_context }}
-					dockerfile: ${{ inputs.dockerfile }}
-					image_suffix: ${{ inputs.service_name }}
-					team: ${{ inputs.team }}
-					identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
-					project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+  build:
+    name: "Build and test"
+    runs-on: "ubuntu-20.04"
+    permissions:
+      id-token: "write"
+    outputs:
+      image: ${{ steps.docker-build-push.outputs.image }}
+    steps:
+      - uses: "actions/checkout@v4"
+      - uses: "gradle/actions/wrapper-validation@v3"
+      - uses: "actions/setup-java@v4"
+        with:
+          java-version: "21"
+          distribution: "temurin"
+      - uses: "gradle/actions/setup-gradle@v3"
+      - name: "Compile and run tests"
+        run: "./gradlew ${{ inputs.service_name }}:test ${{ inputs.service_name }}:installDist"
+      - uses: "nais/docker-build-push@v0"
+        if: github.ref == 'refs/heads/main'
+        id: docker-build-push
+        with:
+          docker_context: ${{ inputs.docker_context }}
+          dockerfile: ${{ inputs.dockerfile }}
+          image_suffix: ${{ inputs.service_name }}
+          team: ${{ inputs.team }}
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
