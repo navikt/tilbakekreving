@@ -11,8 +11,9 @@ import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.content.TextContent
 import io.ktor.http.headersOf
-import no.nav.setup.createHttpClient
-import no.nav.infrastructure.client.maskinporten.json.TexasTokenResponseJson
+import no.nav.tilbakekreving.setup.createHttpClient
+import no.nav.tilbakekreving.infrastructure.client.maskinporten.TexasMaskinportenClient
+import no.nav.tilbakekreving.infrastructure.client.maskinporten.json.TexasTokenResponseJson
 
 class TexasMaskinportenClientTest :
     WordSpec({

@@ -20,14 +20,15 @@ import io.ktor.server.routing.routing
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.datetime.LocalDate
-import no.nav.app.HentKravdetaljer
-import no.nav.domain.Kravdetaljer
-import no.nav.domain.Kravgrunnlag
-import no.nav.domain.Kravidentifikator
-import no.nav.domain.Kravlinje
-import no.nav.infrastructure.route.json.HentKravdetaljerJsonRequest
-import no.nav.infrastructure.route.json.KravidentifikatorType
-import no.nav.setup.configureSerialization
+import no.nav.tilbakekreving.app.HentKravdetaljer
+import no.nav.tilbakekreving.domain.Kravdetaljer
+import no.nav.tilbakekreving.domain.Kravgrunnlag
+import no.nav.tilbakekreving.domain.Kravidentifikator
+import no.nav.tilbakekreving.domain.Kravlinje
+import no.nav.tilbakekreving.infrastructure.route.hentKravdetaljer
+import no.nav.tilbakekreving.infrastructure.route.json.HentKravdetaljerJsonRequest
+import no.nav.tilbakekreving.infrastructure.route.json.KravidentifikatorType
+import no.nav.tilbakekreving.setup.configureSerialization
 import no.nav.util.specWideTestApplication
 
 class HentKravdetaljerTest :

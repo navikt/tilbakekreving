@@ -1,0 +1,38 @@
+name: "CI/CD Pipeline for tilbakekreving"
+on:
+  workflow_dispatch: {}
+  push:
+    paths-ignore:
+      - "**.md"
+      - ".nais/alerts.yaml"
+      - ".github/workflows/alerts.yaml"
+
+permissions:
+  id-token: write
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yaml
+    secrets: inherit
+    with:
+      docker_context: "."
+      dockerfile: "./Dockerfile"
+
+  deploy:
+    uses: ./.github/workflows/deploy.yaml
+    needs: build
+    strategy:
+      matrix:
+        env:
+          - cluster: "dev-gcp"
+            gh_environment: "dev-gcp"
+            nais_vars_file: "dev"
+#           - cluster: "prod-gcp"
+#             gh_environment: "prod-gcp"
+#             nais_vars_file: "prod"
+    with:
+      image: ${{ needs.build.outputs.image }}
+      cluster: ${{ matrix.env.cluster }}
+      gh_environment: ${{ matrix.env.gh_environment }}
+      nais_resource_file: ".nais/nais.yaml"
+      nais_vars_file: ".nais/vars/${{ matrix.env.nais_vars_file }}.yaml"

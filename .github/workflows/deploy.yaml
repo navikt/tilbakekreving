@@ -1,0 +1,37 @@
+name: "Reusable Deploy"
+on:
+  workflow_call:
+    inputs:
+      image:
+        required: true
+        type: string
+      cluster:
+        required: true
+        type: string
+      gh_environment:
+        required: true
+        type: string
+      nais_resource_file:
+        required: true
+        type: string
+      nais_vars_file:
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    name: "Deploy to ${{ inputs.cluster }}"
+    if: github.ref == 'refs/heads/main'
+    runs-on: "ubuntu-20.04"
+    permissions:
+      id-token: "write"
+    environment: "${{ inputs.gh_environment }}"
+    steps:
+      - uses: "actions/checkout@v4"
+      - name: "Deploy to ${{ inputs.cluster }}"
+        uses: "nais/deploy/actions/deploy@v2"
+        env:
+          CLUSTER: "${{ inputs.cluster }}"
+          RESOURCE: "${{ inputs.nais_resource_file }}"
+          VAR: "image=${{ inputs.image }}"
+          VARS: "${{ inputs.nais_vars_file }}"

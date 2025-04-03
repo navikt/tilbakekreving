@@ -10,12 +10,13 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import kotlinx.datetime.LocalDate
-import no.nav.setup.createHttpClient
-import no.nav.domain.Kravdetaljer
-import no.nav.domain.Kravgrunnlag
-import no.nav.domain.Kravidentifikator
-import no.nav.domain.Kravlinje
-import no.nav.infrastructure.client.skatteetaten.json.KravidentifikatortypeQuery
+import no.nav.tilbakekreving.setup.createHttpClient
+import no.nav.tilbakekreving.domain.Kravdetaljer
+import no.nav.tilbakekreving.domain.Kravgrunnlag
+import no.nav.tilbakekreving.domain.Kravidentifikator
+import no.nav.tilbakekreving.domain.Kravlinje
+import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.KravidentifikatortypeQuery
+import no.nav.tilbakekreving.infrastructure.client.skatteetaten.SkatteetatenInnkrevingsoppdragHttpClient
 
 class SkatteetatenInnkrevingsoppdragHttpClientTest :
     WordSpec({
