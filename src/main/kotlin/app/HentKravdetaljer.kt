@@ -8,6 +8,8 @@ interface HentKravdetaljer {
     suspend fun hentKravdetaljer(kravidentifikator: Kravidentifikator): Either<HentKravdetaljerFeil, Kravdetaljer>
 
     sealed class HentKravdetaljerFeil {
+        data object FantIkkeKravdetaljer : HentKravdetaljerFeil()
+
         data object FeilVedHentingAvKravdetaljer : HentKravdetaljerFeil()
     }
 }

@@ -1,15 +1,18 @@
 package no.nav.infrastructure.route
 
+import arrow.core.left
 import arrow.core.right
 import io.kotest.assertions.json.shouldEqualJson
 import io.kotest.assertions.ktor.client.shouldBeBadRequest
 import io.kotest.assertions.ktor.client.shouldBeOK
 import io.kotest.assertions.ktor.client.shouldHaveContentType
+import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.core.spec.style.WordSpec
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.http.withCharset
 import io.ktor.server.routing.route
@@ -97,6 +100,24 @@ class HentKravdetaljerTest :
                         }
                         """.trimIndent(),
                     )
+            }
+            "returnere 201 når kravdetaljer ikke finnes" {
+                coEvery { hentKravdetaljer.hentKravdetaljer(kravidentifikator) } returns
+                    HentKravdetaljer.HentKravdetaljerFeil.FantIkkeKravdetaljer.left()
+
+                client
+                    .post("/kravdetaljer") {
+                        contentType(ContentType.Application.Json)
+                        setBody(
+                            // language=json
+                            """
+                            {
+                                "id": "${kravidentifikator.id}",
+                                "type": "${KravidentifikatorType.NAV}"
+                            }
+                            """.trimIndent(),
+                        )
+                    }.shouldHaveStatus(HttpStatusCode.NoContent)
             }
             "returnere 401 når json ikke er riktig" {
                 client

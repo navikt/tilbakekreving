@@ -13,7 +13,18 @@ fun Route.hentKravdetaljer(hentKravdetaljer: HentKravdetaljer) {
     post<HentKravdetaljerJsonRequest> { jsonRequest ->
         val kravdetaljer =
             hentKravdetaljer.hentKravdetaljer(jsonRequest.toDomain()).getOrElse {
-                call.respond(HttpStatusCode.InternalServerError, "Feil ved henting av kravdetaljer")
+                when (it) {
+                    HentKravdetaljer.HentKravdetaljerFeil.FantIkkeKravdetaljer ->
+                        call.respond(
+                            HttpStatusCode.NoContent,
+                        )
+
+                    HentKravdetaljer.HentKravdetaljerFeil.FeilVedHentingAvKravdetaljer ->
+                        call.respond(
+                            HttpStatusCode.InternalServerError,
+                            "Feil ved henting av kravdetaljer",
+                        )
+                }
                 return@post
             }
 

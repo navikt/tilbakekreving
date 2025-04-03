@@ -10,6 +10,7 @@ import io.ktor.client.request.headers
 import io.ktor.client.request.parameter
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.appendPathSegments
 import no.nav.app.HentKravdetaljer
 import no.nav.domain.Kravdetaljer
@@ -41,15 +42,27 @@ class SkatteetatenInnkrevingsoppdragHttpClient(
                     parameter("kravidentifikatortype", KravidentifikatortypeQuery.from(kravidentifikator))
                 }
 
-            if (httpResponse.status.value !in 200..299) {
-                logger.error(
-                    "Feil ved henting av kravdetaljer: {} - {}",
-                    httpResponse.status.toString(),
-                    httpResponse.bodyAsText(),
-                )
-                raise(HentKravdetaljer.HentKravdetaljerFeil.FeilVedHentingAvKravdetaljer)
-            }
+            when (httpResponse.status) {
+                HttpStatusCode.OK -> {
+                    httpResponse.body<KravdetaljerResponseJson>().toDomain()
+                }
 
-            httpResponse.body<KravdetaljerResponseJson>().toDomain()
+                HttpStatusCode.NotFound -> {
+                    logger.info(
+                        "Kravdetaljer ikke funnet for kravidentifikator: {}",
+                        kravidentifikator.id,
+                    )
+                    raise(HentKravdetaljer.HentKravdetaljerFeil.FantIkkeKravdetaljer)
+                }
+
+                else -> {
+                    logger.error(
+                        "Feil ved henting av kravdetaljer: {} - {}",
+                        httpResponse.status.toString(),
+                        httpResponse.bodyAsText(),
+                    )
+                    raise(HentKravdetaljer.HentKravdetaljerFeil.FeilVedHentingAvKravdetaljer)
+                }
+            }
         }
 }
