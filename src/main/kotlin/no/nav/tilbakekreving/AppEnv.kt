@@ -16,8 +16,8 @@ enum class AppEnv {
             val envVar = System.getenv(name)
             log.info("Environment variable $name is set to $envVar")
             return when (envVar) {
-                "dev" -> DEV
-                "prod" -> PROD
+                "dev-gcp" -> DEV
+                "prod-gcp" -> PROD
                 else -> LOCAL
             }
         }
