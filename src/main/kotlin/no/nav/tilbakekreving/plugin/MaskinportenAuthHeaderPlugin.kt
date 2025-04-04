@@ -3,7 +3,7 @@ package no.nav.tilbakekreving.plugin
 import arrow.core.getOrElse
 import io.ktor.client.plugins.api.createClientPlugin
 import io.ktor.client.request.bearerAuth
-import no.nav.tilbakekreving.infrastructure.client.maskinporten.AccessTokenProvider
+import no.nav.tilbakekreving.infrastructure.client.AccessTokenProvider
 
 data class MaskinportenAuthHeaderPluginConfig(
     var accessTokenProvider: AccessTokenProvider? = null,

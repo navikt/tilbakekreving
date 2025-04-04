@@ -4,12 +4,12 @@ import arrow.core.Either
 import arrow.core.raise.either
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.request.accept
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import no.nav.tilbakekreving.infrastructure.client.AccessTokenProvider
 import no.nav.tilbakekreving.infrastructure.client.maskinporten.json.TexasTokenRequestJson
 import no.nav.tilbakekreving.infrastructure.client.maskinporten.json.TexasTokenResponseJson
 import org.slf4j.LoggerFactory
@@ -30,7 +30,6 @@ class TexasMaskinportenClient(
             val response =
                 httpClient.post(baseUrl) {
                     contentType(ContentType.Application.Json)
-                    accept(ContentType.Application.Json)
                     setBody(
                         TexasTokenRequestJson(
                             identityProvider = "maskinporten",
@@ -46,12 +45,4 @@ class TexasMaskinportenClient(
                 response.body<TexasTokenResponseJson>().accessToken
             }
         }
-}
-
-interface AccessTokenProvider {
-    suspend fun getAccessToken(vararg scopes: String): Either<GetAccessTokenError, String>
-
-    sealed class GetAccessTokenError {
-        data object FailedToGetAccessToken : GetAccessTokenError()
-    }
 }
