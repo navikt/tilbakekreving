@@ -35,6 +35,7 @@ fun Application.module() {
         createHttpClient(CIO.create()) {
             install(MaskinportenAuthHeaderPlugin) {
                 accessTokenProvider = texasClient
+                scopes = tilbakekrevingConfig.skatteetaten.scopes
             }
         }
     val skatteetatenInnkrevingsoppdragHttpClient =
