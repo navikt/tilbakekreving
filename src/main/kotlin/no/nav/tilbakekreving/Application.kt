@@ -2,6 +2,7 @@ package no.nav.tilbakekreving
 
 import io.ktor.client.engine.cio.CIO
 import io.ktor.server.application.Application
+import io.ktor.server.application.log
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.routing.route
@@ -24,7 +25,9 @@ fun main() {
 }
 
 fun Application.module() {
-    val appEnv = AppEnv.getFromEnvVariable("NAIS_CLUSTER_NAME")
+    val appEnv = AppEnv.getFromEnvVariable("NAIS_CLUSTER_NAME", log)
+    log.info("Starting application in $appEnv")
+
     val tilbakekrevingConfig = loadConfiguration(appEnv)
     val maskinportenClient = createHttpClient(CIO.create())
     val texasClient = TexasMaskinportenClient(maskinportenClient, tilbakekrevingConfig.nais.naisTokenEndpoint)
