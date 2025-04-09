@@ -1,4 +1,4 @@
-package no.nav.util
+package no.nav.tilbakekreving.util
 
 import io.kotest.core.spec.DslDrivenSpec
 import io.ktor.server.testing.TestApplication

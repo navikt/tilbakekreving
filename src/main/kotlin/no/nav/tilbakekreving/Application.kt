@@ -6,10 +6,11 @@ import io.ktor.server.application.log
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.routing.route
+import no.nav.tilbakekreving.app.HentKravdetaljer
 import no.nav.tilbakekreving.infrastructure.client.maskinporten.TexasMaskinportenClient
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.SkatteetatenInnkrevingsoppdragHttpClient
 import no.nav.tilbakekreving.infrastructure.route.configureRouting
-import no.nav.tilbakekreving.infrastructure.route.hentKravdetaljer
+import no.nav.tilbakekreving.infrastructure.route.hentKravdetaljerRoute
 import no.nav.tilbakekreving.plugin.MaskinportenAuthHeaderPlugin
 import no.nav.tilbakekreving.setup.configureSerialization
 import no.nav.tilbakekreving.setup.createHttpClient
@@ -38,14 +39,14 @@ fun Application.module() {
                 scopes = tilbakekrevingConfig.skatteetaten.scopes
             }
         }
-    val skatteetatenInnkrevingsoppdragHttpClient =
+    val hentKravdetaljer: HentKravdetaljer =
         SkatteetatenInnkrevingsoppdragHttpClient(tilbakekrevingConfig.skatteetaten.baseUrl, skatteetatenClient)
 
     configureSerialization()
     configureRouting {
         route("/internal") {
             route("/kravdetaljer") {
-                hentKravdetaljer(skatteetatenInnkrevingsoppdragHttpClient)
+                hentKravdetaljerRoute(hentKravdetaljer)
             }
         }
     }

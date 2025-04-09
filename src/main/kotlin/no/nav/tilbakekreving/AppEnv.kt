@@ -13,7 +13,7 @@ enum class AppEnv {
             name: String,
             log: Logger,
         ): AppEnv {
-            val envVar = System.getenv(name)
+            val envVar: String? = System.getenv(name)
             log.info("Environment variable $name is set to $envVar")
             return when (envVar) {
                 "dev-gcp" -> DEV

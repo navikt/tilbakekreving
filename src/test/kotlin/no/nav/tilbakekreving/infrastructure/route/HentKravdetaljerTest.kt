@@ -1,4 +1,4 @@
-package no.nav.infrastructure.route
+package no.nav.tilbakekreving.infrastructure.route
 
 import arrow.core.left
 import arrow.core.right
@@ -25,11 +25,10 @@ import no.nav.tilbakekreving.domain.Kravdetaljer
 import no.nav.tilbakekreving.domain.Kravgrunnlag
 import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravlinje
-import no.nav.tilbakekreving.infrastructure.route.hentKravdetaljer
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravdetaljerJsonRequest
 import no.nav.tilbakekreving.infrastructure.route.json.KravidentifikatorType
 import no.nav.tilbakekreving.setup.configureSerialization
-import no.nav.util.specWideTestApplication
+import no.nav.tilbakekreving.util.specWideTestApplication
 
 class HentKravdetaljerTest :
     WordSpec({
@@ -40,7 +39,7 @@ class HentKravdetaljerTest :
                     configureSerialization()
                     routing {
                         route("/kravdetaljer") {
-                            hentKravdetaljer(hentKravdetaljer)
+                            hentKravdetaljerRoute(hentKravdetaljer)
                         }
                     }
                 }

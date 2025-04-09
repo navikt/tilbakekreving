@@ -9,7 +9,7 @@ import no.nav.tilbakekreving.app.HentKravdetaljer
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravdetaljerJsonRequest
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravdetaljerJsonResponse
 
-fun Route.hentKravdetaljer(hentKravdetaljer: HentKravdetaljer) {
+fun Route.hentKravdetaljerRoute(hentKravdetaljer: HentKravdetaljer) {
     post<HentKravdetaljerJsonRequest> { jsonRequest ->
         val kravdetaljer =
             hentKravdetaljer.hentKravdetaljer(jsonRequest.toDomain()).getOrElse {

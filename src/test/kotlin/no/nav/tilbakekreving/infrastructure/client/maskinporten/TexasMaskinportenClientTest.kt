@@ -1,4 +1,4 @@
-package no.nav.infrastructure.client.maskinporten
+package no.nav.tilbakekreving.infrastructure.client.maskinporten
 
 import io.kotest.assertions.arrow.core.shouldBeRight
 import io.kotest.assertions.json.shouldEqualJson
@@ -12,8 +12,6 @@ import io.ktor.client.engine.mock.respond
 import io.ktor.http.content.TextContent
 import io.ktor.http.headersOf
 import no.nav.tilbakekreving.setup.createHttpClient
-import no.nav.tilbakekreving.infrastructure.client.maskinporten.TexasMaskinportenClient
-import no.nav.tilbakekreving.infrastructure.client.maskinporten.json.TexasTokenResponseJson
 
 class TexasMaskinportenClientTest :
     WordSpec({
@@ -55,7 +53,7 @@ class TexasMaskinportenClientTest :
 
                 val result = texasClient.getAccessToken("scope1", "scope2")
 
-                result.shouldBeRight(TexasTokenResponseJson("token", 3600, "Bearer"))
+                result.shouldBeRight("token")
             }
         }
     })

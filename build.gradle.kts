@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+
 val kotlinVersion = "2.1.10"
 
 plugins {
@@ -60,4 +62,16 @@ dependencies {
 
     val mockkVersion = "1.13.17"
     testImplementation("io.mockk:mockk:$mockkVersion")
+}
+
+tasks {
+    test {
+        useJUnitPlatform()
+        testLogging {
+            events("skipped", "failed")
+            exceptionFormat = TestExceptionFormat.FULL
+        }
+        // Required for testing environment variables
+        jvmArgs("--add-opens=java.base/java.util=ALL-UNNAMED")
+    }
 }
