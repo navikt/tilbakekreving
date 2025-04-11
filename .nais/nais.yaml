@@ -21,12 +21,12 @@ spec:
     {{#each ingresses}}
     - {{this}}
     {{/each}}
-	accessPolicy:
-		outbound:
-			external:
-				{{#each accessPolicy.outbound.external}}
-				- host: {{this}}
-				{{/each}}
+  accessPolicy:
+    outbound:
+      external:
+        {{#each accessPolicy.outbound.external}}
+        - host: {{this}}
+        {{/each}}
   image: {{ image }}
   maskinporten:
     enabled: true
