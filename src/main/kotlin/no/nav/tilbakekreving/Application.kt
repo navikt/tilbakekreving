@@ -30,10 +30,10 @@ fun Application.module() {
     log.info("Starting application in $appEnv")
 
     val tilbakekrevingConfig = loadConfiguration(appEnv)
-    val maskinportenClient = createHttpClient(CIO.create())
+    val maskinportenClient = createHttpClient(CIO.create(), appEnv)
     val texasClient = TexasMaskinportenClient(maskinportenClient, tilbakekrevingConfig.nais.naisTokenEndpoint)
     val skatteetatenClient =
-        createHttpClient(CIO.create()) {
+        createHttpClient(CIO.create(), appEnv) {
             install(MaskinportenAuthHeaderPlugin) {
                 accessTokenProvider = texasClient
                 scopes = tilbakekrevingConfig.skatteetaten.scopes

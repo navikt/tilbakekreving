@@ -15,6 +15,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import kotlinx.datetime.LocalDate
+import no.nav.tilbakekreving.AppEnv
 import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.Kravdetaljer
 import no.nav.tilbakekreving.domain.Kravgrunnlag
@@ -69,7 +70,7 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                         )
                     }
 
-                val client = createHttpClient(mockEngine)
+                val client = createHttpClient(mockEngine, AppEnv.DEV)
                 val skatteetatenInnkrevingsoppdragHttpClient =
                     SkatteetatenInnkrevingsoppdragHttpClient("http://localhost:8080", client)
 
@@ -93,19 +94,16 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                         request.body.contentType
                             .shouldNotBeNull()
                             .shouldBeEqual(ContentType.Application.Json)
-                        request.body
-                            .toByteArray()
-                            .decodeToString()
-                            .shouldEqualJson(
-                                // language=json
-                                """
-                                {
-                                    "skyldner": {
-                                      "foedselsnummer": "12345678901"
-                                    }
+                        request.body.toByteArray().decodeToString().shouldEqualJson(
+                            // language=json
+                            """
+                            {
+                                "skyldner": {
+                                  "foedselsnummer": "12345678901"
                                 }
-                                """.trimIndent(),
-                            )
+                            }
+                            """.trimIndent(),
+                        )
 
                         respond(
                             // language=json
@@ -134,7 +132,7 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                         )
                     }
 
-                val client = createHttpClient(mockEngine)
+                val client = createHttpClient(mockEngine, AppEnv.DEV)
                 val skatteetatenInnkrevingsoppdragHttpClient =
                     SkatteetatenInnkrevingsoppdragHttpClient("http://localhost:8080", client)
 

@@ -11,6 +11,7 @@ import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.content.TextContent
 import io.ktor.http.headersOf
+import no.nav.tilbakekreving.AppEnv
 import no.nav.tilbakekreving.setup.createHttpClient
 
 class TexasMaskinportenClientTest :
@@ -48,7 +49,7 @@ class TexasMaskinportenClientTest :
                         )
                     }
 
-                val httpClient = createHttpClient(mockEngine)
+                val httpClient = createHttpClient(mockEngine, AppEnv.DEV)
                 val texasClient = TexasMaskinportenClient(httpClient, "http://localhost")
 
                 val result = texasClient.getAccessToken("scope1", "scope2")
