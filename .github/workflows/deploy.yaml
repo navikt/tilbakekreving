@@ -22,7 +22,7 @@ jobs:
   deploy:
     name: "Deploy to ${{ inputs.cluster }}"
     if: github.ref == 'refs/heads/main'
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-24.04"
     permissions:
       id-token: "write"
     environment: "${{ inputs.gh_environment }}"
