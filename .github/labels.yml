@@ -1,0 +1,15 @@
+- name: dependencies
+  color: "0366d6"
+  description: "Pull requests that update a dependency file"
+
+- name: gradle
+  color: "02303A"
+  description: "Pull requests that update Gradle dependencies"
+
+- name: github-actions
+  color: "24292E"
+  description: "Pull requests that update GitHub Actions dependencies"
+
+- name: docker
+  color: "0DB7ED"
+  description: "Pull requests that update Docker dependencies"
