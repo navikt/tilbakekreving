@@ -1,0 +1,30 @@
+name: Dependabot Auto-Merge
+on:
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  dependabot:
+    runs-on: "ubuntu-24.04"
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    steps:
+      - name: Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Enable auto-merge for Dependabot PRs
+        # Only merge if it's not a major version update and only for certain dependency types
+        if: >
+          ${{ steps.metadata.outputs.update-type != 'version-update:semver-major' &&
+              (steps.metadata.outputs.dependency-type == 'direct:development' ||
+               steps.metadata.outputs.dependency-type == 'direct:production') }}
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -177,3 +177,14 @@ The project uses Arrow for functional programming patterns:
 - Use expression bodies for simple functions
 - Prefer immutability (val over var)
 - Use data classes for models
+
+### GitHub Actions
+
+The project uses GitHub Actions for CI/CD pipelines:
+
+- All workflows use the specific runner version `ubuntu-24.04` instead of `latest` to ensure consistency
+- The following workflows are defined:
+  - **build.yaml**: Reusable workflow for building and testing the application
+  - **deploy.yaml**: Reusable workflow for deploying the application to NAIS
+  - **tilbakekreving.yaml**: Main CI/CD pipeline that uses the reusable workflows
+  - **dependabot-auto-merge.yml**: Automatically merges non-major version updates from Dependabot
