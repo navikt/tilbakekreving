@@ -21,20 +21,23 @@ data class KravJson(
 ) {
     fun toDomain(): Krav =
         Krav(
-            kravidentifikator = Kravidentifikator.Nav(kravidentifikator),
+            kravidentifikator =
+                if (oppdragsgiverKravidentifikator.isEmpty()) {
+                    Kravidentifikator.Skatteetaten(kravidentifikator)
+                } else {
+                    Kravidentifikator.Nav(oppdragsgiverKravidentifikator)
+                },
             kravtype = kravtype,
         )
 }
 
 @Serializable
 data class KravbeskrivelseJson(
-    @SerialName("spraakTekst")
-    val språkTekst: List<SpråkTekstJson>,
+    @SerialName("spraakTekst") val språkTekst: List<SpråkTekstJson>,
 )
 
 @Serializable
 data class SpråkTekstJson(
     val tekst: String,
-    @SerialName("spraak")
-    val språk: String,
+    @SerialName("spraak") val språk: String,
 )

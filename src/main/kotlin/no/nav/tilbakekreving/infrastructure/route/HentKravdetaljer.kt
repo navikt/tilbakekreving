@@ -10,9 +10,10 @@ import no.nav.tilbakekreving.infrastructure.route.json.HentKravdetaljerJsonReque
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravdetaljerJsonResponse
 
 fun Route.hentKravdetaljerRoute(hentKravdetaljer: HentKravdetaljer) {
-    post<HentKravdetaljerJsonRequest> { jsonRequest ->
+    post<HentKravdetaljerJsonRequest> { hentKravdetaljerJson ->
+        val kravidentifikator = hentKravdetaljerJson.toDomain()
         val kravdetaljer =
-            hentKravdetaljer.hentKravdetaljer(jsonRequest.toDomain()).getOrElse {
+            hentKravdetaljer.hentKravdetaljer(kravidentifikator).getOrElse {
                 when (it) {
                     HentKravdetaljer.HentKravdetaljerFeil.FantIkkeKravdetaljer ->
                         call.respond(

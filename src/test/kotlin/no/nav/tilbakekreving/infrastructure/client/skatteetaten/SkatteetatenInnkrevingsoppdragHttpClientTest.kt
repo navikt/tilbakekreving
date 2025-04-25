@@ -143,7 +143,7 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
 
                 result
                     .shouldBeRight()
-                    .shouldContain(Krav(Kravidentifikator.Nav("29ab06ef-9de1-4312-9677-163e4cc586dd"), "OB04"))
+                    .shouldContain(Krav(Kravidentifikator.Nav("310ade77-8d45-48e8-b053-72659f53b4eb"), "OB04"))
             }
         }
     })
