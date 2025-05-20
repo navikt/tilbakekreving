@@ -22,6 +22,9 @@ spec:
     - {{this}}
     {{/each}}
   accessPolicy:
+		inbound:
+      rules:
+        application: brukerflate-innkreving
     outbound:
       external:
         {{#each accessPolicy.outbound.external}}
