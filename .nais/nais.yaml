@@ -24,7 +24,7 @@ spec:
   accessPolicy:
 		inbound:
       rules:
-        application: brukerflate-innkreving
+        - application: brukerflate-innkreving
     outbound:
       external:
         {{#each accessPolicy.outbound.external}}
