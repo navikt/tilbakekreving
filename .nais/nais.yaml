@@ -21,6 +21,10 @@ spec:
     {{#each ingresses}}
     - {{this}}
     {{/each}}
+  azure:
+    application:
+      enabled: true
+      allowAllUsers: true
   accessPolicy:
     inbound:
       rules:
