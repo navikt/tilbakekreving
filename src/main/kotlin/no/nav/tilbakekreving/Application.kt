@@ -1,15 +1,21 @@
 package no.nav.tilbakekreving
 
+import arrow.core.getOrElse
 import io.ktor.client.engine.cio.CIO
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
+import io.ktor.server.application.install
 import io.ktor.server.application.log
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.authenticate
+import io.ktor.server.auth.bearer
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
+import no.nav.tilbakekreving.infrastructure.client.TexasClient
 import no.nav.tilbakekreving.infrastructure.client.maskinporten.TexasMaskinportenClient
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.SkatteetatenInnkrevingsoppdragHttpClient
 import no.nav.tilbakekreving.infrastructure.route.hentKravdetaljerRoute
@@ -18,6 +24,7 @@ import no.nav.tilbakekreving.plugin.MaskinportenAuthHeaderPlugin
 import no.nav.tilbakekreving.setup.configureSerialization
 import no.nav.tilbakekreving.setup.createHttpClient
 import no.nav.tilbakekreving.setup.loadConfiguration
+import org.slf4j.LoggerFactory
 
 fun main() {
     embeddedServer(
@@ -33,26 +40,43 @@ fun Application.module() {
     log.info("Starting application in $appEnv")
 
     val tilbakekrevingConfig = loadConfiguration(appEnv)
-    val maskinportenClient = createHttpClient(CIO.create(), appEnv)
-    val texasClient = TexasMaskinportenClient(maskinportenClient, tilbakekrevingConfig.nais.naisTokenEndpoint)
+    val httpClient = createHttpClient(CIO.create(), appEnv)
+
+    val maskinportenAccessTokenProvider =
+        TexasMaskinportenClient(httpClient, tilbakekrevingConfig.nais.naisTokenEndpoint)
     val skatteetatenClient =
         createHttpClient(CIO.create(), appEnv) {
             install(MaskinportenAuthHeaderPlugin) {
-                accessTokenProvider = texasClient
+                accessTokenProvider = maskinportenAccessTokenProvider
                 scopes = tilbakekrevingConfig.skatteetaten.scopes
             }
         }
     val innkrevingsoppdragHttpClient =
         SkatteetatenInnkrevingsoppdragHttpClient(tilbakekrevingConfig.skatteetaten.baseUrl, skatteetatenClient)
 
+    val accessTokenVerifier = TexasClient(httpClient, tilbakekrevingConfig.nais.naisTokenIntrospectionEndpoint)
     configureSerialization()
+    install(Authentication) {
+        val logger = LoggerFactory.getLogger("Authentication")
+        bearer("entra-id") {
+            authenticate { credentials ->
+                accessTokenVerifier.verifyToken(credentials.token).getOrElse {
+                    logger.error("Token verification failed: $it")
+                    null
+                }
+            }
+        }
+    }
+
     routing {
         route("/internal") {
-            route("/kravdetaljer") {
-                hentKravdetaljerRoute(innkrevingsoppdragHttpClient)
-            }
-            route("/kravoversikt") {
-                hentKravoversikt(innkrevingsoppdragHttpClient)
+            authenticate("entra-id") {
+                route("/kravdetaljer") {
+                    hentKravdetaljerRoute(innkrevingsoppdragHttpClient)
+                }
+                route("/kravoversikt") {
+                    hentKravoversikt(innkrevingsoppdragHttpClient)
+                }
             }
             get("/isAlive") {
                 call.respond<HttpStatusCode>(HttpStatusCode.OK)
