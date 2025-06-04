@@ -26,7 +26,7 @@ import no.nav.tilbakekreving.util.specWideTestApplication
 class AuthenticationTest :
     WordSpec({
         val accessTokenVerifier = mockk<AccessTokenVerifier>()
-        val userGroups = AccessTokenVerifier.UserGroups(listOf("group1", "group2"))
+        val groupIds = (listOf("group1", "group2").map(::GroupId))
         val client =
             specWideTestApplication {
                 application {
@@ -34,8 +34,15 @@ class AuthenticationTest :
                         bearer("entra-id") {
                             authenticate { credentials ->
                                 accessTokenVerifier.verifyToken(credentials.token).fold(
-                                    { null },
-                                    { it },
+                                    { error ->
+                                        when (error) {
+                                            is AccessTokenVerifier.VerificationError.FailedToVerifyToken -> null
+                                            is AccessTokenVerifier.VerificationError.InvalidToken -> null
+                                        }
+                                    },
+                                    { validatedToken ->
+                                        validatedToken.groupIds
+                                    },
                                 )
                             }
                         }
@@ -60,7 +67,7 @@ class AuthenticationTest :
 
                 coEvery {
                     accessTokenVerifier.verifyToken("valid-token")
-                } returns userGroups.right()
+                } returns AccessTokenVerifier.ValidatedToken(groupIds).right()
 
                 // Public route should be accessible without a token
                 client.get("/public").shouldBeOK()
@@ -75,7 +82,7 @@ class AuthenticationTest :
             "deny access to protected routes with invalid token" {
                 coEvery {
                     accessTokenVerifier.verifyToken("invalid-token")
-                } returns AccessTokenVerifier.VerificationError.FailedToVerifyToken.left()
+                } returns AccessTokenVerifier.VerificationError.InvalidToken.left()
 
                 // Protected route should be inaccessible with invalid token
                 client
@@ -92,15 +99,22 @@ class AuthenticationTest :
             "make user groups available in the authentication context" {
                 coEvery {
                     accessTokenVerifier.verifyToken("valid-token")
-                } returns userGroups.right()
+                } returns AccessTokenVerifier.ValidatedToken(groupIds).right()
 
                 testApplication {
                     install(Authentication) {
                         bearer("entra-id") {
                             authenticate { credentials ->
                                 accessTokenVerifier.verifyToken(credentials.token).fold(
-                                    { null },
-                                    { it },
+                                    { error ->
+                                        when (error) {
+                                            is AccessTokenVerifier.VerificationError.FailedToVerifyToken -> null
+                                            is AccessTokenVerifier.VerificationError.InvalidToken -> null
+                                        }
+                                    },
+                                    { validatedToken ->
+                                        validatedToken.groupIds
+                                    },
                                 )
                             }
                         }
@@ -109,8 +123,8 @@ class AuthenticationTest :
                     routing {
                         authenticate("entra-id") {
                             get("/protected") {
-                                val principal = call.authentication.principal<AccessTokenVerifier.UserGroups>()
-                                if (principal != null && principal.groupIds.contains("group1")) {
+                                val principal = call.authentication.principal<UserGroupIdsPrincipal>()
+                                if (principal != null && principal.groupIds.contains(GroupId("group1"))) {
                                     call.respond(HttpStatusCode.OK)
                                 } else {
                                     call.respond(HttpStatusCode.Forbidden)

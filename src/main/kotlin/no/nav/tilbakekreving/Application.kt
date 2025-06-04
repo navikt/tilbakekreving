@@ -15,6 +15,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
+import no.nav.tilbakekreving.infrastructure.client.AccessTokenVerifier
 import no.nav.tilbakekreving.infrastructure.client.TexasClient
 import no.nav.tilbakekreving.infrastructure.client.maskinporten.TexasMaskinportenClient
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.SkatteetatenInnkrevingsoppdragHttpClient
@@ -60,10 +61,21 @@ fun Application.module() {
         val logger = LoggerFactory.getLogger("Authentication")
         bearer("entra-id") {
             authenticate { credentials ->
-                accessTokenVerifier.verifyToken(credentials.token).getOrElse {
-                    logger.error("Token verification failed: $it")
-                    null
-                }
+                accessTokenVerifier
+                    .verifyToken(credentials.token)
+                    .getOrElse { error ->
+                        when (error) {
+                            is AccessTokenVerifier.VerificationError.FailedToVerifyToken -> {
+                                logger.error("Token verification failed: $error")
+                                null
+                            }
+
+                            is AccessTokenVerifier.VerificationError.InvalidToken -> {
+                                logger.error("Token is invalid: $error")
+                                null
+                            }
+                        }
+                    }?.groupIds
             }
         }
     }

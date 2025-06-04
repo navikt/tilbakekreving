@@ -10,6 +10,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import no.nav.tilbakekreving.infrastructure.auth.GroupId
 import org.slf4j.LoggerFactory
 
 class TexasClient(
@@ -35,9 +36,13 @@ class TexasClient(
                 logger.error("Failed to verify token: ${response.status} - ${response.bodyAsText()}")
                 raise(AccessTokenVerifier.VerificationError.FailedToVerifyToken)
             } else {
-                // TODO: Remove
-                logger.info("Token verified successfully: ${response.bodyAsText()}")
-                response.body<VerifyTokenResponse>().toDomain()
+                when (val verifyTokenResponse = response.body<VerifyTokenResponse>()) {
+                    is VerifyTokenResponse.ValidTokenResponse -> verifyTokenResponse.toDomain()
+                    is VerifyTokenResponse.InvalidTokenResponse -> {
+                        logger.info("Token is invalid: ${verifyTokenResponse.error}")
+                        raise(AccessTokenVerifier.VerificationError.InvalidToken)
+                    }
+                }
             }
         }
 }
@@ -49,11 +54,27 @@ data class VerifyTokenRequest(
 )
 
 @Serializable
-data class VerifyTokenResponse(
-    val active: Boolean,
-    val exp: Long,
-    val iat: Long,
-    val groups: List<String>,
-) {
-    fun toDomain(): AccessTokenVerifier.UserGroups = AccessTokenVerifier.UserGroups(groups)
+sealed class VerifyTokenResponse {
+    abstract val active: Boolean
+
+    @Serializable
+    @SerialName("valid")
+    data class ValidTokenResponse(
+        override val active: Boolean,
+        val exp: Long,
+        val iat: Long,
+        val groups: List<String>,
+    ) : VerifyTokenResponse() {
+        fun toDomain(): AccessTokenVerifier.ValidatedToken =
+            AccessTokenVerifier.ValidatedToken(
+                groups.map(::GroupId),
+            )
+    }
+
+    @Serializable
+    @SerialName("invalid")
+    data class InvalidTokenResponse(
+        override val active: Boolean,
+        val error: String,
+    ) : VerifyTokenResponse()
 }
