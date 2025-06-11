@@ -21,6 +21,7 @@ import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.Kravdetaljer
 import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Skyldner
+import no.nav.tilbakekreving.domain.TilleggsfristStore
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.HentKravoversiktRequestJson
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.HentKravoversiktResponseJson
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.KravdetaljerResponseJson
@@ -30,6 +31,7 @@ import org.slf4j.LoggerFactory
 class SkatteetatenInnkrevingsoppdragHttpClient(
     private val baseUrl: String,
     private val client: HttpClient,
+    private val tilleggsfristStore: TilleggsfristStore,
 ) : HentKravdetaljer,
     HentKravoversikt {
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -53,7 +55,9 @@ class SkatteetatenInnkrevingsoppdragHttpClient(
 
             when (httpResponse.status) {
                 HttpStatusCode.OK -> {
-                    httpResponse.body<KravdetaljerResponseJson>().toDomain()
+                    val kravdetaljer = httpResponse.body<KravdetaljerResponseJson>().toDomain()
+                    val tilleggsfrist = tilleggsfristStore.getTilleggsfrist(kravidentifikator)
+                    kravdetaljer.copy(tilleggsfrist = tilleggsfrist)
                 }
 
                 HttpStatusCode.NotFound -> {

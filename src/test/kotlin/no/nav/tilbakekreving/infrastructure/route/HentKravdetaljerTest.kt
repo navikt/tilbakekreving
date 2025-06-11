@@ -56,6 +56,7 @@ class HentKravdetaljerTest :
                             gjenstaaendeBeloep = 500.0,
                         ),
                     ),
+                tilleggsfrist = LocalDate(2025, 2, 1),
             )
         val kravidentifikator = Kravidentifikator.Nav("123456789")
 
@@ -96,7 +97,8 @@ class HentKravdetaljerTest :
                                     "opprinneligBeløp": 1000.0,
                                     "gjenståendeBeløp": 500.0
                                 }
-                            ]
+                            ],
+                            "tilleggsfrist": "2025-02-01"
                         }
                         """.trimIndent(),
                     )

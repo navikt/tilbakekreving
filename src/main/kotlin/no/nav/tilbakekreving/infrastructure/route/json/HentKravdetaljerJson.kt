@@ -11,12 +11,14 @@ import no.nav.tilbakekreving.domain.Kravlinje
 data class HentKravdetaljerJsonResponse(
     val kravgrunnlag: KravgrunnlagResponseJson,
     val kravlinjer: List<KravlinjeResponseJson>,
+    val tilleggsfrist: String? = null,
 ) {
     companion object {
         fun fromDomain(kravdetaljer: Kravdetaljer): HentKravdetaljerJsonResponse =
             HentKravdetaljerJsonResponse(
                 kravgrunnlag = KravgrunnlagResponseJson.fromDomain(kravdetaljer.kravgrunnlag),
                 kravlinjer = kravdetaljer.kravlinjer.map(KravlinjeResponseJson.Companion::fromDomain),
+                tilleggsfrist = kravdetaljer.tilleggsfrist?.toString(),
             )
     }
 }

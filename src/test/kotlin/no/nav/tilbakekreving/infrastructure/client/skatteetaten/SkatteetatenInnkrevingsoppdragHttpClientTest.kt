@@ -22,11 +22,13 @@ import no.nav.tilbakekreving.domain.Kravgrunnlag
 import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravlinje
 import no.nav.tilbakekreving.domain.Skyldner
+import no.nav.tilbakekreving.domain.TilleggsfristStore
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.KravidentifikatortypeQuery
 import no.nav.tilbakekreving.setup.createHttpClient
 
 class SkatteetatenInnkrevingsoppdragHttpClientTest :
     WordSpec({
+        val tilleggsfristStore = TilleggsfristStore()
         "hent kravdetaljer" should {
             "returnerere kravdetaljer når alt er ok" {
                 val kravidentifikator = "123"
@@ -72,7 +74,7 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
 
                 val client = createHttpClient(mockEngine, AppEnv.DEV)
                 val skatteetatenInnkrevingsoppdragHttpClient =
-                    SkatteetatenInnkrevingsoppdragHttpClient("http://localhost:8080", client)
+                    SkatteetatenInnkrevingsoppdragHttpClient("http://localhost:8080", client, tilleggsfristStore)
 
                 val result =
                     skatteetatenInnkrevingsoppdragHttpClient.hentKravdetaljer(
@@ -134,7 +136,7 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
 
                 val client = createHttpClient(mockEngine, AppEnv.DEV)
                 val skatteetatenInnkrevingsoppdragHttpClient =
-                    SkatteetatenInnkrevingsoppdragHttpClient("http://localhost:8080", client)
+                    SkatteetatenInnkrevingsoppdragHttpClient("http://localhost:8080", client, tilleggsfristStore)
 
                 val result =
                     skatteetatenInnkrevingsoppdragHttpClient.hentKravoversikt(

@@ -8,8 +8,17 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.JsonDecoder
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.boolean
+import kotlinx.serialization.json.jsonPrimitive
 import no.nav.tilbakekreving.infrastructure.auth.GroupId
 import org.slf4j.LoggerFactory
 
@@ -53,7 +62,7 @@ data class VerifyTokenRequest(
     val token: String,
 )
 
-@Serializable
+@Serializable(with = VerifyTokenResponseSerializer::class)
 sealed class VerifyTokenResponse {
     abstract val active: Boolean
 
@@ -77,4 +86,30 @@ sealed class VerifyTokenResponse {
         override val active: Boolean,
         val error: String,
     ) : VerifyTokenResponse()
+}
+
+class VerifyTokenResponseSerializer : KSerializer<VerifyTokenResponse> {
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("VerifyTokenResponse")
+
+    override fun serialize(
+        encoder: Encoder,
+        value: VerifyTokenResponse,
+    ) {
+        // We don't need to implement serialization as we're only concerned with deserialization
+        throw NotImplementedError("Serialization is not implemented for VerifyTokenResponse")
+    }
+
+    override fun deserialize(decoder: Decoder): VerifyTokenResponse {
+        val jsonDecoder = decoder as? JsonDecoder ?: throw IllegalArgumentException("Expected JsonDecoder")
+        val jsonObject =
+            jsonDecoder.decodeJsonElement() as? JsonObject ?: throw IllegalArgumentException("Expected JsonObject")
+
+        val active = jsonObject["active"]?.jsonPrimitive?.boolean ?: false
+
+        return if (active) {
+            jsonDecoder.json.decodeFromJsonElement(VerifyTokenResponse.ValidTokenResponse.serializer(), jsonObject)
+        } else {
+            jsonDecoder.json.decodeFromJsonElement(VerifyTokenResponse.InvalidTokenResponse.serializer(), jsonObject)
+        }
+    }
 }

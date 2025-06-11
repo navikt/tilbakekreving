@@ -41,7 +41,7 @@ class AuthenticationTest :
                                         }
                                     },
                                     { validatedToken ->
-                                        validatedToken.groupIds
+                                        UserGroupIdsPrincipal(validatedToken.groupIds)
                                     },
                                 )
                             }
@@ -113,7 +113,7 @@ class AuthenticationTest :
                                         }
                                     },
                                     { validatedToken ->
-                                        validatedToken.groupIds
+                                        UserGroupIdsPrincipal(validatedToken.groupIds)
                                     },
                                 )
                             }
