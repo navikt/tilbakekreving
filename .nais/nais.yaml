@@ -16,7 +16,7 @@ spec:
       runtime: java
     logging:
       destinations:
-        - id: "elastic"
+        - id: loki
   ingresses:
     {{#each ingresses}}
     - {{this}}
