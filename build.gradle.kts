@@ -1,6 +1,6 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
-val kotlinVersion = "2.1.21"
+val kotlinVersion = "2.2.0"
 
 plugins {
     kotlin("jvm") version "2.1.21"
