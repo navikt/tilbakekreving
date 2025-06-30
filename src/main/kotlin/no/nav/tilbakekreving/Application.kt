@@ -15,14 +15,12 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
-import no.nav.tilbakekreving.domain.TilleggsfristStore
 import no.nav.tilbakekreving.infrastructure.client.AccessTokenVerifier
 import no.nav.tilbakekreving.infrastructure.client.TexasClient
 import no.nav.tilbakekreving.infrastructure.client.maskinporten.TexasMaskinportenClient
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.SkatteetatenInnkrevingsoppdragHttpClient
 import no.nav.tilbakekreving.infrastructure.route.hentKravdetaljerRoute
 import no.nav.tilbakekreving.infrastructure.route.hentKravoversikt
-import no.nav.tilbakekreving.infrastructure.route.oppdaterTilleggsfristRoute
 import no.nav.tilbakekreving.plugin.MaskinportenAuthHeaderPlugin
 import no.nav.tilbakekreving.setup.configureSerialization
 import no.nav.tilbakekreving.setup.createHttpClient
@@ -54,12 +52,10 @@ fun Application.module() {
                 scopes = tilbakekrevingConfig.skatteetaten.scopes
             }
         }
-    val tilleggsfristStore = TilleggsfristStore()
     val innkrevingsoppdragHttpClient =
         SkatteetatenInnkrevingsoppdragHttpClient(
             tilbakekrevingConfig.skatteetaten.baseUrl,
             skatteetatenClient,
-            tilleggsfristStore,
         )
 
     val accessTokenVerifier = TexasClient(httpClient, tilbakekrevingConfig.nais.naisTokenIntrospectionEndpoint)
@@ -95,9 +91,6 @@ fun Application.module() {
                 }
                 route("/kravoversikt") {
                     hentKravoversikt(innkrevingsoppdragHttpClient)
-                }
-                route("/tilleggsfrist") {
-                    oppdaterTilleggsfristRoute(tilleggsfristStore)
                 }
             }
             get("/isAlive") {
