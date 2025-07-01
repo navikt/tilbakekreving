@@ -99,7 +99,9 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                             // language=json
                             """
                             {
-                                "skyldner": "12345678901",
+                                "skyldner": {
+                                  "foedselsnummer": "12345678901"
+                                },
                                 "kravfilter": "alle"
                             }
                             """.trimIndent(),
