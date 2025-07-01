@@ -17,9 +17,9 @@ fun Route.hentKravoversikt(hentKravoversikt: HentKravoversikt) {
     post<HentKravoversiktJsonRequest> { hentKravoversiktJsonRequest ->
         val groupIds = call.principal<UserGroupIdsPrincipal>()
         logger.info("Henter kravoversikt for bruker med userGroups=${groupIds?.groupIds}")
-        val skyldner = hentKravoversiktJsonRequest.toDomain()
+        val (skyldner, kravfilter) = hentKravoversiktJsonRequest.toDomain()
         val kravoversikt =
-            hentKravoversikt.hentKravoversikt(skyldner).getOrElse {
+            hentKravoversikt.hentKravoversikt(skyldner, kravfilter).getOrElse {
                 when (it) {
                     HentKravoversikt.HentKravoversiktFeil.FeilVedHentingAvKrav ->
                         call.respond(

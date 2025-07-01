@@ -19,6 +19,7 @@ import no.nav.tilbakekreving.app.HentKravdetaljer
 import no.nav.tilbakekreving.app.HentKravoversikt
 import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.Kravdetaljer
+import no.nav.tilbakekreving.domain.Kravfilter
 import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Skyldner
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.HentKravoversiktRequestJson
@@ -75,14 +76,17 @@ class SkatteetatenInnkrevingsoppdragHttpClient(
             }
         }
 
-    override suspend fun hentKravoversikt(skyldner: Skyldner): Either<HentKravoversikt.HentKravoversiktFeil, List<Krav>> =
+    override suspend fun hentKravoversikt(
+        skyldner: Skyldner,
+        kravfilter: Kravfilter,
+    ): Either<HentKravoversikt.HentKravoversiktFeil, List<Krav>> =
         either {
             val httpResponse =
                 client.post("$baseUrl/api/innkreving/innkrevingsoppdrag/v1/innkrevingsoppdrag/kravoversikt") {
                     headers {
                         append("Klientid", "NAV/2.0")
                     }
-                    setBody(HentKravoversiktRequestJson.from(skyldner))
+                    setBody(HentKravoversiktRequestJson.from(skyldner, kravfilter))
                     contentType(ContentType.Application.Json)
                     accept(ContentType.Application.Json)
                 }
