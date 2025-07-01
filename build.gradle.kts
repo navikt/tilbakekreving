@@ -40,7 +40,7 @@ dependencies {
 
     implementation("ch.qos.logback:logback-classic:1.5.18")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.0-0.6.x-compat")
 
     val arrowVersion = "2.1.2"
     implementation("io.arrow-kt:arrow-core:$arrowVersion")
