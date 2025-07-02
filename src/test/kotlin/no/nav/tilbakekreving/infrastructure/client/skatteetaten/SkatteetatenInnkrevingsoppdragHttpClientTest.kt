@@ -70,7 +70,7 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                         )
                     }
 
-                val client = createHttpClient(mockEngine, AppEnv.DEV)
+                val client = with(AppEnv.DEV) { createHttpClient(mockEngine) }
                 val skatteetatenInnkrevingsoppdragHttpClient =
                     SkatteetatenInnkrevingsoppdragHttpClient("http://localhost:8080", client)
 
@@ -132,7 +132,7 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                         )
                     }
 
-                val client = createHttpClient(mockEngine, AppEnv.DEV)
+                val client = with(AppEnv.DEV) { createHttpClient(mockEngine) }
                 val skatteetatenInnkrevingsoppdragHttpClient =
                     SkatteetatenInnkrevingsoppdragHttpClient("http://localhost:8080", client)
 

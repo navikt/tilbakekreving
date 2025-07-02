@@ -6,7 +6,8 @@ import io.ktor.server.plugins.calllogging.CallLogging
 import no.nav.tilbakekreving.AppEnv
 import org.slf4j.event.Level
 
-fun Application.configureCallLogging(appEnv: AppEnv) {
+context(appEnv: AppEnv)
+fun Application.configureCallLogging() {
     install(CallLogging) {
         when (appEnv) {
             AppEnv.LOCAL,

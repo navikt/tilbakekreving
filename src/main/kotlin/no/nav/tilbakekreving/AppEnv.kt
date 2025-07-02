@@ -9,12 +9,10 @@ enum class AppEnv {
     ;
 
     companion object {
-        fun getFromEnvVariable(
-            name: String,
-            log: Logger,
-        ): AppEnv {
+        context(logger: Logger)
+        fun getFromEnvVariable(name: String): AppEnv {
             val envVar: String? = System.getenv(name)
-            log.info("Environment variable $name is set to $envVar")
+            logger.info("Environment variable $name is set to $envVar")
             return when (envVar) {
                 "dev-gcp" -> DEV
                 "prod-gcp" -> PROD

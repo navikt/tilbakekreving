@@ -33,47 +33,49 @@ fun main() {
 }
 
 fun Application.module() {
-    val appEnv = AppEnv.getFromEnvVariable("NAIS_CLUSTER_NAME", log)
+    val appEnv = with(log) { AppEnv.getFromEnvVariable("NAIS_CLUSTER_NAME") }
     log.info("Starting application in $appEnv")
 
-    val tilbakekrevingConfig = loadConfiguration(appEnv)
-    val httpClient = createHttpClient(CIO.create(), appEnv)
+    with(appEnv) {
+        val tilbakekrevingConfig = loadConfiguration()
+        val httpClient = createHttpClient(CIO.create())
 
-    val maskinportenAccessTokenProvider =
-        TexasMaskinportenClient(httpClient, tilbakekrevingConfig.nais.naisTokenEndpoint)
-    val skatteetatenClient =
-        createHttpClient(CIO.create(), appEnv) {
-            install(MaskinportenAuthHeaderPlugin) {
-                accessTokenProvider = maskinportenAccessTokenProvider
-                scopes = tilbakekrevingConfig.skatteetaten.scopes
-            }
-        }
-    val innkrevingsoppdragHttpClient =
-        SkatteetatenInnkrevingsoppdragHttpClient(
-            tilbakekrevingConfig.skatteetaten.baseUrl,
-            skatteetatenClient,
-        )
-
-    val accessTokenVerifier = TexasClient(httpClient, tilbakekrevingConfig.nais.naisTokenIntrospectionEndpoint)
-    configureSerialization()
-    configureCallLogging(appEnv)
-    configureAuthentication(accessTokenVerifier)
-
-    routing {
-        route("/internal") {
-            authenticate("entra-id") {
-                route("/kravdetaljer") {
-                    hentKravdetaljerRoute(innkrevingsoppdragHttpClient)
-                }
-                route("/kravoversikt") {
-                    hentKravoversikt(innkrevingsoppdragHttpClient)
+        val maskinportenAccessTokenProvider =
+            TexasMaskinportenClient(httpClient, tilbakekrevingConfig.nais.naisTokenEndpoint)
+        val skatteetatenClient =
+            createHttpClient(CIO.create()) {
+                install(MaskinportenAuthHeaderPlugin) {
+                    accessTokenProvider = maskinportenAccessTokenProvider
+                    scopes = tilbakekrevingConfig.skatteetaten.scopes
                 }
             }
-            get("/isAlive") {
-                call.respond<HttpStatusCode>(HttpStatusCode.OK)
-            }
-            get("/isReady") {
-                call.respond<HttpStatusCode>(HttpStatusCode.OK)
+        val innkrevingsoppdragHttpClient =
+            SkatteetatenInnkrevingsoppdragHttpClient(
+                tilbakekrevingConfig.skatteetaten.baseUrl,
+                skatteetatenClient,
+            )
+
+        val accessTokenVerifier = TexasClient(httpClient, tilbakekrevingConfig.nais.naisTokenIntrospectionEndpoint)
+        configureSerialization()
+        configureCallLogging()
+        configureAuthentication(accessTokenVerifier)
+
+        routing {
+            route("/internal") {
+                authenticate("entra-id") {
+                    route("/kravdetaljer") {
+                        hentKravdetaljerRoute(innkrevingsoppdragHttpClient)
+                    }
+                    route("/kravoversikt") {
+                        hentKravoversikt(innkrevingsoppdragHttpClient)
+                    }
+                }
+                get("/isAlive") {
+                    call.respond<HttpStatusCode>(HttpStatusCode.OK)
+                }
+                get("/isReady") {
+                    call.respond<HttpStatusCode>(HttpStatusCode.OK)
+                }
             }
         }
     }

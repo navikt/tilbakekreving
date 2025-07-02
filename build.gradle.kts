@@ -8,6 +8,12 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "2.2.0"
 }
 
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xcontext-parameters")
+    }
+}
+
 group = "no.nav"
 version = "0.0.1"
 

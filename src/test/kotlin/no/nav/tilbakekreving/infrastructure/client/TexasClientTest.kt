@@ -54,7 +54,7 @@ class TexasClientTest :
                         )
                     }
 
-                val httpClient = createHttpClient(mockEngine, AppEnv.DEV)
+                val httpClient = with(AppEnv.DEV) { createHttpClient(mockEngine) }
                 val texasClient = TexasClient(httpClient, "http://localhost")
 
                 val result = texasClient.verifyToken("valid-token")
@@ -101,7 +101,7 @@ class TexasClientTest :
                         )
                     }
 
-                val httpClient = createHttpClient(mockEngine, AppEnv.DEV)
+                val httpClient = with(AppEnv.DEV) { createHttpClient(mockEngine) }
                 val texasClient = TexasClient(httpClient, "http://localhost")
 
                 val result = texasClient.verifyToken("invalid-token")
@@ -115,7 +115,7 @@ class TexasClientTest :
                         respondError(HttpStatusCode.Unauthorized)
                     }
 
-                val httpClient = createHttpClient(mockEngine, AppEnv.DEV)
+                val httpClient = with(AppEnv.DEV) { createHttpClient(mockEngine) }
                 val texasClient = TexasClient(httpClient, "http://localhost")
 
                 val result = texasClient.verifyToken("invalid-token")

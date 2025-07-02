@@ -49,7 +49,7 @@ class TexasMaskinportenClientTest :
                         )
                     }
 
-                val httpClient = createHttpClient(mockEngine, AppEnv.DEV)
+                val httpClient = with(AppEnv.DEV) { createHttpClient(mockEngine) }
                 val texasClient = TexasMaskinportenClient(httpClient, "http://localhost")
 
                 val result = texasClient.getAccessToken("scope1", "scope2")

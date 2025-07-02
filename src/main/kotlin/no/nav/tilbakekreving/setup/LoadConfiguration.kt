@@ -10,7 +10,8 @@ import no.nav.tilbakekreving.config.TilbakekrevingConfig
  * Miljøvariabler som er referert i filene og lastes også inn her.
  */
 @OptIn(ExperimentalHoplite::class)
-fun loadConfiguration(appEnv: AppEnv): TilbakekrevingConfig {
+context(appEnv: AppEnv)
+fun loadConfiguration(): TilbakekrevingConfig {
     val resourceFiles =
         listOfNotNull(
             when (appEnv) {

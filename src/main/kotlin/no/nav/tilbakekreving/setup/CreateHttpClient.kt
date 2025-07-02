@@ -10,9 +10,9 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import no.nav.tilbakekreving.AppEnv
 
+context(appEnv: AppEnv)
 fun createHttpClient(
     engine: HttpClientEngine,
-    appEnv: AppEnv,
     httpClientConfig: HttpClientConfig<*>.() -> Unit = {},
 ): HttpClient =
     HttpClient(engine) {
