@@ -8,30 +8,23 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.jsonObject
-import no.nav.tilbakekreving.domain.Kravfilter
 import no.nav.tilbakekreving.domain.Skyldner
 
 @Serializable
 data class HentKravoversiktRequestJson(
     val skyldner: SkyldnerJson,
-    val kravfilter: KravfilterJson,
 ) {
     companion object {
-        fun from(
-            skyldner: Skyldner,
-            kravfilter: Kravfilter,
-        ): HentKravoversiktRequestJson =
+        fun from(skyldner: Skyldner): HentKravoversiktRequestJson =
             when (skyldner) {
                 is Skyldner.Fødselnummer ->
                     HentKravoversiktRequestJson(
                         skyldner = SkyldnerJson.Fødselsnummer(skyldner.id),
-                        kravfilter = KravfilterJson.from(kravfilter),
                     )
 
                 is Skyldner.Organisasjonsnummer ->
                     HentKravoversiktRequestJson(
                         skyldner = SkyldnerJson.Organisasjonsnummer(skyldner.id),
-                        kravfilter = KravfilterJson.from(kravfilter),
                     )
             }
     }

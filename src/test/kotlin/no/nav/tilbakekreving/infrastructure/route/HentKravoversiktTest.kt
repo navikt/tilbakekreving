@@ -38,7 +38,7 @@ class HentKravoversiktTest :
 
         "hent kravoversikt" should {
             "returnere 200 med kravoversikt" {
-                coEvery { hentKravoversikt.hentKravoversikt(any(), any()) } returns
+                coEvery { hentKravoversikt.hentKravoversikt(any()) } returns
                     listOf(
                         Krav(
                             Kravidentifikator.Nav("123456789"),
@@ -53,8 +53,7 @@ class HentKravoversiktTest :
                             """
                             {
                               "type": "fødselsnummer",
-                              "id": "123456789",
-                              "kravfilter": "ALLE"
+                              "id": "123456789"
                             }
                             """.trimIndent(),
                         )

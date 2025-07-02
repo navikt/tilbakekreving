@@ -17,51 +17,51 @@ The project follows a standard Kotlin/Ktor application structure:
   - `infrastructure/` - Tests for infrastructure components
   - `util/` - Tests for utility classes
 
-## Build and Run
+## Build and Configuration Instructions
 
 ### Prerequisites
 
 - JDK 21
 - Gradle (wrapper included)
 
-### Building and Testing
+### Building the Project
 
 ```bash
 # Build the project
 ./gradlew build
 
-# Run all tests
+# Run tests
 ./gradlew test
-
-# Run a specific test class
-./gradlew test --tests no.nav.tilbakekreving.infrastructure.route.HentKravdetaljerTest
-
-# Run tests with continuous build
-./gradlew test --continuous
 
 # Create distribution
 ./gradlew installDist
 ```
 
-### Environment Configuration
+### Environment Variables
 
-The application uses Hoplite to read configuration from `application.conf` files:
+The application requires the following environment variables:
 
-- **Local development**: Values are specified in `application-local.conf`
-- **Development/Production**: The following environment variables must be set:
-  - `NAIS_CLUSTER_NAME` - The NAIS cluster name (used to determine environment)
-  - `NAIS_TOKEN_ENDPOINT` - The NAIS token endpoint for authentication
+- `NAIS_CLUSTER_NAME` - The NAIS cluster name (used to determine environment)
+- `NAIS_TOKEN_ENDPOINT` - The NAIS token endpoint for authentication
+
+Environment variables are read by Hoplite from the configuration files (application.conf). When running the application locally, you do not need to set these environment variables. Instead, you can add the values directly to the configuration files:
+
+- For local development: Values are specified directly in `application-local.conf`
+- For development environment: Environment variables must be set in the runtime environment.
+- For production: Environment variables must be set in the runtime environment
 
 ### Docker
 
-The application is containerized using a distroless Java 21 image:
+The application is containerized using a distroless Java 21 image. The Dockerfile is configured to use the output of the `installDist` Gradle task.
+
+To build the Docker image locally:
 
 ```bash
 ./gradlew installDist
 docker build -t tilbakekreving .
 ```
 
-## Testing Guidelines
+## Testing Information
 
 ### Test Framework
 
@@ -72,11 +72,25 @@ The project uses the following testing frameworks:
 - **Ktor Test** - Utilities for testing Ktor applications
 - **Arrow Test** - Assertions for Arrow functional types
 
+### Running Tests
+
+```bash
+# Run all tests
+./gradlew test
+
+# Run a specific test class
+./gradlew test --tests no.nav.tilbakekreving.infrastructure.route.HentKravdetaljerTest
+
+# Run tests with continuous build
+./gradlew test --continuous
+```
+
 ### Writing Tests
 
 Tests should follow the WordSpec style from Kotest. Here's an example:
 
-```kotlin
+```
+// Example test class
 class HentKravdetaljerTest : WordSpec({
     val hentKravdetaljer = mockk<HentKravdetaljer>()
     val client = specWideTestApplication {
@@ -105,9 +119,31 @@ class HentKravdetaljerTest : WordSpec({
 })
 ```
 
-For HTTP endpoint tests, use the `specWideTestApplication` utility as shown above.
+### Testing HTTP Endpoints
 
-## Development Guidelines
+For testing HTTP endpoints, use the `specWideTestApplication` utility:
+
+```
+// Example HTTP endpoint test setup
+val client = specWideTestApplication {
+    application {
+        configureSerialization()
+        routing {
+            route("/your-endpoint") {
+                yourEndpointRoute(mockDependency)
+            }
+        }
+    }
+}.client
+
+// Then use the client to make requests
+client.post("/your-endpoint") {
+    contentType(ContentType.Application.Json)
+    setBody("""{"key": "value"}""")
+}.shouldBeOK()
+```
+
+## Code Style and Development Guidelines
 
 ### Functional Programming
 
@@ -115,7 +151,7 @@ The project uses Arrow for functional programming patterns:
 
 - Use `Either<L, R>` for operations that can fail
 - Return `left()` for errors and `right()` for successful results
-- Use Arrow operators for working with functional types
+- Use the Arrow operators for working with functional types
 
 ### Error Handling
 
@@ -123,23 +159,32 @@ The project uses Arrow for functional programming patterns:
 - Return errors as `Either.Left` values
 - Handle all possible error cases
 
-### Code Quality
+### Testing
 
-- **Testing**: Write tests for all public functions and mock external dependencies
-- **Documentation**: Use KDoc comments for public APIs with parameters and return values
-- **Kotlin Style**:
-  - Follow the [Kotlin Coding Conventions](https://kotlinlang.org/docs/coding-conventions.html)
-  - Use expression bodies for simple functions
-  - Prefer immutability (val over var)
-  - Use data classes for models
+- Write tests for all public functions
+- Mock external dependencies
+- Use descriptive test names that explain the behavior being tested
 
-### CI/CD
+### Documentation
+
+- Use KDoc comments for public APIs
+- Document parameters and return values
+- Provide examples for complex functions
+
+### Kotlin Style
+
+- Follow the [Kotlin Coding Conventions](https://kotlinlang.org/docs/coding-conventions.html)
+- Use expression bodies for simple functions
+- Prefer immutability (val over var)
+- Use data classes for models
+
+### GitHub Actions
 
 The project uses GitHub Actions for CI/CD pipelines:
 
-- All workflows use `ubuntu-24.04` runner version for consistency
-- Workflows:
-  - **build.yaml**: Builds and tests the application
-  - **deploy.yaml**: Deploys the application to NAIS
-  - **tilbakekreving.yaml**: Main CI/CD pipeline
-  - **dependabot-auto-merge.yml**: Auto-merges non-major Dependabot updates
+- All workflows use the specific runner version `ubuntu-24.04` instead of `latest` to ensure consistency
+- The following workflows are defined:
+  - **build.yaml**: Reusable workflow for building and testing the application
+  - **deploy.yaml**: Reusable workflow for deploying the application to NAIS
+  - **tilbakekreving.yaml**: Main CI/CD pipeline that uses the reusable workflows
+  - **dependabot-auto-merge.yml**: Automatically merges non-major version updates from Dependabot

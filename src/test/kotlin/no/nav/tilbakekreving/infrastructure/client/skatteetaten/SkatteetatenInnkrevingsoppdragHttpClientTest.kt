@@ -18,7 +18,6 @@ import kotlinx.datetime.LocalDate
 import no.nav.tilbakekreving.AppEnv
 import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.Kravdetaljer
-import no.nav.tilbakekreving.domain.Kravfilter
 import no.nav.tilbakekreving.domain.Kravgrunnlag
 import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravlinje
@@ -101,8 +100,7 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                             {
                                 "skyldner": {
                                   "foedselsnummer": "12345678901"
-                                },
-                                "kravfilter": "alle"
+                                }
                             }
                             """.trimIndent(),
                         )
@@ -141,7 +139,6 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                 val result =
                     skatteetatenInnkrevingsoppdragHttpClient.hentKravoversikt(
                         Skyldner.Fødselnummer("12345678901"),
-                        Kravfilter.ALLE,
                     )
 
                 result
