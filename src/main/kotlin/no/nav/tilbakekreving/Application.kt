@@ -22,6 +22,7 @@ import no.nav.tilbakekreving.infrastructure.client.skatteetaten.SkatteetatenInnk
 import no.nav.tilbakekreving.infrastructure.route.hentKravdetaljerRoute
 import no.nav.tilbakekreving.infrastructure.route.hentKravoversikt
 import no.nav.tilbakekreving.plugin.MaskinportenAuthHeaderPlugin
+import no.nav.tilbakekreving.setup.configureCallLogging
 import no.nav.tilbakekreving.setup.configureSerialization
 import no.nav.tilbakekreving.setup.createHttpClient
 import no.nav.tilbakekreving.setup.loadConfiguration
@@ -60,6 +61,7 @@ fun Application.module() {
 
     val accessTokenVerifier = TexasClient(httpClient, tilbakekrevingConfig.nais.naisTokenIntrospectionEndpoint)
     configureSerialization()
+    configureCallLogging(appEnv)
     install(Authentication) {
         val logger = LoggerFactory.getLogger("Authentication")
         bearer("entra-id") {
