@@ -33,10 +33,10 @@ fun main() {
 }
 
 fun Application.module() {
-    val appEnv = with(log) { AppEnv.getFromEnvVariable("NAIS_CLUSTER_NAME") }
+    val appEnv = context(log) { AppEnv.getFromEnvVariable("NAIS_CLUSTER_NAME") }
     log.info("Starting application in $appEnv")
 
-    with(appEnv) {
+    context(appEnv) {
         val tilbakekrevingConfig = loadConfiguration()
         val httpClient = createHttpClient(CIO.create())
 
