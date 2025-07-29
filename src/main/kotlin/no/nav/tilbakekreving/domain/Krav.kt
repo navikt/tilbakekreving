@@ -2,5 +2,10 @@ package no.nav.tilbakekreving.domain
 
 data class Krav(
     val kravidentifikator: Kravidentifikator,
-    val kravtype: String,
+    val kravtype: Kravtype,
+)
+
+@JvmInline
+value class Kravtype(
+    val value: String,
 )

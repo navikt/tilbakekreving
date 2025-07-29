@@ -18,6 +18,7 @@ import io.mockk.mockk
 import no.nav.tilbakekreving.app.HentKravoversikt
 import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.Kravidentifikator
+import no.nav.tilbakekreving.domain.Kravtype
 import no.nav.tilbakekreving.setup.configureSerialization
 import no.nav.tilbakekreving.util.specWideTestApplication
 
@@ -42,7 +43,7 @@ class HentKravoversiktTest :
                     listOf(
                         Krav(
                             Kravidentifikator.Nav("123456789"),
-                            "Kravtype",
+                            Kravtype("Kravtype"),
                         ),
                     ).right()
 

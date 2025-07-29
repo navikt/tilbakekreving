@@ -21,6 +21,7 @@ import no.nav.tilbakekreving.domain.Kravdetaljer
 import no.nav.tilbakekreving.domain.Kravgrunnlag
 import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravlinje
+import no.nav.tilbakekreving.domain.Kravtype
 import no.nav.tilbakekreving.domain.Skyldner
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.KravidentifikatortypeQuery
 import no.nav.tilbakekreving.setup.createHttpClient
@@ -143,7 +144,12 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
 
                 result
                     .shouldBeRight()
-                    .shouldContain(Krav(Kravidentifikator.Nav("310ade77-8d45-48e8-b053-72659f53b4eb"), "OB04"))
+                    .shouldContain(
+                        Krav(
+                            Kravidentifikator.Nav("310ade77-8d45-48e8-b053-72659f53b4eb"),
+                            Kravtype("OB04"),
+                        ),
+                    )
             }
         }
     })

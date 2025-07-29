@@ -4,6 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.Kravidentifikator
+import no.nav.tilbakekreving.domain.Kravtype
 
 @Serializable
 data class HentKravoversiktResponseJson(
@@ -27,7 +28,7 @@ data class KravJson(
                 } else {
                     Kravidentifikator.Nav(oppdragsgiverKravidentifikator)
                 },
-            kravtype = kravtype,
+            kravtype = Kravtype(kravtype),
         )
 }
 

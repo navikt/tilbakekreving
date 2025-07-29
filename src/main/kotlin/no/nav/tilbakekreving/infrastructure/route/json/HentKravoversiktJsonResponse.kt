@@ -26,7 +26,7 @@ data class KravResponseJson(
         fun from(krav: Krav): KravResponseJson =
             KravResponseJson(
                 kravidentifikator = KravidentifikatorJsonResponse.from(krav.kravidentifikator),
-                kravtype = krav.kravtype,
+                kravtype = krav.kravtype.value,
             )
     }
 }
