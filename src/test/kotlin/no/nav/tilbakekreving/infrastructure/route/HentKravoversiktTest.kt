@@ -19,19 +19,23 @@ import no.nav.tilbakekreving.app.HentKravoversikt
 import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravtype
+import no.nav.tilbakekreving.infrastructure.auth.GroupId
 import no.nav.tilbakekreving.setup.configureSerialization
 import no.nav.tilbakekreving.util.specWideTestApplication
 
 class HentKravoversiktTest :
     WordSpec({
         val hentKravoversikt = mockk<HentKravoversikt>()
+        val kravAccessControl = KravAccessControl(emptyMap())
         val client =
             specWideTestApplication {
                 application {
                     configureSerialization()
                     routing {
                         route("/kravdetaljer") {
-                            hentKravoversikt(hentKravoversikt)
+                            context(kravAccessControl) {
+                                hentKravoversikt(hentKravoversikt)
+                            }
                         }
                     }
                 }
@@ -78,6 +82,27 @@ class HentKravoversiktTest :
                         }
                         """.trimIndent(),
                     )
+            }
+
+            "returnere 200 med utvalgt kravoversikt basert på roller" {
+                coEvery { hentKravoversikt.hentKravoversikt(any()) } returns
+                    listOf(
+                        Krav(
+                            Kravidentifikator.Nav("123456789"),
+                            Kravtype("Kravtype1"),
+                        ),
+                        Krav(
+                            Kravidentifikator.Nav("987654321"),
+                            Kravtype("Kravtype2"),
+                        ),
+                    ).right()
+
+                KravAccessControl(
+                    mapOf(
+                        Kravtype("Kravtype1") to setOf(GroupId("group1"), GroupId("group_all")),
+                        Kravtype("Kravtype2") to setOf(GroupId("group2"), GroupId("group_all")),
+                    ),
+                )
             }
         }
     })

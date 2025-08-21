@@ -14,6 +14,7 @@ import io.ktor.server.routing.routing
 import no.nav.tilbakekreving.infrastructure.client.TexasClient
 import no.nav.tilbakekreving.infrastructure.client.maskinporten.TexasMaskinportenClient
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.SkatteetatenInnkrevingsoppdragHttpClient
+import no.nav.tilbakekreving.infrastructure.route.KravAccessControl
 import no.nav.tilbakekreving.infrastructure.route.hentKravdetaljerRoute
 import no.nav.tilbakekreving.infrastructure.route.hentKravoversikt
 import no.nav.tilbakekreving.plugin.MaskinportenAuthHeaderPlugin
@@ -56,6 +57,7 @@ fun Application.module() {
             )
 
         val accessTokenVerifier = TexasClient(httpClient, tilbakekrevingConfig.nais.naisTokenIntrospectionEndpoint)
+        val kravAccessControl = KravAccessControl()
         configureSerialization()
         configureCallLogging()
         configureAuthentication(accessTokenVerifier)
@@ -63,11 +65,13 @@ fun Application.module() {
         routing {
             route("/internal") {
                 authenticate("entra-id") {
-                    route("/kravdetaljer") {
-                        hentKravdetaljerRoute(innkrevingsoppdragHttpClient)
-                    }
-                    route("/kravoversikt") {
-                        hentKravoversikt(innkrevingsoppdragHttpClient)
+                    context(kravAccessControl) {
+                        route("/kravdetaljer") {
+                            hentKravdetaljerRoute(innkrevingsoppdragHttpClient)
+                        }
+                        route("/kravoversikt") {
+                            hentKravoversikt(innkrevingsoppdragHttpClient)
+                        }
                     }
                 }
                 get("/isAlive") {

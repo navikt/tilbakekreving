@@ -1,0 +1,101 @@
+direction: down
+
+# Main container for the Enhet-Based Access Model
+enhet_based_access: "Enhet-Based Access Model" {
+  direction: down
+
+  # Scenario 1: A user with NAV-Tau and view access gets access to Type 1
+  scenario_1: "User with NAV-Tau and View Access" {
+    user_1: "User" {shape: person}
+    permissions_1: "Permissions:\n- NAV-Tau\n- View Innkrevingskrav" {shape: rectangle}
+    resource_1: "Innkrevingskrav Type 1" {shape: document}
+    user_1 -> permissions_1 -> resource_1: "Access Granted"
+  }
+
+  # Scenario 2: A user with NAV-Stavanger and view access gets access to Type 2
+  scenario_2: "User with NAV-Stavanger and View Access" {
+    user_2: "User" {shape: person}
+    permissions_2: "Permissions:\n- NAV-Stavanger\n- View Innkrevingskrav" {shape: rectangle}
+    resource_2: "Innkrevingskrav Type 2" {shape: document}
+    user_2 -> permissions_2 -> resource_2: "Access Granted"
+  }
+
+  # Scenario 3: A user with NAV-Oslo and view access gets access to Type 1 and Type 2
+  scenario_3: "User with NAV-Oslo and View Access" {
+    user_3: "User" {shape: person}
+    permissions_3: "Permissions:\n- NAV-Oslo\n- View Innkrevingskrav" {shape: rectangle}
+    resource_1_3: "Innkrevingskrav Type 1" {shape: document}
+    resource_2_3: "Innkrevingskrav Type 2" {shape: document}
+
+    user_3 -> permissions_3
+    permissions_3 -> resource_1_3: "Access Granted"
+    permissions_3 -> resource_2_3: "Access Granted"
+  }
+
+  # Scenario 4: A user with NAV-Tau but no view access gets no access
+  scenario_4: "User with NAV-Tau and NO View Access" {
+    user_4: "User" {shape: person}
+    permissions_4: "Permissions:\n- NAV-Tau" {shape: rectangle}
+    no_access_4: "No Access" {
+      style.fill: "#F8D7DA"
+      style.stroke: "#721C24"
+    }
+    user_4 -> permissions_4 -> no_access_4: "Access Denied"
+  }
+
+  # This invisible connection helps to order the containers vertically
+  scenario_1 -> scenario_2 -> scenario_3 -> scenario_4: { style.opacity: 0 }
+}
+
+
+# Main container for the Role-Based Access Model
+role_based_access: "Role-Based Access Model" {
+  direction: down
+
+  # Scenario 5: A user with Type 1 Role
+  scenario_5: "User with Type 1 Role" {
+    user_5: "User" {shape: person}
+    permissions_5: "Roles:\n- Innkrevingskrav Type 1 Role" {shape: rectangle}
+    resource_1_5: "Innkrevingskrav Type 1" {shape: document}
+    user_5 -> permissions_5 -> resource_1_5: "Access Granted"
+  }
+
+  # Scenario 6: A user with Type 2 Role
+  scenario_6: "User with Type 2 Role" {
+    user_6: "User" {shape: person}
+    permissions_6: "Roles:\n- Innkrevingskrav Type 2 Role" {shape: rectangle}
+    resource_2_6: "Innkrevingskrav Type 2" {shape: document}
+    user_6 -> permissions_6 -> resource_2_6: "Access Granted"
+  }
+
+  # Scenario 7: A user with both Type 1 and Type 2 Roles
+  scenario_7: "User with Both Roles" {
+    user_7: "User" {shape: person}
+    permissions_7: "Roles:\n- Innkrevingskrav Type 1 Role\n- Innkrevingskrav Type 2 Role" {shape: rectangle}
+    resource_1_7: "Innkrevingskrav Type 1" {shape: document}
+    resource_2_7: "Innkrevingskrav Type 2" {shape: document}
+
+    user_7 -> permissions_7
+    permissions_7 -> resource_1_7: "Access Granted"
+    permissions_7 -> resource_2_7: "Access Granted"
+  }
+
+  # Scenario 8: A user with no relevant roles
+  scenario_8: "User with No Innkrevingskrav Roles" {
+    user_8: "User" {shape: person}
+    permissions_8: "Roles:\n- Other Role" {shape: rectangle}
+    no_access_8: "No Access" {
+      style.fill: "#F8D7DA"
+      style.stroke: "#721C24"
+    }
+    user_8 -> permissions_8 -> no_access_8: "Access Denied"
+  }
+
+  # This invisible connection helps to order the containers vertically
+  scenario_5 -> scenario_6 -> scenario_7 -> scenario_8: { style.opacity: 0 }
+}
+
+# This invisible connection helps to order the main containers horizontally
+enhet_based_access -> role_based_access: {
+  style.opacity: 0
+}

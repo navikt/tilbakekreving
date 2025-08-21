@@ -12,23 +12,26 @@ import no.nav.tilbakekreving.infrastructure.route.json.HentKravoversiktJsonReque
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravoversiktJsonResponse
 import org.slf4j.LoggerFactory
 
+context(kravAccessControl: KravAccessControl)
 fun Route.hentKravoversikt(hentKravoversikt: HentKravoversikt) {
     val logger = LoggerFactory.getLogger("HentKravoversiktRoute")
     post<HentKravoversiktJsonRequest> { hentKravoversiktJsonRequest ->
-        val groupIds = call.principal<UserGroupIdsPrincipal>()
-        logger.info("Henter kravoversikt for bruker med userGroups=${groupIds?.groupIds}")
+        val groupIds = call.principal<UserGroupIdsPrincipal>()?.groupIds?.toSet() ?: emptySet()
+        logger.info("Henter kravoversikt for bruker med userGroups=$groupIds")
         val skyldner = hentKravoversiktJsonRequest.toDomain()
         val kravoversikt =
-            hentKravoversikt.hentKravoversikt(skyldner).getOrElse {
-                when (it) {
-                    HentKravoversikt.HentKravoversiktFeil.FeilVedHentingAvKrav ->
-                        call.respond(
-                            HttpStatusCode.InternalServerError,
-                            "Feil ved henting av kravoversikt",
-                        )
-                }
-                return@post
-            }
+            hentKravoversikt
+                .hentKravoversikt(skyldner)
+                .getOrElse {
+                    when (it) {
+                        HentKravoversikt.HentKravoversiktFeil.FeilVedHentingAvKrav ->
+                            call.respond(
+                                HttpStatusCode.InternalServerError,
+                                "Feil ved henting av kravoversikt",
+                            )
+                    }
+                    return@post
+                }.filterByAccess(groupIds)
 
         call.respond(HttpStatusCode.OK, HentKravoversiktJsonResponse.fromDomain(kravoversikt))
     }
