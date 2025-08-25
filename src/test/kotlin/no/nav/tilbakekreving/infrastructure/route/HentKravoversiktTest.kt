@@ -5,12 +5,18 @@ import io.kotest.assertions.json.shouldEqualJson
 import io.kotest.assertions.ktor.client.shouldBeOK
 import io.kotest.assertions.ktor.client.shouldHaveContentType
 import io.kotest.core.spec.style.WordSpec
+import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import io.ktor.http.withCharset
+import io.ktor.server.application.install
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.authenticate
+import io.ktor.server.auth.bearer
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.mockk.coEvery
@@ -20,21 +26,31 @@ import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravtype
 import no.nav.tilbakekreving.infrastructure.auth.GroupId
+import no.nav.tilbakekreving.infrastructure.auth.UserGroupIdsPrincipal
 import no.nav.tilbakekreving.setup.configureSerialization
 import no.nav.tilbakekreving.util.specWideTestApplication
 
 class HentKravoversiktTest :
     WordSpec({
         val hentKravoversikt = mockk<HentKravoversikt>()
-        val kravAccessControl = KravAccessControl(emptyMap())
+        val kravAccessControl = KravAccessControl(mapOf(Kravtype("Kravtype") to setOf(GroupId("group_all"))))
         val client =
             specWideTestApplication {
                 application {
                     configureSerialization()
+                    install(Authentication) {
+                        bearer("entra-id") {
+                            authenticate { _ ->
+                                UserGroupIdsPrincipal(listOf(GroupId("group_all")))
+                            }
+                        }
+                    }
                     routing {
-                        route("/kravdetaljer") {
-                            context(kravAccessControl) {
-                                hentKravoversikt(hentKravoversikt)
+                        authenticate("entra-id") {
+                            route("/kravoversikt") {
+                                context(kravAccessControl) {
+                                    hentKravoversikt(hentKravoversikt)
+                                }
                             }
                         }
                     }
@@ -52,7 +68,8 @@ class HentKravoversiktTest :
                     ).right()
 
                 client
-                    .post("/kravdetaljer") {
+                    .post("/kravoversikt") {
+                        header(HttpHeaders.Authorization, "Bearer any-token")
                         setBody(
                             // language=json
                             """
