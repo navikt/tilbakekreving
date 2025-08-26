@@ -3,16 +3,18 @@ package no.nav.tilbakekreving.infrastructure.route
 import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.Kravtype
 import no.nav.tilbakekreving.infrastructure.auth.GroupId
+import org.slf4j.LoggerFactory
 
 context(kravAccessControl: KravAccessControl)
 fun List<Krav>.filterByAccess(groupIds: Set<GroupId>): List<Krav> = filter(kravAccessControl.isKravAccessibleTo(groupIds))
 
 class KravAccessControl(
-    val access: Map<Kravtype, Set<GroupId>> = defaultAccess,
+    val access: Map<Kravtype, Set<GroupId>>,
 ) {
-    companion object {
-        // TODO: Flytt til application.conf
-        val defaultAccess: Map<Kravtype, Set<GroupId>> = emptyMap()
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
+    init {
+        logger.info("KravAccessControl initialized with access: $access")
     }
 
     fun isKravAccessibleTo(groupIds: Set<GroupId>): (Krav) -> Boolean =
