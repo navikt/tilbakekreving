@@ -9,10 +9,18 @@ import no.nav.tilbakekreving.infrastructure.auth.UserGroupIdsPrincipal
 import no.nav.tilbakekreving.infrastructure.client.AccessTokenVerifier
 import org.slf4j.LoggerFactory
 
-fun Application.configureAuthentication(accessTokenVerifier: AccessTokenVerifier) {
+@JvmInline
+value class AuthenticationConfigName(
+    val name: String,
+)
+
+fun Application.configureAuthentication(
+    authenticationConfigName: AuthenticationConfigName,
+    accessTokenVerifier: AccessTokenVerifier,
+) {
     install(Authentication) {
         val logger = LoggerFactory.getLogger("Authentication")
-        bearer("entra-id") {
+        bearer(authenticationConfigName.name) {
             authenticate { credentials ->
                 accessTokenVerifier
                     .verifyToken(credentials.token)

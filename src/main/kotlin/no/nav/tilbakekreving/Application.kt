@@ -18,6 +18,7 @@ import no.nav.tilbakekreving.infrastructure.route.KravAccessControl
 import no.nav.tilbakekreving.infrastructure.route.hentKravdetaljerRoute
 import no.nav.tilbakekreving.infrastructure.route.hentKravoversikt
 import no.nav.tilbakekreving.plugin.MaskinportenAuthHeaderPlugin
+import no.nav.tilbakekreving.setup.AuthenticationConfigName
 import no.nav.tilbakekreving.setup.configureAuthentication
 import no.nav.tilbakekreving.setup.configureCallLogging
 import no.nav.tilbakekreving.setup.configureSerialization
@@ -60,11 +61,13 @@ fun Application.module() {
         val kravAccessControl = KravAccessControl(tilbakekrevingConfig.kravAcl)
         configureSerialization()
         configureCallLogging()
-        configureAuthentication(accessTokenVerifier)
+
+        val authenticationConfigName = AuthenticationConfigName("entra-id")
+        configureAuthentication(authenticationConfigName, accessTokenVerifier)
 
         routing {
             route("/internal") {
-                authenticate("entra-id") {
+                authenticate(authenticationConfigName.name) {
                     context(kravAccessControl) {
                         route("/kravdetaljer") {
                             hentKravdetaljerRoute(innkrevingsoppdragHttpClient)

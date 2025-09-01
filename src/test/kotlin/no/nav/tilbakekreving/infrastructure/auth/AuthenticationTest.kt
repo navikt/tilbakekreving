@@ -9,49 +9,54 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.install
-import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.authentication
-import io.ktor.server.auth.bearer
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
-import io.ktor.server.testing.testApplication
 import io.mockk.coEvery
 import io.mockk.mockk
+import no.nav.tilbakekreving.domain.Krav
+import no.nav.tilbakekreving.domain.Kravidentifikator
+import no.nav.tilbakekreving.domain.Kravtype
 import no.nav.tilbakekreving.infrastructure.client.AccessTokenVerifier
+import no.nav.tilbakekreving.infrastructure.route.KravAccessControl
+import no.nav.tilbakekreving.setup.AuthenticationConfigName
+import no.nav.tilbakekreving.setup.configureAuthentication
 import no.nav.tilbakekreving.util.specWideTestApplication
 
 class AuthenticationTest :
     WordSpec({
         val accessTokenVerifier = mockk<AccessTokenVerifier>()
         val groupIds = (listOf("group1", "group2").map(::GroupId))
+        val authenticationConfigName = AuthenticationConfigName("entra-id")
+        val kravAccessControl =
+            KravAccessControl(
+                mapOf(Kravtype("TYPE_A") to setOf(GroupId("group1"))),
+            )
         val client =
             specWideTestApplication {
                 application {
-                    install(Authentication) {
-                        bearer("entra-id") {
-                            authenticate { credentials ->
-                                accessTokenVerifier.verifyToken(credentials.token).fold(
-                                    { error ->
-                                        when (error) {
-                                            is AccessTokenVerifier.VerificationError.FailedToVerifyToken -> null
-                                            is AccessTokenVerifier.VerificationError.InvalidToken -> null
-                                        }
-                                    },
-                                    { validatedToken ->
-                                        UserGroupIdsPrincipal(validatedToken.groupIds)
-                                    },
-                                )
-                            }
-                        }
-                    }
+                    configureAuthentication(authenticationConfigName, accessTokenVerifier)
 
                     routing {
-                        authenticate("entra-id") {
+                        authenticate(authenticationConfigName.name) {
                             get("/protected") {
                                 call.respond(HttpStatusCode.OK)
+                            }
+
+                            get("/protected-krav") {
+                                val principal = call.authentication.principal<UserGroupIdsPrincipal>()
+                                val krav = Krav(Kravidentifikator.Nav("123"), Kravtype("TYPE_A"))
+                                val allowed =
+                                    kravAccessControl.isKravAccessibleTo(principal?.groupIds?.toSet() ?: emptySet())(
+                                        krav,
+                                    )
+                                if (allowed) {
+                                    call.respond(HttpStatusCode.OK)
+                                } else {
+                                    call.respond(HttpStatusCode.Forbidden)
+                                }
                             }
                         }
 
@@ -62,7 +67,7 @@ class AuthenticationTest :
                 }
             }.client
 
-        "Authentication with AccessTokenVerifier" should {
+        "routes configured with authentication" should {
             "allow access to protected routes with valid token" {
 
                 coEvery {
@@ -96,48 +101,28 @@ class AuthenticationTest :
                 client.get("/protected").shouldHaveStatus(HttpStatusCode.Unauthorized)
             }
 
-            "make user groups available in the authentication context" {
+            "deny access to protected routes when token verifier fails" {
+                coEvery {
+                    accessTokenVerifier.verifyToken("failing-token")
+                } returns AccessTokenVerifier.VerificationError.FailedToVerifyToken.left()
+
+                client
+                    .get("/protected") {
+                        header(HttpHeaders.Authorization, "Bearer failing-token")
+                    }.shouldHaveStatus(HttpStatusCode.Unauthorized)
+            }
+        }
+
+        "routes using krav access control" should {
+            "authorize access using KravAccessControl and user groups" {
                 coEvery {
                     accessTokenVerifier.verifyToken("valid-token")
                 } returns AccessTokenVerifier.ValidatedToken(groupIds).right()
 
-                testApplication {
-                    install(Authentication) {
-                        bearer("entra-id") {
-                            authenticate { credentials ->
-                                accessTokenVerifier.verifyToken(credentials.token).fold(
-                                    { error ->
-                                        when (error) {
-                                            is AccessTokenVerifier.VerificationError.FailedToVerifyToken -> null
-                                            is AccessTokenVerifier.VerificationError.InvalidToken -> null
-                                        }
-                                    },
-                                    { validatedToken ->
-                                        UserGroupIdsPrincipal(validatedToken.groupIds)
-                                    },
-                                )
-                            }
-                        }
-                    }
-
-                    routing {
-                        authenticate("entra-id") {
-                            get("/protected") {
-                                val principal = call.authentication.principal<UserGroupIdsPrincipal>()
-                                if (principal != null && principal.groupIds.contains(GroupId("group1"))) {
-                                    call.respond(HttpStatusCode.OK)
-                                } else {
-                                    call.respond(HttpStatusCode.Forbidden)
-                                }
-                            }
-                        }
-                    }
-                    // Protected route should be accessible with a valid token containing the required group
-                    this.client
-                        .get("/protected") {
-                            header(HttpHeaders.Authorization, "Bearer valid-token")
-                        }.shouldBeOK()
-                }
+                client
+                    .get("/protected-krav") {
+                        header(HttpHeaders.Authorization, "Bearer valid-token")
+                    }.shouldBeOK()
             }
         }
     })
