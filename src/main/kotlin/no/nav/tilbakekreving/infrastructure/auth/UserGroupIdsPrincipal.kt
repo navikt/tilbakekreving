@@ -7,4 +7,8 @@ data class UserGroupIdsPrincipal(
 @JvmInline
 value class GroupId(
     val value: String,
-)
+) {
+    init {
+        require(value.isNotBlank()) { "GroupId cannot be blank" }
+    }
+}

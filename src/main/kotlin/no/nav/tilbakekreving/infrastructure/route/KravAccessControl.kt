@@ -9,14 +9,18 @@ context(kravAccessControl: KravAccessControl)
 fun List<Krav>.filterByAccess(groupIds: Set<GroupId>): List<Krav> = filter(kravAccessControl.isKravAccessibleTo(groupIds))
 
 class KravAccessControl(
-    val access: Map<Kravtype, Set<GroupId>>,
+    val enhetAccess: Map<Kravtype, Set<GroupId>>,
+    val kravAccessGroup: GroupId,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     init {
-        logger.info("KravAccessControl initialized with access: $access")
+        logger.info("KravAccessControl initialized with access: $enhetAccess")
     }
 
     fun isKravAccessibleTo(groupIds: Set<GroupId>): (Krav) -> Boolean =
-        { krav -> access[krav.kravtype]?.any { groupId -> groupId in groupIds } ?: false }
+        { krav ->
+            groupIds.contains(kravAccessGroup) &&
+                enhetAccess[krav.kravtype]?.any { groupId -> groupId in groupIds } ?: false
+        }
 }

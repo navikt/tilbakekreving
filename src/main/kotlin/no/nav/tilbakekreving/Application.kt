@@ -58,7 +58,7 @@ fun Application.module() {
             )
 
         val accessTokenVerifier = TexasClient(httpClient, tilbakekrevingConfig.nais.naisTokenIntrospectionEndpoint)
-        val kravAccessControl = KravAccessControl(tilbakekrevingConfig.kravAcl)
+        val kravAccessControl = KravAccessControl(tilbakekrevingConfig.kravAcl, tilbakekrevingConfig.kravTilgangsgruppe)
         configureSerialization()
         configureCallLogging()
 

@@ -33,7 +33,8 @@ import no.nav.tilbakekreving.util.specWideTestApplication
 class HentKravoversiktTest :
     WordSpec({
         val hentKravoversikt = mockk<HentKravoversikt>()
-        val kravAccessControl = KravAccessControl(mapOf(Kravtype("Kravtype") to setOf(GroupId("group_all"))))
+        val kravAccessControl =
+            KravAccessControl(mapOf(Kravtype("Kravtype") to setOf(GroupId("enhet_1"))), GroupId("tilgang_til_krav"))
         val client =
             specWideTestApplication {
                 application {
@@ -41,7 +42,7 @@ class HentKravoversiktTest :
                     install(Authentication) {
                         bearer("entra-id") {
                             authenticate { _ ->
-                                UserGroupIdsPrincipal(listOf(GroupId("group_all")))
+                                UserGroupIdsPrincipal(listOf(GroupId("tilgang_til_krav"), GroupId("enhet_1")))
                             }
                         }
                     }
@@ -106,20 +107,46 @@ class HentKravoversiktTest :
                     listOf(
                         Krav(
                             Kravidentifikator.Nav("123456789"),
-                            Kravtype("Kravtype1"),
+                            Kravtype("Kravtype"),
                         ),
                         Krav(
                             Kravidentifikator.Nav("987654321"),
-                            Kravtype("Kravtype2"),
+                            Kravtype("Kravtype1"),
                         ),
                     ).right()
 
-                KravAccessControl(
-                    mapOf(
-                        Kravtype("Kravtype1") to setOf(GroupId("group1"), GroupId("group_all")),
-                        Kravtype("Kravtype2") to setOf(GroupId("group2"), GroupId("group_all")),
-                    ),
-                )
+                client
+                    .post("/kravoversikt") {
+                        header(HttpHeaders.Authorization, "Bearer any-token")
+                        setBody(
+                            // language=json
+                            """
+                            {
+                              "type": "fødselsnummer",
+                              "id": "123456789"
+                            }
+                            """.trimIndent(),
+                        )
+                        contentType(ContentType.Application.Json)
+                    }.shouldBeOK()
+                    .shouldHaveContentType(ContentType.Application.Json.withCharset(Charsets.UTF_8))
+                    .bodyAsText()
+                    .shouldEqualJson(
+                        // language=json
+                        """
+                        {
+                            "krav": [
+                                {
+                                    "kravidentifikator": {
+                                        "id": "123456789",
+                                        "type": "nav"
+                                    },
+                                    "kravtype": "Kravtype"
+                                }
+                            ]
+                        }
+                        """.trimIndent(),
+                    )
             }
         }
     })

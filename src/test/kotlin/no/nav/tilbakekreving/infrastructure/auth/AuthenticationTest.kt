@@ -33,6 +33,7 @@ class AuthenticationTest :
         val kravAccessControl =
             KravAccessControl(
                 mapOf(Kravtype("TYPE_A") to setOf(GroupId("group1"))),
+                GroupId("tilgang_til_krav"),
             )
         val client =
             specWideTestApplication {
