@@ -28,7 +28,7 @@ import no.nav.tilbakekreving.util.specWideTestApplication
 class AuthenticationTest :
     WordSpec({
         val accessTokenVerifier = mockk<AccessTokenVerifier>()
-        val groupIds = (listOf("group1", "group2").map(::GroupId))
+        val groupIds = (listOf("group1", "group2", "tilgang_til_krav").map(::GroupId))
         val authenticationConfigName = AuthenticationConfigName("entra-id")
         val kravAccessControl =
             KravAccessControl(

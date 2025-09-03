@@ -9,8 +9,8 @@ context(kravAccessControl: KravAccessControl)
 fun List<Krav>.filterByAccess(groupIds: Set<GroupId>): List<Krav> = filter(kravAccessControl.isKravAccessibleTo(groupIds))
 
 class KravAccessControl(
-    val enhetAccess: Map<Kravtype, Set<GroupId>>,
-    val kravAccessGroup: GroupId,
+    private val enhetAccess: Map<Kravtype, Set<GroupId>>,
+    private val kravAccessGroup: GroupId,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
