@@ -39,7 +39,13 @@ fun Application.module() {
     log.info("Starting application in $appEnv")
 
     context(appEnv) {
-        val tilbakekrevingConfig = loadConfiguration()
+        val tilbakekrevingConfig =
+            loadConfiguration().also {
+                when (appEnv) {
+                    AppEnv.LOCAL, AppEnv.DEV -> log.info("Loaded configuration: $it")
+                    AppEnv.PROD -> {}
+                }
+            }
         val httpClient = createHttpClient(CIO.create())
 
         val maskinportenAccessTokenProvider =
