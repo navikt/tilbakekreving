@@ -1,3 +1,5 @@
+---
+# yamllint disable rule:document-start rule:indentation rule:braces rule:comments
 apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
@@ -25,6 +27,11 @@ spec:
     application:
       enabled: true
       allowAllUsers: true
+      claims:
+        groups:
+          {{#each azure.application.claims.groups}}
+          - id: {{this}}
+          {{/each}}
   accessPolicy:
     inbound:
       rules:
@@ -34,7 +41,7 @@ spec:
         {{#each accessPolicy.outbound.external}}
         - host: {{this.host}}
         {{/each}}
-  image: {{ image }}
+  image: {{image}}
   maskinporten:
     enabled: true
     scopes:
