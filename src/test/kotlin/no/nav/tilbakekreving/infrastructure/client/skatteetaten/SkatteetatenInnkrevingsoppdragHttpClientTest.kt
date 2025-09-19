@@ -23,6 +23,7 @@ import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravlinje
 import no.nav.tilbakekreving.domain.Kravtype
 import no.nav.tilbakekreving.domain.Skyldner
+import no.nav.tilbakekreving.domain.SkyldnerId
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.KravidentifikatortypeQuery
 import no.nav.tilbakekreving.setup.createHttpClient
 
@@ -99,9 +100,8 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                             // language=json
                             """
                             {
-                                "skyldner": {
-                                  "foedselsnummer": "12345678901"
-                                }
+                                "skyldner": "12345678901",
+                                "kravfilter": "alle"
                             }
                             """.trimIndent(),
                         )
@@ -139,17 +139,15 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
 
                 val result =
                     skatteetatenInnkrevingsoppdragHttpClient.hentKravoversikt(
-                        Skyldner.Fødselnummer("12345678901"),
+                        Skyldner.Fødselnummer(SkyldnerId("12345678901")),
                     )
 
-                result
-                    .shouldBeRight()
-                    .shouldContain(
-                        Krav(
-                            Kravidentifikator.Nav("310ade77-8d45-48e8-b053-72659f53b4eb"),
-                            Kravtype("OB04"),
-                        ),
-                    )
+                result.shouldBeRight().shouldContain(
+                    Krav(
+                        Kravidentifikator.Nav("310ade77-8d45-48e8-b053-72659f53b4eb"),
+                        Kravtype("OB04"),
+                    ),
+                )
             }
         }
     })
