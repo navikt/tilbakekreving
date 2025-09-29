@@ -2,29 +2,29 @@ package no.nav.tilbakekreving.infrastructure.route
 
 import arrow.core.getOrElse
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.auth.principal
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
-import no.nav.tilbakekreving.app.HentKravoversikt
-import no.nav.tilbakekreving.infrastructure.auth.UserGroupIdsPrincipal
+import no.nav.tilbakekreving.app.SøkEtterInnkrevingskrav
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravoversiktJsonRequest
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravoversiktJsonResponse
+import no.nav.tilbakekreving.infrastructure.route.util.groupIdsFromPrincipal
 import org.slf4j.LoggerFactory
 
 context(kravAccessControl: KravAccessControl)
-fun Route.hentKravoversikt(hentKravoversikt: HentKravoversikt) {
+fun Route.hentKravoversikt(søkEtterInnkrevingskrav: SøkEtterInnkrevingskrav) {
     val logger = LoggerFactory.getLogger("HentKravoversiktRoute")
     post<HentKravoversiktJsonRequest> { hentKravoversiktJsonRequest ->
-        val groupIds = call.principal<UserGroupIdsPrincipal>()?.groupIds?.toSet() ?: emptySet()
+        val groupIds = groupIdsFromPrincipal()
         logger.info("Henter kravoversikt for bruker med userGroups=$groupIds")
-        val skyldner = hentKravoversiktJsonRequest.toDomain()
+
+        val skyldnersøk = hentKravoversiktJsonRequest.toDomain()
         val kravoversikt =
-            hentKravoversikt
-                .hentKravoversikt(skyldner)
+            søkEtterInnkrevingskrav
+                .søk(skyldnersøk)
                 .getOrElse {
                     when (it) {
-                        HentKravoversikt.HentKravoversiktFeil.FeilVedHentingAvKrav ->
+                        SøkEtterInnkrevingskrav.Feil.SøkEtterInnkrevingskravFeil ->
                             call.respond(
                                 HttpStatusCode.InternalServerError,
                                 "Feil ved henting av kravoversikt",

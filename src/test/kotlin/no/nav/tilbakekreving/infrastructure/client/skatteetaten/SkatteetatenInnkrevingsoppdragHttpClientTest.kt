@@ -18,12 +18,14 @@ import kotlinx.datetime.LocalDate
 import no.nav.tilbakekreving.AppEnv
 import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.Kravdetaljer
+import no.nav.tilbakekreving.domain.Kravfilter
 import no.nav.tilbakekreving.domain.Kravgrunnlag
 import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravlinje
 import no.nav.tilbakekreving.domain.Kravtype
 import no.nav.tilbakekreving.domain.Skyldner
 import no.nav.tilbakekreving.domain.SkyldnerId
+import no.nav.tilbakekreving.domain.Skyldnersøk
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.KravidentifikatortypeQuery
 import no.nav.tilbakekreving.setup.createHttpClient
 
@@ -111,21 +113,21 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                             content =
                                 """
                                 {
-                                    "krav": [
-                                        {
+                                  "krav": [
+                                    {
                                         "kravidentifikator": "29ab06ef-9de1-4312-9677-163e4cc586dd",
                                         "oppdragsgiverKravidentifikator": "310ade77-8d45-48e8-b053-72659f53b4eb",
-                                        "kravtype": "OB04",
-                                        "kravbeskrivelse": {
-                                            "spraakTekst": [
-                                            {
-                                                "tekst": "Eksempeltekst",
-                                                "spraak": "NB"
-                                            }
-                                            ]
-                                        }
-                                        }
-                                    ]
+                                      "kravtype": "OB04",
+                                      "kravbeskrivelse": {
+                                        "spraakTekst": [
+                                          {
+                                            "tekst": "Eksempeltekst",
+                                            "spraak": "NB"
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  ]
                                 }
                                 """.trimIndent(),
                             status = HttpStatusCode.OK,
@@ -138,8 +140,11 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                     SkatteetatenInnkrevingsoppdragHttpClient("http://localhost:8080", client)
 
                 val result =
-                    skatteetatenInnkrevingsoppdragHttpClient.hentKravoversikt(
-                        Skyldner.Fødselnummer(SkyldnerId("12345678901")),
+                    skatteetatenInnkrevingsoppdragHttpClient.søk(
+                        Skyldnersøk(
+                            Skyldner(SkyldnerId("12345678901")),
+                            Kravfilter.ALLE,
+                        ),
                     )
 
                 result.shouldBeRight().shouldContain(

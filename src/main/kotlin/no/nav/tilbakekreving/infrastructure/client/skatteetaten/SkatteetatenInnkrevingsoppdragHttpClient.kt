@@ -16,11 +16,11 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.appendPathSegments
 import io.ktor.http.contentType
 import no.nav.tilbakekreving.app.HentKravdetaljer
-import no.nav.tilbakekreving.app.HentKravoversikt
+import no.nav.tilbakekreving.app.SøkEtterInnkrevingskrav
 import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.Kravdetaljer
 import no.nav.tilbakekreving.domain.Kravidentifikator
-import no.nav.tilbakekreving.domain.Skyldner
+import no.nav.tilbakekreving.domain.Skyldnersøk
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.HentKravoversiktRequestJson
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.HentKravoversiktResponseJson
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.KravdetaljerResponseJson
@@ -31,7 +31,7 @@ class SkatteetatenInnkrevingsoppdragHttpClient(
     private val baseUrl: String,
     private val client: HttpClient,
 ) : HentKravdetaljer,
-    HentKravoversikt {
+    SøkEtterInnkrevingskrav {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override suspend fun hentKravdetaljer(
@@ -75,14 +75,14 @@ class SkatteetatenInnkrevingsoppdragHttpClient(
             }
         }
 
-    override suspend fun hentKravoversikt(skyldner: Skyldner): Either<HentKravoversikt.HentKravoversiktFeil, List<Krav>> =
+    override suspend fun søk(skyldnersøk: Skyldnersøk): Either<SøkEtterInnkrevingskrav.Feil, List<Krav>> =
         either {
             val httpResponse =
                 client.post("$baseUrl/api/innkreving/innkrevingsoppdrag/v1/innkrevingsoppdrag/kravoversikt") {
                     headers {
                         append("Klientid", "NAV/2.0")
                     }
-                    setBody(HentKravoversiktRequestJson.from(skyldner))
+                    setBody(HentKravoversiktRequestJson.from(skyldnersøk))
                     contentType(ContentType.Application.Json)
                     accept(ContentType.Application.Json)
                 }
@@ -93,7 +93,7 @@ class SkatteetatenInnkrevingsoppdragHttpClient(
                 }
 
                 else -> {
-                    raise(HentKravoversikt.HentKravoversiktFeil.FeilVedHentingAvKrav)
+                    raise(SøkEtterInnkrevingskrav.Feil.SøkEtterInnkrevingskravFeil)
                 }
             }
         }

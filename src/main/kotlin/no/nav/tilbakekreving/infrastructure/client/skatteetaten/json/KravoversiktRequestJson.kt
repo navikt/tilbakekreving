@@ -2,7 +2,8 @@ package no.nav.tilbakekreving.infrastructure.client.skatteetaten.json
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import no.nav.tilbakekreving.domain.Skyldner
+import no.nav.tilbakekreving.domain.Kravfilter
+import no.nav.tilbakekreving.domain.Skyldnersøk
 
 @Serializable
 data class HentKravoversiktRequestJson(
@@ -10,11 +11,10 @@ data class HentKravoversiktRequestJson(
     val kravfilter: KravfilterJson,
 ) {
     companion object {
-        fun from(skyldner: Skyldner): HentKravoversiktRequestJson =
+        fun from(skyldnersøk: Skyldnersøk): HentKravoversiktRequestJson =
             HentKravoversiktRequestJson(
-                skyldner = skyldner.id.value,
-                // TODO: Sett kravfilter når det er lagt til i APIet og sendt gjennom applikasjonslaget
-                kravfilter = KravfilterJson.ALLE,
+                skyldner = skyldnersøk.skyldner.skyldnerId.value,
+                kravfilter = KravfilterJson.fromDomain(skyldnersøk.kravfilter),
             )
     }
 }
@@ -31,5 +31,15 @@ enum class KravfilterJson {
     LUKKEDE,
 
     @SerialName("ingen")
-    INGEN,
+    INGEN, ;
+
+    companion object {
+        fun fromDomain(kravfilter: Kravfilter): KravfilterJson =
+            when (kravfilter) {
+                Kravfilter.ALLE -> ALLE
+                Kravfilter.ÅPNE -> ÅPNE
+                Kravfilter.LUKKEDE -> LUKKEDE
+                Kravfilter.INGEN -> INGEN
+            }
+    }
 }

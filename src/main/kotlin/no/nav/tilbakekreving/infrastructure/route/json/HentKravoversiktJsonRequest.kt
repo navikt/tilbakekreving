@@ -1,29 +1,35 @@
 package no.nav.tilbakekreving.infrastructure.route.json
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import no.nav.tilbakekreving.domain.Kravfilter
 import no.nav.tilbakekreving.domain.Skyldner
 import no.nav.tilbakekreving.domain.SkyldnerId
+import no.nav.tilbakekreving.domain.Skyldnersøk
 
 @Serializable
-sealed class HentKravoversiktJsonRequest {
-    abstract val id: String
+data class HentKravoversiktJsonRequest(
+    val skyldner: String,
+    val kravfilter: KravfilterJson,
+) {
+    fun toDomain(): Skyldnersøk =
+        Skyldnersøk(
+            skyldner = Skyldner(SkyldnerId(skyldner)),
+            kravfilter = kravfilter.toDomain(),
+        )
+}
 
-    fun toDomain(): Skyldner =
+@Serializable
+enum class KravfilterJson {
+    ALLE,
+    ÅPNE,
+    LUKKEDE,
+    INGEN, ;
+
+    fun toDomain(): Kravfilter =
         when (this) {
-            is FnrJson -> Skyldner.Fødselnummer(SkyldnerId(id))
-            is OrgnummerJson -> Skyldner.Organisasjonsnummer(SkyldnerId(id))
+            ALLE -> Kravfilter.ALLE
+            ÅPNE -> Kravfilter.ÅPNE
+            LUKKEDE -> Kravfilter.LUKKEDE
+            INGEN -> Kravfilter.INGEN
         }
-
-    @Serializable
-    @SerialName("fødselsnummer")
-    data class FnrJson(
-        override val id: String,
-    ) : HentKravoversiktJsonRequest()
-
-    @Serializable
-    @SerialName("organisasjonsnummer")
-    data class OrgnummerJson(
-        override val id: String,
-    ) : HentKravoversiktJsonRequest()
 }

@@ -21,7 +21,7 @@ import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.mockk.coEvery
 import io.mockk.mockk
-import no.nav.tilbakekreving.app.HentKravoversikt
+import no.nav.tilbakekreving.app.SøkEtterInnkrevingskrav
 import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravtype
@@ -32,7 +32,7 @@ import no.nav.tilbakekreving.util.specWideTestApplication
 
 class HentKravoversiktTest :
     WordSpec({
-        val hentKravoversikt = mockk<HentKravoversikt>()
+        val søkEtterInnkrevingskrav = mockk<SøkEtterInnkrevingskrav>()
         val kravAccessControl =
             KravAccessControl(mapOf(Kravtype("Kravtype") to setOf(GroupId("enhet_1"))), GroupId("tilgang_til_krav"))
         val client =
@@ -50,7 +50,7 @@ class HentKravoversiktTest :
                         authenticate("entra-id") {
                             route("/kravoversikt") {
                                 context(kravAccessControl) {
-                                    hentKravoversikt(hentKravoversikt)
+                                    hentKravoversikt(søkEtterInnkrevingskrav)
                                 }
                             }
                         }
@@ -60,7 +60,7 @@ class HentKravoversiktTest :
 
         "hent kravoversikt" should {
             "returnere 200 med kravoversikt" {
-                coEvery { hentKravoversikt.hentKravoversikt(any()) } returns
+                coEvery { søkEtterInnkrevingskrav.søk(any()) } returns
                     listOf(
                         Krav(
                             Kravidentifikator.Nav("123456789"),
@@ -75,8 +75,8 @@ class HentKravoversiktTest :
                             // language=json
                             """
                             {
-                              "type": "fødselsnummer",
-                              "id": "123456789"
+                              "skyldner": "123456789",
+                              "kravfilter": "ALLE"
                             }
                             """.trimIndent(),
                         )
@@ -103,7 +103,7 @@ class HentKravoversiktTest :
             }
 
             "returnere 200 med utvalgt kravoversikt basert på roller" {
-                coEvery { hentKravoversikt.hentKravoversikt(any()) } returns
+                coEvery { søkEtterInnkrevingskrav.søk(any()) } returns
                     listOf(
                         Krav(
                             Kravidentifikator.Nav("123456789"),
@@ -122,8 +122,8 @@ class HentKravoversiktTest :
                             // language=json
                             """
                             {
-                              "type": "fødselsnummer",
-                              "id": "123456789"
+                              "skyldner": "123456789",
+                              "kravfilter": "ALLE"
                             }
                             """.trimIndent(),
                         )
