@@ -75,7 +75,7 @@ class SkatteetatenInnkrevingsoppdragHttpClient(
             }
         }
 
-    override suspend fun søk(skyldnersøk: Skyldnersøk): Either<SøkEtterInnkrevingskrav.Feil, List<Krav>> =
+    override suspend fun søk(skyldnersøk: Skyldnersøk): Either<SøkEtterInnkrevingskrav.Feil, Kravoversikt> =
         either {
             val httpResponse =
                 client.post("$baseUrl/api/innkreving/innkrevingsoppdrag/v1/innkrevingsoppdrag/kravoversikt") {

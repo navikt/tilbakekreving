@@ -113,10 +113,13 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                             content =
                                 """
                                 {
+                                  "oppdragsgiver": {
+                                    "organisasjonsnummer": "123456789",
+                                    "organisasjonsnavn": "Test Org"
+                                  },
                                   "krav": [
                                     {
-                                        "kravidentifikator": "29ab06ef-9de1-4312-9677-163e4cc586dd",
-                                        "oppdragsgiverKravidentifikator": "310ade77-8d45-48e8-b053-72659f53b4eb",
+                                      "skatteetatensKravidentifikator": "29ab06ef-9de1-4312-9677-163e4cc586dd",
                                       "kravtype": "OB04",
                                       "kravbeskrivelse": {
                                         "spraakTekst": [
@@ -125,9 +128,19 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                                             "spraak": "NB"
                                           }
                                         ]
-                                      }
+                                      },
+                                      "kravgrunnlag": {
+                                        "oppdragsgiversKravidentifikator": "310ade77-8d45-48e8-b053-72659f53b4eb",
+                                        "oppdragsgiversReferanse": "ref1"
+                                      },
+                                      "gjenstaaendeBeloep": 1000.0
                                     }
-                                  ]
+                                  ],
+                                  "gjenstaaendeBeloepForSkyldner": 1000.0,
+                                  "skyldner": {
+                                    "identifikator": "12345678901",
+                                    "skyldnersNavn": "Test Person"
+                                  }
                                 }
                                 """.trimIndent(),
                             status = HttpStatusCode.OK,
@@ -147,10 +160,13 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                         ),
                     )
 
-                result.shouldBeRight().shouldContain(
+                result.shouldBeRight().krav.shouldContain(
                     Krav(
-                        Kravidentifikator.Nav("310ade77-8d45-48e8-b053-72659f53b4eb"),
-                        Kravtype("OB04"),
+                        kravidentifikator = Kravidentifikator.Nav("310ade77-8d45-48e8-b053-72659f53b4eb"),
+                        kravtype = Kravtype("OB04"),
+                        kravbeskrivelse = MultiSpråkTekst(listOf(SpråkTekst("Eksempeltekst", "NB"))),
+                        kravgrunnlag = KravoversiktKravgrunnlag("310ade77-8d45-48e8-b053-72659f53b4eb", "ref1"),
+                        gjenståendeBeløp = 1000.0,
                     ),
                 )
             }

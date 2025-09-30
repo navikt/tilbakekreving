@@ -31,8 +31,11 @@ fun Route.hentKravoversikt(søkEtterInnkrevingskrav: SøkEtterInnkrevingskrav) {
                             )
                     }
                     return@post
-                }.filterByAccess(groupIds)
+                }
 
-        call.respond(HttpStatusCode.OK, HentKravoversiktJsonResponse.fromDomain(kravoversikt))
+        val filteredKrav = kravoversikt.krav.filterByAccess(groupIds)
+        val filteredKravoversikt = kravoversikt.copy(krav = filteredKrav)
+
+        call.respond(HttpStatusCode.OK, HentKravoversiktJsonResponse.fromDomain(filteredKravoversikt))
     }
 }

@@ -8,37 +8,96 @@ import no.nav.tilbakekreving.domain.Kravtype
 
 @Serializable
 data class HentKravoversiktResponseJson(
-    val krav: List<KravJson>,
+    val oppdragsgiver: OppdragsgiverJson,
+    val krav: List<KravJson>? = null,
+    @SerialName("gjenstaaendeBeloepForSkyldner") val gjenståendeBeløpForSkyldner: Double,
+    val skyldner: SkyldnerJson,
 ) {
-    fun toDomain(): List<Krav> = krav.map(KravJson::toDomain)
+    fun toDomain(): Kravoversikt =
+        Kravoversikt(
+            oppdragsgiver = oppdragsgiver.toDomain(),
+            krav = krav?.map(KravJson::toDomain) ?: emptyList(),
+            gjenståendeBeløpForSkyldner = gjenståendeBeløpForSkyldner,
+            skyldner = skyldner.toDomain(),
+    )
 }
 
 @Serializable
 data class KravJson(
-    val kravidentifikator: String,
-    val oppdragsgiverKravidentifikator: String,
+    val skatteetatensKravidentifikator: String,
     val kravtype: String,
-    val kravbeskrivelse: KravbeskrivelseJson,
+    val kravbeskrivelse: MultiSpråkTekstJson,
+    val kravgrunnlag: KravgrunnlagJson,
+    @SerialName("gjenstaaendeBeloep") val gjenståendeBeløp: Double,
 ) {
     fun toDomain(): Krav =
         Krav(
             kravidentifikator =
-                if (oppdragsgiverKravidentifikator.isEmpty()) {
-                    Kravidentifikator.Skatteetaten(kravidentifikator)
+                if (kravgrunnlag.oppdragsgiversKravidentifikator.isEmpty()) {
+                    Kravidentifikator.Skatteetaten(skatteetatensKravidentifikator)
                 } else {
-                    Kravidentifikator.Nav(oppdragsgiverKravidentifikator)
+                    Kravidentifikator.Nav(kravgrunnlag.oppdragsgiversKravidentifikator)
                 },
             kravtype = Kravtype(kravtype),
+            kravbeskrivelse = kravbeskrivelse.toDomain(),
+            kravgrunnlag = kravgrunnlag.toDomain(),
+            gjenståendeBeløp = gjenståendeBeløp,
         )
 }
 
 @Serializable
-data class KravbeskrivelseJson(
+data class KravgrunnlagJson(
+    val oppdragsgiversKravidentifikator: String,
+    val oppdragsgiversReferanse: String? = null,
+) {
+    fun toDomain(): KravoversiktKravgrunnlag =
+        KravoversiktKravgrunnlag(
+            oppdragsgiversKravidentifikator = oppdragsgiversKravidentifikator,
+            oppdragsgiversReferanse = oppdragsgiversReferanse,
+        )
+}
+
+@Serializable
+data class OppdragsgiverJson(
+    val organisasjonsnummer: String,
+    val organisasjonsnavn: String,
+) {
+    fun toDomain(): Oppdragsgiver =
+        Oppdragsgiver(
+            organisasjonsnummer = organisasjonsnummer,
+            organisasjonsnavn = organisasjonsnavn,
+        )
+}
+
+@Serializable
+data class SkyldnerJson(
+    val identifikator: String,
+    val skyldnersNavn: String? = null,
+) {
+    fun toDomain(): KravoversiktSkyldner =
+        KravoversiktSkyldner(
+            identifikator = identifikator,
+            skyldnersNavn = skyldnersNavn,
+    )
+}
+
+@Serializable
+data class MultiSpråkTekstJson(
     @SerialName("spraakTekst") val språkTekst: List<SpråkTekstJson>,
-)
+) {
+    fun toDomain(): MultiSpråkTekst =
+        MultiSpråkTekst(
+        språkTekst = språkTekst.map(SpråkTekstJson::toDomain),
+    )
+}
 
 @Serializable
 data class SpråkTekstJson(
     val tekst: String,
     @SerialName("spraak") val språk: String,
-)
+) {
+    fun toDomain(): SpråkTekst = SpråkTekst(
+        tekst = tekst,
+        språk = språk,
+    )
+}

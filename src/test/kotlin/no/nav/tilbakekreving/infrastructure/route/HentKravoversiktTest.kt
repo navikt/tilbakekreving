@@ -24,7 +24,13 @@ import io.mockk.mockk
 import no.nav.tilbakekreving.app.SøkEtterInnkrevingskrav
 import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.Kravidentifikator
+import no.nav.tilbakekreving.domain.Kravoversikt
+import no.nav.tilbakekreving.domain.KravoversiktKravgrunnlag
+import no.nav.tilbakekreving.domain.KravoversiktSkyldner
 import no.nav.tilbakekreving.domain.Kravtype
+import no.nav.tilbakekreving.domain.MultiSpråkTekst
+import no.nav.tilbakekreving.domain.Oppdragsgiver
+import no.nav.tilbakekreving.domain.SpråkTekst
 import no.nav.tilbakekreving.infrastructure.auth.GroupId
 import no.nav.tilbakekreving.infrastructure.auth.UserGroupIdsPrincipal
 import no.nav.tilbakekreving.setup.configureSerialization
@@ -61,11 +67,20 @@ class HentKravoversiktTest :
         "hent kravoversikt" should {
             "returnere 200 med kravoversikt" {
                 coEvery { søkEtterInnkrevingskrav.søk(any()) } returns
-                    listOf(
-                        Krav(
-                            Kravidentifikator.Nav("123456789"),
-                            Kravtype("Kravtype"),
-                        ),
+                    Kravoversikt(
+                        oppdragsgiver = Oppdragsgiver("123456789", "Test Oppdragsgiver"),
+                        krav =
+                            listOf(
+                                Krav(
+                                    kravidentifikator = Kravidentifikator.Nav("123456789"),
+                                    kravtype = Kravtype("Kravtype"),
+                                    kravbeskrivelse = MultiSpråkTekst(listOf(SpråkTekst("Test beskrivelse", "nb"))),
+                                    kravgrunnlag = KravoversiktKravgrunnlag("123456789", "ref1"),
+                                    gjenståendeBeløp = 1000.0,
+                                ),
+                            ),
+                        gjenståendeBeløpForSkyldner = 1000.0,
+                        skyldner = KravoversiktSkyldner("123456789", "Test Skyldner"),
                     ).right()
 
                 client
@@ -88,15 +103,37 @@ class HentKravoversiktTest :
                         // language=json
                         """
                         {
+                            "oppdragsgiver": {
+                                "organisasjonsnummer": "123456789",
+                                "organisasjonsnavn": "Test Oppdragsgiver"
+                            },
                             "krav": [
                                 {
                                     "kravidentifikator": {
                                         "id": "123456789",
                                         "type": "nav"
                                     },
-                                    "kravtype": "Kravtype"
+                                    "kravtype": "Kravtype",
+                                    "kravbeskrivelse": {
+                                        "språkTekst": [
+                                            {
+                                                "tekst": "Test beskrivelse",
+                                                "språk": "nb"
+                                            }
+                                        ]
+                                    },
+                                    "kravgrunnlag": {
+                                        "oppdragsgiversKravidentifikator": "123456789",
+                                        "oppdragsgiversReferanse": "ref1"
+                                    },
+                                    "gjenståendeBeløp": 1000.0
                                 }
-                            ]
+                            ],
+                            "gjenståendeBeløpForSkyldner": 1000.0,
+                            "skyldner": {
+                                "identifikator": "123456789",
+                                "skyldnersNavn": "Test Skyldner"
+                            }
                         }
                         """.trimIndent(),
                     )
@@ -104,15 +141,35 @@ class HentKravoversiktTest :
 
             "returnere 200 med utvalgt kravoversikt basert på roller" {
                 coEvery { søkEtterInnkrevingskrav.søk(any()) } returns
-                    listOf(
-                        Krav(
-                            Kravidentifikator.Nav("123456789"),
-                            Kravtype("Kravtype"),
-                        ),
-                        Krav(
-                            Kravidentifikator.Nav("987654321"),
-                            Kravtype("Kravtype1"),
-                        ),
+                        Kravoversikt(
+                            oppdragsgiver = Oppdragsgiver("123456789", "Test Oppdragsgiver"),
+                        krav =
+                            listOf(
+                                Krav(
+                                    kravidentifikator = Kravidentifikator.Nav("123456789"),
+                                    kravtype = Kravtype("Kravtype"),
+                                    kravbeskrivelse = MultiSpråkTekst(listOf(SpråkTekst("Test beskrivelse", "nb"))),
+                                    kravgrunnlag = KravoversiktKravgrunnlag("123456789", "ref1"),
+                                    gjenståendeBeløp = 1000.0,
+                                ),
+                                Krav(
+                                    kravidentifikator = Kravidentifikator.Nav("987654321"),
+                                    kravtype = Kravtype("Kravtype1"),
+                                    kravbeskrivelse =
+                                        MultiSpråkTekst(
+                                            listOf(
+                                                SpråkTekst(
+                                                    "Test beskrivelse 2",
+                                                    "nb",
+                                                ),
+                                            ),
+                                        ),
+                                    kravgrunnlag = KravoversiktKravgrunnlag("987654321", "ref2"),
+                                    gjenståendeBeløp = 2000.0,
+                                ),
+                            ),
+                        gjenståendeBeløpForSkyldner = 3000.0,
+                        skyldner = KravoversiktSkyldner("123456789", "Test Skyldner"),
                     ).right()
 
                 client
@@ -135,15 +192,37 @@ class HentKravoversiktTest :
                         // language=json
                         """
                         {
+                            "oppdragsgiver": {
+                                "organisasjonsnummer": "123456789",
+                                "organisasjonsnavn": "Test Oppdragsgiver"
+                            },
                             "krav": [
                                 {
                                     "kravidentifikator": {
                                         "id": "123456789",
                                         "type": "nav"
                                     },
-                                    "kravtype": "Kravtype"
+                                    "kravtype": "Kravtype",
+                                    "kravbeskrivelse": {
+                                        "språkTekst": [
+                                            {
+                                                "tekst": "Test beskrivelse",
+                                                "språk": "nb"
+                                            }
+                                        ]
+                                    },
+                                    "kravgrunnlag": {
+                                        "oppdragsgiversKravidentifikator": "123456789",
+                                        "oppdragsgiversReferanse": "ref1"
+                                    },
+                                    "gjenståendeBeløp": 1000.0
                                 }
-                            ]
+                            ],
+                            "gjenståendeBeløpForSkyldner": 3000.0,
+                            "skyldner": {
+                                "identifikator": "123456789",
+                                "skyldnersNavn": "Test Skyldner"
+                            }
                         }
                         """.trimIndent(),
                     )
