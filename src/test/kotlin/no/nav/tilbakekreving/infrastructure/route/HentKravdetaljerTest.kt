@@ -21,10 +21,13 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.datetime.LocalDate
 import no.nav.tilbakekreving.app.HentKravdetaljer
+import no.nav.tilbakekreving.domain.KravDetalj
 import no.nav.tilbakekreving.domain.Kravdetaljer
+import no.nav.tilbakekreving.domain.KravdetaljerSkyldner
 import no.nav.tilbakekreving.domain.Kravgrunnlag
 import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravlinje
+import no.nav.tilbakekreving.domain.Oppdragsgiver
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravdetaljerJsonRequest
 import no.nav.tilbakekreving.infrastructure.route.json.KravidentifikatorType
 import no.nav.tilbakekreving.setup.configureSerialization
@@ -47,15 +50,27 @@ class HentKravdetaljerTest :
 
         val kravdetaljer =
             Kravdetaljer(
-                kravgrunnlag = Kravgrunnlag(LocalDate(2025, 1, 1)),
-                kravlinjer =
-                    listOf(
+                krav =
+                    KravDetalj(
+                        forfallsdato = LocalDate(2025, 2, 1),
+                        foreldelsesdato = LocalDate(2030, 1, 1),
+                        fastsettelsesdato = LocalDate(2024, 12, 1),
+                        kravtype = "OB04",
+                        opprinneligBeløp = 1000.0,
+                        gjenståendeBeløp = 500.0,
+                        skatteetatensKravidentifikator = "skatte-123",
+                        kravlinjer =
+                        listOf(
                         Kravlinje(
-                            kravlinjetype = "Kravlinjetype",
-                            opprinneligBeloep = 1000.0,
-                            gjenstaaendeBeloep = 500.0,
-                        ),
+                                    kravlinjetype = "Kravlinjetype",
+                                    opprinneligBeløp = 1000.0,
+                            gjenståendeBeløp = 500.0,
+                                ),
+                            ),
+                        kravgrunnlag = Kravgrunnlag("123456789", "ref-123"),
                     ),
+                oppdragsgiver = Oppdragsgiver("987654321", "Test Oppdragsgiver"),
+                skyldner = KravdetaljerSkyldner("12345678901", "Test Person"),
             )
         val kravidentifikator = Kravidentifikator.Nav("123456789")
 
@@ -87,16 +102,35 @@ class HentKravdetaljerTest :
                         // language=json
                         """
                         {
-                            "kravgrunnlag": {
-                                "datoNårKravVarBesluttetHosOppdragsgiver": "2025-01-01"
+                            "krav": {
+                                "forfallsdato": "2025-02-01",
+                                "foreldelsesdato": "2030-01-01",
+                                "fastsettelsesdato": "2024-12-01",
+                                "kravtype": "OB04",
+                                "opprinneligBeløp": 1000.0,
+                                "gjenståendeBeløp": 500.0,
+                                "skatteetatensKravidentifikator": "skatte-123",
+                                "kravlinjer": [
+                                    {
+                                        "kravlinjetype": "Kravlinjetype",
+                                        "opprinneligBeløp": 1000.0,
+                                        "gjenståendeBeløp": 500.0
+                                    }
+                                ],
+                                "kravgrunnlag": {
+                                    "oppdragsgiversKravidentifikator": "123456789",
+                                    "oppdragsgiversReferanse": "ref-123"
+                                },
+                                "innbetalingerPlassertMotKrav": []
                             },
-                            "kravlinjer": [
-                                {
-                                    "kravlinjetype": "Kravlinjetype",
-                                    "opprinneligBeløp": 1000.0,
-                                    "gjenståendeBeløp": 500.0
-                                }
-                            ]
+                            "oppdragsgiver": {
+                                "organisasjonsnummer": "987654321",
+                                "organisasjonsnavn": "Test Oppdragsgiver"
+                            },
+                            "skyldner": {
+                                "identifikator": "12345678901",
+                                "skyldnersNavn": "Test Person"
+                            }
                         }
                         """.trimIndent(),
                     )

@@ -17,7 +17,9 @@ import io.ktor.http.headersOf
 import kotlinx.datetime.LocalDate
 import no.nav.tilbakekreving.AppEnv
 import no.nav.tilbakekreving.domain.Krav
+import no.nav.tilbakekreving.domain.KravDetalj
 import no.nav.tilbakekreving.domain.Kravdetaljer
+import no.nav.tilbakekreving.domain.KravdetaljerSkyldner
 import no.nav.tilbakekreving.domain.Kravfilter
 import no.nav.tilbakekreving.domain.Kravgrunnlag
 import no.nav.tilbakekreving.domain.Kravidentifikator
@@ -25,11 +27,12 @@ import no.nav.tilbakekreving.domain.Kravlinje
 import no.nav.tilbakekreving.domain.KravoversiktKravgrunnlag
 import no.nav.tilbakekreving.domain.Kravtype
 import no.nav.tilbakekreving.domain.MultiSpråkTekst
+import no.nav.tilbakekreving.domain.Oppdragsgiver
 import no.nav.tilbakekreving.domain.Skyldner
 import no.nav.tilbakekreving.domain.SkyldnerId
 import no.nav.tilbakekreving.domain.Skyldnersøk
 import no.nav.tilbakekreving.domain.SpråkTekst
-import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.KravidentifikatortypeQuery
+
 import no.nav.tilbakekreving.setup.createHttpClient
 
 class SkatteetatenInnkrevingsoppdragHttpClientTest :
@@ -39,37 +42,75 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                 val kravidentifikator = "123"
                 val kravdetaljer =
                     Kravdetaljer(
-                        Kravgrunnlag(LocalDate.parse("2025-03-24")),
-                        listOf(
-                            Kravlinje("testtype", 100.0, 50.0),
-                        ),
+                        krav =
+                            KravDetalj(
+                                forfallsdato = LocalDate.parse("2025-01-01"),
+                                foreldelsesdato = LocalDate.parse("2030-01-01"),
+                                fastsettelsesdato = LocalDate.parse("2024-01-01"),
+                                kravtype = "OB04",
+                                opprinneligBeløp = 100.0,
+                                gjenståendeBeløp = 50.0,
+                                skatteetatensKravidentifikator = "skatte-123",
+                                kravlinjer =
+                                    listOf(
+                                        Kravlinje("testtype", 100.0, 50.0),
+                                    ),
+                                kravgrunnlag = Kravgrunnlag("123", "ref-123"),
+                            ),
+                        oppdragsgiver = Oppdragsgiver("123456789", "Test Org"),
+                        skyldner = KravdetaljerSkyldner("12345678901", "Test Person"),
                     )
                 val mockEngine =
                     MockEngine { request ->
                         request.headers.contains("Klientid", "NAV/2.0").shouldBeTrue()
                         request.headers.contains(HttpHeaders.Accept, "application/json").shouldBeTrue()
-                        request.url.segments.shouldContain(kravidentifikator)
-                        request.url.parameters
-                            .contains(
-                                "kravidentifikatortype",
-                                KravidentifikatortypeQuery.OPPDRAGSGIVERS_KRAVIDENTIFIKATOR.name,
-                            ).shouldBeTrue()
+                        request.body.contentType
+                            .shouldNotBeNull()
+                            .shouldBeEqual(ContentType.Application.Json)
+                        request.body.toByteArray().decodeToString().shouldEqualJson(
+                            // language=json
+                            """
+                            {
+                                "krav": {
+                                    "oppdragsgiversKravidentifikator": "123"
+                                }
+                            }
+                            """.trimIndent(),
+                        )
 
                         respond(
                             // language=json
                             content =
                                 """
                                 {
-                                  "kravgrunnlag": {
-                                    "datoNaarKravVarBesluttetHosOppdragsgiver": "2025-03-24"
-                                  },
-                                  "kravlinjer": [
-                                    {
-                                      "kravlinjetype": "testtype",
-                                      "opprinneligBeloep": 100,
-                                      "gjenstaaendeBeloep": 50
+                                  "krav": {
+                                    "forfallsdato": "2025-01-01",
+                                    "foreldelsesdato": "2030-01-01",
+                                    "fastsettelsesdato": "2024-01-01",
+                                    "kravtype": "OB04",
+                                    "opprinneligBeloep": 100.0,
+                                    "gjenstaaendeBeloep": 50.0,
+                                    "skatteetatensKravidentifikator": "skatte-123",
+                                    "kravlinjer": [
+                                      {
+                                        "kravlinjetype": "testtype",
+                                        "opprinneligBeloep": 100,
+                                        "gjenstaaendeBeloep": 50
+                                      }
+                                    ],
+                                    "kravgrunnlag": {
+                                      "oppdragsgiversKravidentifikator": "123",
+                                      "oppdragsgiversReferanse": "ref-123"
                                     }
-                                  ]
+                                  },
+                                  "oppdragsgiver": {
+                                    "organisasjonsnummer": "123456789",
+                                    "organisasjonsnavn": "Test Org"
+                                  },
+                                  "skyldner": {
+                                    "identifikator": "12345678901",
+                                    "skyldnersNavn": "Test Person"
+                                  }
                                 }
                                 """.trimIndent(),
                             status = HttpStatusCode.OK,

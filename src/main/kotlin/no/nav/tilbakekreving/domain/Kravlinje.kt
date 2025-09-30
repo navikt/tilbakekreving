@@ -2,6 +2,7 @@ package no.nav.tilbakekreving.domain
 
 data class Kravlinje(
     val kravlinjetype: String,
-    val opprinneligBeloep: Double,
-    val gjenstaaendeBeloep: Double?,
+    val opprinneligBeløp: Double,
+    val gjenståendeBeløp: Double,
+    val kravlinjeBeskrivelse: MultiSpråkTekst? = null,
 )

@@ -5,15 +5,12 @@ import arrow.core.raise.either
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.accept
-import io.ktor.client.request.get
 import io.ktor.client.request.headers
-import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.appendPathSegments
 import io.ktor.http.contentType
 import no.nav.tilbakekreving.app.HentKravdetaljer
 import no.nav.tilbakekreving.app.SøkEtterInnkrevingskrav
@@ -21,10 +18,10 @@ import no.nav.tilbakekreving.domain.Kravdetaljer
 import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravoversikt
 import no.nav.tilbakekreving.domain.Skyldnersøk
+import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.HentKravdetaljerRequestJson
+import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.HentKravdetaljerResponsJson
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.HentKravoversiktRequestJson
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.HentKravoversiktResponseJson
-import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.KravdetaljerResponseJson
-import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.KravidentifikatortypeQuery
 import org.slf4j.LoggerFactory
 
 class SkatteetatenInnkrevingsoppdragHttpClient(
@@ -39,21 +36,18 @@ class SkatteetatenInnkrevingsoppdragHttpClient(
     ): Either<HentKravdetaljer.HentKravdetaljerFeil, Kravdetaljer> =
         either {
             val httpResponse =
-                client.get("$baseUrl/api/innkreving/innkrevingsoppdrag/v1/innkrevingsoppdrag") {
-                    url {
-                        appendPathSegments(kravidentifikator.id)
-                    }
-                    accept(ContentType.Application.Json)
-
+                client.post("$baseUrl/api/innkreving/innkrevingsoppdrag/v1/kravdetaljer") {
                     headers {
                         append("Klientid", "NAV/2.0")
                     }
-                    parameter("kravidentifikatortype", KravidentifikatortypeQuery.from(kravidentifikator))
+                    setBody(HentKravdetaljerRequestJson.from(kravidentifikator))
+                    contentType(ContentType.Application.Json)
+                    accept(ContentType.Application.Json)
                 }
 
             when (httpResponse.status) {
                 HttpStatusCode.OK -> {
-                    httpResponse.body<KravdetaljerResponseJson>().toDomain()
+                    httpResponse.body<HentKravdetaljerResponsJson>().toDomain()
                 }
 
                 HttpStatusCode.NotFound -> {
