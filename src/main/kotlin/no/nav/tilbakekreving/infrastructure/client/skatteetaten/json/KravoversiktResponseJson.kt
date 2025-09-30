@@ -4,7 +4,13 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.Kravidentifikator
+import no.nav.tilbakekreving.domain.Kravoversikt
+import no.nav.tilbakekreving.domain.KravoversiktKravgrunnlag
+import no.nav.tilbakekreving.domain.KravoversiktSkyldner
 import no.nav.tilbakekreving.domain.Kravtype
+import no.nav.tilbakekreving.domain.MultiSpråkTekst
+import no.nav.tilbakekreving.domain.Oppdragsgiver
+import no.nav.tilbakekreving.domain.SpråkTekst
 
 @Serializable
 data class HentKravoversiktResponseJson(

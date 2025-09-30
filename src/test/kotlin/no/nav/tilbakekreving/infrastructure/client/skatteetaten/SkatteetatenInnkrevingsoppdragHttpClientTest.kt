@@ -22,10 +22,13 @@ import no.nav.tilbakekreving.domain.Kravfilter
 import no.nav.tilbakekreving.domain.Kravgrunnlag
 import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravlinje
+import no.nav.tilbakekreving.domain.KravoversiktKravgrunnlag
 import no.nav.tilbakekreving.domain.Kravtype
+import no.nav.tilbakekreving.domain.MultiSpråkTekst
 import no.nav.tilbakekreving.domain.Skyldner
 import no.nav.tilbakekreving.domain.SkyldnerId
 import no.nav.tilbakekreving.domain.Skyldnersøk
+import no.nav.tilbakekreving.domain.SpråkTekst
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.KravidentifikatortypeQuery
 import no.nav.tilbakekreving.setup.createHttpClient
 

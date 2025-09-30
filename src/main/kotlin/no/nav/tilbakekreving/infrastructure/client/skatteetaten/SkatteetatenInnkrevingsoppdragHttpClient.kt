@@ -17,9 +17,9 @@ import io.ktor.http.appendPathSegments
 import io.ktor.http.contentType
 import no.nav.tilbakekreving.app.HentKravdetaljer
 import no.nav.tilbakekreving.app.SøkEtterInnkrevingskrav
-import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.Kravdetaljer
 import no.nav.tilbakekreving.domain.Kravidentifikator
+import no.nav.tilbakekreving.domain.Kravoversikt
 import no.nav.tilbakekreving.domain.Skyldnersøk
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.HentKravoversiktRequestJson
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.HentKravoversiktResponseJson

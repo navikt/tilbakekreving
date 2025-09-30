@@ -18,7 +18,10 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.Kravidentifikator
+import no.nav.tilbakekreving.domain.KravoversiktKravgrunnlag
 import no.nav.tilbakekreving.domain.Kravtype
+import no.nav.tilbakekreving.domain.MultiSpråkTekst
+import no.nav.tilbakekreving.domain.SpråkTekst
 import no.nav.tilbakekreving.infrastructure.client.AccessTokenVerifier
 import no.nav.tilbakekreving.infrastructure.route.KravAccessControl
 import no.nav.tilbakekreving.setup.AuthenticationConfigName
@@ -48,7 +51,14 @@ class AuthenticationTest :
 
                             get("/protected-krav") {
                                 val principal = call.authentication.principal<UserGroupIdsPrincipal>()
-                                val krav = Krav(Kravidentifikator.Nav("123"), Kravtype("TYPE_A"))
+                                val krav =
+                                    Krav(
+                                        kravidentifikator = Kravidentifikator.Nav("123"),
+                                        kravtype = Kravtype("TYPE_A"),
+                                        kravbeskrivelse = MultiSpråkTekst(listOf(SpråkTekst("Test", "nb"))),
+                                        kravgrunnlag = KravoversiktKravgrunnlag("123", null),
+                                        gjenståendeBeløp = 1000.0,
+                                    )
                                 val allowed =
                                     kravAccessControl.isKravAccessibleTo(principal?.groupIds?.toSet() ?: emptySet())(
                                         krav,
