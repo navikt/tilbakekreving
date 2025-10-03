@@ -116,9 +116,7 @@ class HentKravdetaljerTest :
                                         "kravlinjetype": "Kravlinjetype",
                                         "opprinneligBeløp": 1000.0,
                                         "gjenståendeBeløp": 500.0,
-                                        "kravlinjeBeskrivelse": {
-                                            "språkTekst": []
-                                        }
+                                        "kravlinjeBeskrivelse": {}
                                     }
                                 ],
                                 "kravgrunnlag": {

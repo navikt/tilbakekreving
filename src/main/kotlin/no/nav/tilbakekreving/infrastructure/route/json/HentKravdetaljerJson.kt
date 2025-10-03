@@ -137,7 +137,7 @@ data class KravlinjeResponseJson(
     val kravlinjetype: String,
     val opprinneligBeløp: Double,
     val gjenståendeBeløp: Double,
-    val kravlinjeBeskrivelse: MultiSpråkTekstResponseJson? = null,
+    val kravlinjeBeskrivelse: Map<String, String>,
 ) {
     companion object {
         fun fromDomain(kravlinje: Kravlinje): KravlinjeResponseJson =
@@ -146,26 +146,12 @@ data class KravlinjeResponseJson(
                 opprinneligBeløp = kravlinje.opprinneligBeløp,
                 gjenståendeBeløp = kravlinje.gjenståendeBeløp,
                 kravlinjeBeskrivelse =
-                    MultiSpråkTekstResponseJson(
-                        språkTekst =
-                            kravlinje.kravlinjeBeskrivelse.map { (locale, beskrivelse) ->
-                                SpråkTekstResponseJson(beskrivelse.value, locale.toLanguageTag())
-                            },
-                    ),
+                    kravlinje.kravlinjeBeskrivelse
+                        .map { (locale, beskrivelse) -> locale.toLanguageTag() to beskrivelse.value }
+                        .toMap(),
             )
     }
 }
-
-@Serializable
-data class MultiSpråkTekstResponseJson(
-    val språkTekst: List<SpråkTekstResponseJson>,
-)
-
-@Serializable
-data class SpråkTekstResponseJson(
-    val tekst: String,
-    val språk: String,
-)
 
 @Serializable
 data class InnbetalingPlassertMotKravResponseJson(
