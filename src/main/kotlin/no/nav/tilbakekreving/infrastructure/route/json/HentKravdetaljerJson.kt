@@ -11,10 +11,8 @@ import no.nav.tilbakekreving.domain.KravdetaljerSkyldner
 import no.nav.tilbakekreving.domain.Kravgrunnlag
 import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravlinje
-import no.nav.tilbakekreving.domain.MultiSpråkTekst
 import no.nav.tilbakekreving.domain.Oppdragsgiver
 import no.nav.tilbakekreving.domain.PeriodeMedTvangsmulkt
-import no.nav.tilbakekreving.domain.SpråkTekst
 import no.nav.tilbakekreving.domain.Tilbakekrevingsperiode
 import no.nav.tilbakekreving.domain.Tilleggsinformasjon
 import no.nav.tilbakekreving.domain.YtelseForAvregningBeløp
@@ -147,7 +145,13 @@ data class KravlinjeResponseJson(
                 kravlinjetype = kravlinje.kravlinjetype,
                 opprinneligBeløp = kravlinje.opprinneligBeløp,
                 gjenståendeBeløp = kravlinje.gjenståendeBeløp,
-                kravlinjeBeskrivelse = kravlinje.kravlinjeBeskrivelse?.let { MultiSpråkTekstResponseJson.fromDomain(it) },
+                kravlinjeBeskrivelse =
+                    MultiSpråkTekstResponseJson(
+                        språkTekst =
+                            kravlinje.kravlinjeBeskrivelse.map { (locale, beskrivelse) ->
+                                SpråkTekstResponseJson(beskrivelse.value, locale.toLanguageTag())
+                            },
+                    ),
             )
     }
 }
@@ -155,28 +159,13 @@ data class KravlinjeResponseJson(
 @Serializable
 data class MultiSpråkTekstResponseJson(
     val språkTekst: List<SpråkTekstResponseJson>,
-) {
-    companion object {
-        fun fromDomain(multiSpråkTekst: MultiSpråkTekst): MultiSpråkTekstResponseJson =
-            MultiSpråkTekstResponseJson(
-                språkTekst = multiSpråkTekst.språkTekst.map { SpråkTekstResponseJson.fromDomain(it) },
-            )
-    }
-}
+)
 
 @Serializable
 data class SpråkTekstResponseJson(
     val tekst: String,
     val språk: String,
-) {
-    companion object {
-        fun fromDomain(språkTekst: SpråkTekst): SpråkTekstResponseJson =
-            SpråkTekstResponseJson(
-                tekst = språkTekst.tekst,
-                språk = språkTekst.språk,
-            )
-    }
-}
+)
 
 @Serializable
 data class InnbetalingPlassertMotKravResponseJson(

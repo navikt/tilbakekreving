@@ -23,18 +23,17 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import no.nav.tilbakekreving.app.SøkEtterInnkrevingskrav
 import no.nav.tilbakekreving.domain.Krav
+import no.nav.tilbakekreving.domain.Kravbeskrivelse
 import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravoversikt
-import no.nav.tilbakekreving.domain.KravoversiktKravgrunnlag
 import no.nav.tilbakekreving.domain.KravoversiktSkyldner
 import no.nav.tilbakekreving.domain.Kravtype
-import no.nav.tilbakekreving.domain.MultiSpråkTekst
 import no.nav.tilbakekreving.domain.Oppdragsgiver
-import no.nav.tilbakekreving.domain.SpråkTekst
 import no.nav.tilbakekreving.infrastructure.auth.GroupId
 import no.nav.tilbakekreving.infrastructure.auth.UserGroupIdsPrincipal
 import no.nav.tilbakekreving.setup.configureSerialization
 import no.nav.tilbakekreving.util.specWideTestApplication
+import java.util.Locale
 
 class HentKravoversiktTest :
     WordSpec({
@@ -72,10 +71,11 @@ class HentKravoversiktTest :
                         krav =
                             listOf(
                                 Krav(
-                                    kravidentifikator = Kravidentifikator.Nav("123456789"),
+                                    skeKravidentifikator = Kravidentifikator.Skatteetaten("skatte-123456789"),
+                                    navKravidentifikator = Kravidentifikator.Nav("123456789"),
+                                    navReferanse = "ref1",
                                     kravtype = Kravtype("Kravtype"),
-                                    kravbeskrivelse = MultiSpråkTekst(listOf(SpråkTekst("Test beskrivelse", "nb"))),
-                                    kravgrunnlag = KravoversiktKravgrunnlag("123456789", "ref1"),
+                                    kravbeskrivelse = mapOf(Locale.forLanguageTag("nb") to Kravbeskrivelse("Test beskrivelse")),
                                     gjenståendeBeløp = 1000.0,
                                 ),
                             ),
@@ -109,22 +109,12 @@ class HentKravoversiktTest :
                             },
                             "krav": [
                                 {
-                                    "kravidentifikator": {
-                                        "id": "123456789",
-                                        "type": "nav"
-                                    },
+                                    "skeKravidentifikator": "skatte-123456789",
+                                    "navKravidentifikator": "123456789",
+                                    "navReferanse": "ref1",
                                     "kravtype": "Kravtype",
                                     "kravbeskrivelse": {
-                                        "språkTekst": [
-                                            {
-                                                "tekst": "Test beskrivelse",
-                                                "språk": "nb"
-                                            }
-                                        ]
-                                    },
-                                    "kravgrunnlag": {
-                                        "oppdragsgiversKravidentifikator": "123456789",
-                                        "oppdragsgiversReferanse": "ref1"
+                                        "nb": "Test beskrivelse"
                                     },
                                     "gjenståendeBeløp": 1000.0
                                 }
@@ -141,30 +131,24 @@ class HentKravoversiktTest :
 
             "returnere 200 med utvalgt kravoversikt basert på roller" {
                 coEvery { søkEtterInnkrevingskrav.søk(any()) } returns
-                        Kravoversikt(
-                            oppdragsgiver = Oppdragsgiver("123456789", "Test Oppdragsgiver"),
+                    Kravoversikt(
+                        oppdragsgiver = Oppdragsgiver("123456789", "Test Oppdragsgiver"),
                         krav =
                             listOf(
                                 Krav(
-                                    kravidentifikator = Kravidentifikator.Nav("123456789"),
+                                    skeKravidentifikator = Kravidentifikator.Skatteetaten("skatte-123456789"),
+                                    navKravidentifikator = Kravidentifikator.Nav("123456789"),
+                                    navReferanse = "ref1",
                                     kravtype = Kravtype("Kravtype"),
-                                    kravbeskrivelse = MultiSpråkTekst(listOf(SpråkTekst("Test beskrivelse", "nb"))),
-                                    kravgrunnlag = KravoversiktKravgrunnlag("123456789", "ref1"),
+                                    kravbeskrivelse = mapOf(Locale.forLanguageTag("nb") to Kravbeskrivelse("Test beskrivelse")),
                                     gjenståendeBeløp = 1000.0,
                                 ),
                                 Krav(
-                                    kravidentifikator = Kravidentifikator.Nav("987654321"),
+                                    skeKravidentifikator = Kravidentifikator.Skatteetaten("skatte-987654321"),
+                                    navKravidentifikator = Kravidentifikator.Nav("987654321"),
+                                    navReferanse = "ref2",
                                     kravtype = Kravtype("Kravtype1"),
-                                    kravbeskrivelse =
-                                        MultiSpråkTekst(
-                                            listOf(
-                                                SpråkTekst(
-                                                    "Test beskrivelse 2",
-                                                    "nb",
-                                                ),
-                                            ),
-                                        ),
-                                    kravgrunnlag = KravoversiktKravgrunnlag("987654321", "ref2"),
+                                    kravbeskrivelse = mapOf(Locale.forLanguageTag("nb") to Kravbeskrivelse("Test beskrivelse 2")),
                                     gjenståendeBeløp = 2000.0,
                                 ),
                             ),
@@ -198,22 +182,12 @@ class HentKravoversiktTest :
                             },
                             "krav": [
                                 {
-                                    "kravidentifikator": {
-                                        "id": "123456789",
-                                        "type": "nav"
-                                    },
+                                    "skeKravidentifikator": "skatte-123456789",
+                                    "navKravidentifikator": "123456789",
+                                    "navReferanse": "ref1",
                                     "kravtype": "Kravtype",
                                     "kravbeskrivelse": {
-                                        "språkTekst": [
-                                            {
-                                                "tekst": "Test beskrivelse",
-                                                "språk": "nb"
-                                            }
-                                        ]
-                                    },
-                                    "kravgrunnlag": {
-                                        "oppdragsgiversKravidentifikator": "123456789",
-                                        "oppdragsgiversReferanse": "ref1"
+                                        "nb": "Test beskrivelse"
                                     },
                                     "gjenståendeBeløp": 1000.0
                                 }

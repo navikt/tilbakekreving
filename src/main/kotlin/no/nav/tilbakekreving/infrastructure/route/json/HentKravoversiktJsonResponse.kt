@@ -1,15 +1,10 @@
 package no.nav.tilbakekreving.infrastructure.route.json
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import no.nav.tilbakekreving.domain.Krav
-import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravoversikt
-import no.nav.tilbakekreving.domain.KravoversiktKravgrunnlag
 import no.nav.tilbakekreving.domain.KravoversiktSkyldner
-import no.nav.tilbakekreving.domain.MultiSpråkTekst
 import no.nav.tilbakekreving.domain.Oppdragsgiver
-import no.nav.tilbakekreving.domain.SpråkTekst
 
 @Serializable
 data class HentKravoversiktJsonResponse(
@@ -31,48 +26,27 @@ data class HentKravoversiktJsonResponse(
 
 @Serializable
 data class KravResponseJson(
-    val kravidentifikator: KravidentifikatorJsonResponse,
+    val skeKravidentifikator: String,
+    val navKravidentifikator: String,
+    val navReferanse: String?,
     val kravtype: String,
-    val kravbeskrivelse: MultiSpråkTekstJsonResponse,
-    val kravgrunnlag: KravgrunnlagJsonResponse,
+    val kravbeskrivelse: Map<String, String>,
     val gjenståendeBeløp: Double,
 ) {
     companion object {
         fun from(krav: Krav): KravResponseJson =
             KravResponseJson(
-                kravidentifikator = KravidentifikatorJsonResponse.from(krav.kravidentifikator),
+                skeKravidentifikator = krav.skeKravidentifikator.id,
+                navKravidentifikator = krav.navKravidentifikator.id,
+                navReferanse = krav.navReferanse,
                 kravtype = krav.kravtype.value,
-                kravbeskrivelse = MultiSpråkTekstJsonResponse.from(krav.kravbeskrivelse),
-                kravgrunnlag = KravgrunnlagJsonResponse.from(krav.kravgrunnlag),
+                kravbeskrivelse =
+                    krav.kravbeskrivelse
+                        .map { (locale, beskrivelse) -> locale.toLanguageTag() to beskrivelse.value }
+                        .toMap(),
                 gjenståendeBeløp = krav.gjenståendeBeløp,
             )
     }
-}
-
-@Serializable
-sealed class KravidentifikatorJsonResponse {
-    abstract val id: String
-
-    companion object {
-        fun from(kravidentifikator: Kravidentifikator): KravidentifikatorJsonResponse =
-            when (kravidentifikator) {
-                is Kravidentifikator.Nav -> Nav(kravidentifikator.id)
-
-                is Kravidentifikator.Skatteetaten -> Skatteetaten(kravidentifikator.id)
-            }
-    }
-
-    @Serializable
-    @SerialName("nav")
-    data class Nav(
-        override val id: String,
-    ) : KravidentifikatorJsonResponse()
-
-    @Serializable
-    @SerialName("skatteetaten")
-    data class Skatteetaten(
-        override val id: String,
-    ) : KravidentifikatorJsonResponse()
 }
 
 @Serializable
@@ -99,46 +73,6 @@ data class SkyldnerJsonResponse(
             SkyldnerJsonResponse(
                 identifikator = skyldner.identifikator,
                 skyldnersNavn = skyldner.skyldnersNavn,
-            )
-    }
-}
-
-@Serializable
-data class MultiSpråkTekstJsonResponse(
-    val språkTekst: List<SpråkTekstJsonResponse>,
-) {
-    companion object {
-        fun from(multiSpråkTekst: MultiSpråkTekst): MultiSpråkTekstJsonResponse =
-            MultiSpråkTekstJsonResponse(
-                språkTekst = multiSpråkTekst.språkTekst.map(SpråkTekstJsonResponse::from),
-            )
-    }
-}
-
-@Serializable
-data class SpråkTekstJsonResponse(
-    val tekst: String,
-    val språk: String,
-) {
-    companion object {
-        fun from(språkTekst: SpråkTekst): SpråkTekstJsonResponse =
-            SpråkTekstJsonResponse(
-                tekst = språkTekst.tekst,
-                språk = språkTekst.språk,
-            )
-    }
-}
-
-@Serializable
-data class KravgrunnlagJsonResponse(
-    val oppdragsgiversKravidentifikator: String,
-    val oppdragsgiversReferanse: String?,
-) {
-    companion object {
-        fun from(kravgrunnlag: KravoversiktKravgrunnlag): KravgrunnlagJsonResponse =
-            KravgrunnlagJsonResponse(
-                oppdragsgiversKravidentifikator = kravgrunnlag.oppdragsgiversKravidentifikator,
-                oppdragsgiversReferanse = kravgrunnlag.oppdragsgiversReferanse,
             )
     }
 }

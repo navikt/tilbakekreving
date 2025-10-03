@@ -1,5 +1,7 @@
 package no.nav.tilbakekreving.domain
 
+import java.util.Locale
+
 data class Kravoversikt(
     val oppdragsgiver: Oppdragsgiver,
     val krav: List<Krav>,
@@ -8,10 +10,11 @@ data class Kravoversikt(
 )
 
 data class Krav(
-    val kravidentifikator: Kravidentifikator,
+    val skeKravidentifikator: Kravidentifikator.Skatteetaten,
+    val navKravidentifikator: Kravidentifikator.Nav,
+    val navReferanse: String?,
     val kravtype: Kravtype,
-    val kravbeskrivelse: MultiSpråkTekst,
-    val kravgrunnlag: KravoversiktKravgrunnlag,
+    val kravbeskrivelse: Map<Locale, Kravbeskrivelse>,
     val gjenståendeBeløp: Double,
 )
 
@@ -25,21 +28,12 @@ data class KravoversiktSkyldner(
     val skyldnersNavn: String?,
 )
 
-data class MultiSpråkTekst(
-    val språkTekst: List<SpråkTekst>,
-)
-
-data class SpråkTekst(
-    val tekst: String,
-    val språk: String,
-)
-
-data class KravoversiktKravgrunnlag(
-    val oppdragsgiversKravidentifikator: String,
-    val oppdragsgiversReferanse: String?,
+@JvmInline
+value class Kravtype(
+    val value: String,
 )
 
 @JvmInline
-value class Kravtype(
+value class Kravbeskrivelse(
     val value: String,
 )

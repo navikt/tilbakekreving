@@ -17,16 +17,15 @@ import io.ktor.server.routing.routing
 import io.mockk.coEvery
 import io.mockk.mockk
 import no.nav.tilbakekreving.domain.Krav
+import no.nav.tilbakekreving.domain.Kravbeskrivelse
 import no.nav.tilbakekreving.domain.Kravidentifikator
-import no.nav.tilbakekreving.domain.KravoversiktKravgrunnlag
 import no.nav.tilbakekreving.domain.Kravtype
-import no.nav.tilbakekreving.domain.MultiSpråkTekst
-import no.nav.tilbakekreving.domain.SpråkTekst
 import no.nav.tilbakekreving.infrastructure.client.AccessTokenVerifier
 import no.nav.tilbakekreving.infrastructure.route.KravAccessControl
 import no.nav.tilbakekreving.setup.AuthenticationConfigName
 import no.nav.tilbakekreving.setup.configureAuthentication
 import no.nav.tilbakekreving.util.specWideTestApplication
+import java.util.Locale
 
 class AuthenticationTest :
     WordSpec({
@@ -53,10 +52,11 @@ class AuthenticationTest :
                                 val principal = call.authentication.principal<UserGroupIdsPrincipal>()
                                 val krav =
                                     Krav(
-                                        kravidentifikator = Kravidentifikator.Nav("123"),
+                                        skeKravidentifikator = Kravidentifikator.Skatteetaten("skatte-123"),
+                                        navKravidentifikator = Kravidentifikator.Nav("123"),
+                                        navReferanse = null,
                                         kravtype = Kravtype("TYPE_A"),
-                                        kravbeskrivelse = MultiSpråkTekst(listOf(SpråkTekst("Test", "nb"))),
-                                        kravgrunnlag = KravoversiktKravgrunnlag("123", null),
+                                        kravbeskrivelse = mapOf(Locale.forLanguageTag("nb") to Kravbeskrivelse("Test")),
                                         gjenståendeBeløp = 1000.0,
                                     )
                                 val allowed =

@@ -3,8 +3,8 @@ package no.nav.tilbakekreving.infrastructure.client.skatteetaten.json
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import no.nav.tilbakekreving.domain.Kravlinje
-import no.nav.tilbakekreving.domain.MultiSpråkTekst
-import no.nav.tilbakekreving.domain.SpråkTekst
+import no.nav.tilbakekreving.domain.Kravlinjebeskrivelse
+import java.util.Locale
 
 @Serializable
 data class KravlinjeResponseJson(
@@ -20,7 +20,13 @@ data class KravlinjeResponseJson(
             kravlinjetype = kravlinjetype,
             opprinneligBeløp = opprinneligBeløp,
             gjenståendeBeløp = gjenståendeBeløp,
-            kravlinjeBeskrivelse = kravlinjeBeskrivelse?.toDomain(),
+            kravlinjeBeskrivelse =
+                kravlinjeBeskrivelse?.språkTekst?.associate {
+                    Locale.forLanguageTag(it.språk) to
+                        Kravlinjebeskrivelse(
+                            it.tekst,
+                        )
+                } ?: emptyMap(),
         )
 }
 
@@ -28,22 +34,11 @@ data class KravlinjeResponseJson(
 data class MultiSpråkTekstResponseJson(
     @SerialName("spraakTekst")
     val språkTekst: List<SpråkTekstResponseJson>,
-) {
-    fun toDomain(): MultiSpråkTekst =
-        MultiSpråkTekst(
-            språkTekst = språkTekst.map { it.toDomain() },
-        )
-}
+)
 
 @Serializable
 data class SpråkTekstResponseJson(
     val tekst: String,
     @SerialName("spraak")
     val språk: String,
-) {
-    fun toDomain(): SpråkTekst =
-        SpråkTekst(
-            tekst = tekst,
-            språk = språk,
-        )
-}
+)

@@ -53,7 +53,10 @@ class SkatteetatenInnkrevingsoppdragHttpClient(
                 HttpStatusCode.NotFound -> {
                     logger.info(
                         "Kravdetaljer ikke funnet for kravidentifikator: {}",
-                        kravidentifikator.id,
+                        when (kravidentifikator) {
+                            is Kravidentifikator.Nav -> "navId=${kravidentifikator.id}"
+                            is Kravidentifikator.Skatteetaten -> "skatteetatenId=${kravidentifikator.id}"
+                        },
                     )
                     raise(HentKravdetaljer.HentKravdetaljerFeil.FantIkkeKravdetaljer)
                 }

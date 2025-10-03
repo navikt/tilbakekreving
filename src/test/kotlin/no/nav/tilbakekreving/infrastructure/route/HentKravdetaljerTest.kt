@@ -60,11 +60,12 @@ class HentKravdetaljerTest :
                         gjenståendeBeløp = 500.0,
                         skatteetatensKravidentifikator = "skatte-123",
                         kravlinjer =
-                        listOf(
-                        Kravlinje(
+                            listOf(
+                                Kravlinje(
                                     kravlinjetype = "Kravlinjetype",
                                     opprinneligBeløp = 1000.0,
-                            gjenståendeBeløp = 500.0,
+                                    gjenståendeBeløp = 500.0,
+                                    emptyMap(),
                                 ),
                             ),
                         kravgrunnlag = Kravgrunnlag("123456789", "ref-123"),
@@ -114,7 +115,10 @@ class HentKravdetaljerTest :
                                     {
                                         "kravlinjetype": "Kravlinjetype",
                                         "opprinneligBeløp": 1000.0,
-                                        "gjenståendeBeløp": 500.0
+                                        "gjenståendeBeløp": 500.0,
+                                        "kravlinjeBeskrivelse": {
+                                            "språkTekst": []
+                                        }
                                     }
                                 ],
                                 "kravgrunnlag": {

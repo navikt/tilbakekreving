@@ -18,22 +18,20 @@ import kotlinx.datetime.LocalDate
 import no.nav.tilbakekreving.AppEnv
 import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.KravDetalj
+import no.nav.tilbakekreving.domain.Kravbeskrivelse
 import no.nav.tilbakekreving.domain.Kravdetaljer
 import no.nav.tilbakekreving.domain.KravdetaljerSkyldner
 import no.nav.tilbakekreving.domain.Kravfilter
 import no.nav.tilbakekreving.domain.Kravgrunnlag
 import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravlinje
-import no.nav.tilbakekreving.domain.KravoversiktKravgrunnlag
 import no.nav.tilbakekreving.domain.Kravtype
-import no.nav.tilbakekreving.domain.MultiSpråkTekst
 import no.nav.tilbakekreving.domain.Oppdragsgiver
 import no.nav.tilbakekreving.domain.Skyldner
 import no.nav.tilbakekreving.domain.SkyldnerId
 import no.nav.tilbakekreving.domain.Skyldnersøk
-import no.nav.tilbakekreving.domain.SpråkTekst
-
 import no.nav.tilbakekreving.setup.createHttpClient
+import java.util.Locale
 
 class SkatteetatenInnkrevingsoppdragHttpClientTest :
     WordSpec({
@@ -53,7 +51,7 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                                 skatteetatensKravidentifikator = "skatte-123",
                                 kravlinjer =
                                     listOf(
-                                        Kravlinje("testtype", 100.0, 50.0),
+                                        Kravlinje("testtype", 100.0, 50.0, emptyMap()),
                                     ),
                                 kravgrunnlag = Kravgrunnlag("123", "ref-123"),
                             ),
@@ -124,9 +122,7 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
 
                 val result =
                     skatteetatenInnkrevingsoppdragHttpClient.hentKravdetaljer(
-                        Kravidentifikator.Nav(
-                            kravidentifikator,
-                        ),
+                        Kravidentifikator.Nav(kravidentifikator),
                     )
 
                 result.shouldBeRight(kravdetaljer)
@@ -206,10 +202,11 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
 
                 result.shouldBeRight().krav.shouldContain(
                     Krav(
-                        kravidentifikator = Kravidentifikator.Nav("310ade77-8d45-48e8-b053-72659f53b4eb"),
+                        skeKravidentifikator = Kravidentifikator.Skatteetaten("29ab06ef-9de1-4312-9677-163e4cc586dd"),
+                        navKravidentifikator = Kravidentifikator.Nav("310ade77-8d45-48e8-b053-72659f53b4eb"),
+                        navReferanse = "ref1",
                         kravtype = Kravtype("OB04"),
-                        kravbeskrivelse = MultiSpråkTekst(listOf(SpråkTekst("Eksempeltekst", "NB"))),
-                        kravgrunnlag = KravoversiktKravgrunnlag("310ade77-8d45-48e8-b053-72659f53b4eb", "ref1"),
+                        kravbeskrivelse = mapOf(Locale.forLanguageTag("NB") to Kravbeskrivelse("Eksempeltekst")),
                         gjenståendeBeløp = 1000.0,
                     ),
                 )
