@@ -28,9 +28,9 @@ jobs:
           - cluster: "dev-gcp"
             gh_environment: "dev-gcp"
             nais_vars_file: "dev"
-#           - cluster: "prod-gcp"
-#             gh_environment: "prod-gcp"
-#             nais_vars_file: "prod"
+           - cluster: "prod-gcp"
+             gh_environment: "prod-gcp"
+             nais_vars_file: "prod"
     with:
       image: ${{ needs.build.outputs.image }}
       cluster: ${{ matrix.env.cluster }}
