@@ -20,3 +20,9 @@ resources:
   requests:
     cpu: 5m
     memory: 440Mi
+
+azure:
+  application:
+    claims:
+      groups:
+        - "9d969830-2d8c-4c72-bb59-a067d8c4d883" # 0000-CA-Tilbakekreving_Les_krav

@@ -25,6 +25,6 @@ azure:
   application:
     claims:
       groups:
-        - "30f17df5-c36c-4ad7-b862-48f56c95ebb2" # 0000-GA-FIA-Lesetilgang
+        - "d5da316e-e4b8-4906-aa84-7fa87a1355f3" # 0000-CA-Tilbakekreving_Les_krav
         - "e7d9c694-d1f8-4dc9-90c4-106da1844552" # 0000-GA-ENHET_0106 - Nav Fredrikstad
         - "add39d0c-f8fb-4c8d-83e4-4450ba61afb0" # 0000-GA-ENHET_4411 - Nav Karmøy
