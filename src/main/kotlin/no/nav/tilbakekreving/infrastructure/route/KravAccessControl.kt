@@ -20,7 +20,8 @@ class KravAccessControl(
 
     fun isKravAccessibleTo(groupIds: Set<GroupId>): (Krav) -> Boolean =
         { krav ->
-            groupIds.contains(kravAccessGroup) &&
-                enhetAccess[krav.kravtype]?.any { groupId -> groupId in groupIds } ?: false
+            groupIds.contains(kravAccessGroup)
+            // TODO: Skru på tilgangskontroll når mapping fra kravtype til enhet er på plass
+            // && enhetAccess[krav.kravtype]?.any { groupId -> groupId in groupIds } ?: false
         }
 }
