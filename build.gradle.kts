@@ -4,8 +4,9 @@ val kotlinVersion = "2.2.20"
 
 plugins {
     kotlin("jvm") version "2.2.20"
-    id("io.ktor.plugin") version "3.3.0"
+    id("io.ktor.plugin") version "3.3.1"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.2.20"
+    id("com.github.ben-manes.versions") version "0.53.0"
 }
 
 kotlin {
@@ -82,4 +83,17 @@ tasks {
         // Required for testing environment variables
         jvmArgs("--add-opens=java.base/java.util=ALL-UNNAMED")
     }
+
+    dependencyUpdates.configure {
+        rejectVersionIf {
+            isNonStable(candidate.version) && !isNonStable(currentVersion)
+        }
+    }
+}
+
+fun isNonStable(version: String): Boolean {
+    val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.uppercase().contains(it) }
+    val regex = "^[0-9,.v-]+(-r)?$".toRegex()
+    val isStable = stableKeyword || regex.matches(version)
+    return isStable.not()
 }
