@@ -59,7 +59,7 @@ fun Application.module() {
                     scopes = tilbakekrevingConfig.skatteetaten.scopes
                 }
                 install(HttpTimeout) {
-                    requestTimeoutMillis = 10.seconds.inWholeMilliseconds
+                    requestTimeoutMillis = 30.seconds.inWholeMilliseconds
                 }
             }
         val innkrevingsoppdragHttpClient =
