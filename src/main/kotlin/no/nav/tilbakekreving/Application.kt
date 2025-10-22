@@ -1,6 +1,7 @@
 package no.nav.tilbakekreving
 
 import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.log
@@ -24,6 +25,7 @@ import no.nav.tilbakekreving.setup.configureCallLogging
 import no.nav.tilbakekreving.setup.configureSerialization
 import no.nav.tilbakekreving.setup.createHttpClient
 import no.nav.tilbakekreving.setup.loadConfiguration
+import kotlin.time.Duration.Companion.seconds
 
 fun main() {
     embeddedServer(
@@ -55,6 +57,9 @@ fun Application.module() {
                 install(MaskinportenAuthHeaderPlugin) {
                     accessTokenProvider = maskinportenAccessTokenProvider
                     scopes = tilbakekrevingConfig.skatteetaten.scopes
+                }
+                install(HttpTimeout) {
+                    requestTimeoutMillis = 10.seconds.inWholeMilliseconds
                 }
             }
         val innkrevingsoppdragHttpClient =
