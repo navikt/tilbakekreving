@@ -10,7 +10,6 @@ import io.ktor.client.request.header
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.authenticate
-import io.ktor.server.auth.authentication
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
@@ -22,6 +21,7 @@ import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravtype
 import no.nav.tilbakekreving.infrastructure.client.AccessTokenVerifier
 import no.nav.tilbakekreving.infrastructure.route.KravAccessControl
+import no.nav.tilbakekreving.infrastructure.route.util.navUserPrincipal
 import no.nav.tilbakekreving.setup.AuthenticationConfigName
 import no.nav.tilbakekreving.setup.configureAuthentication
 import no.nav.tilbakekreving.util.specWideTestApplication
@@ -30,6 +30,7 @@ import java.util.Locale
 class AuthenticationTest :
     WordSpec({
         val accessTokenVerifier = mockk<AccessTokenVerifier>()
+        val navIdent = "Z123456"
         val groupIds = (listOf("group1", "group2", "tilgang_til_krav").map(::GroupId))
         val authenticationConfigName = AuthenticationConfigName("entra-id")
         val kravAccessControl =
@@ -49,7 +50,7 @@ class AuthenticationTest :
                             }
 
                             get("/protected-krav") {
-                                val principal = call.authentication.principal<UserGroupIdsPrincipal>()
+                                val principal = navUserPrincipal()
                                 val krav =
                                     Krav(
                                         skeKravidentifikator = Kravidentifikator.Skatteetaten("skatte-123"),
@@ -83,7 +84,7 @@ class AuthenticationTest :
 
                 coEvery {
                     accessTokenVerifier.verifyToken("valid-token")
-                } returns AccessTokenVerifier.ValidatedToken(groupIds).right()
+                } returns AccessTokenVerifier.ValidatedToken(navIdent, groupIds).right()
 
                 // Public route should be accessible without a token
                 client.get("/public").shouldBeOK()
@@ -128,7 +129,7 @@ class AuthenticationTest :
             "authorize access using KravAccessControl and user groups" {
                 coEvery {
                     accessTokenVerifier.verifyToken("valid-token")
-                } returns AccessTokenVerifier.ValidatedToken(groupIds).right()
+                } returns AccessTokenVerifier.ValidatedToken(navIdent, groupIds).right()
 
                 client
                     .get("/protected-krav") {

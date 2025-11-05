@@ -5,7 +5,7 @@ import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.bearer
-import no.nav.tilbakekreving.infrastructure.auth.UserGroupIdsPrincipal
+import no.nav.tilbakekreving.infrastructure.auth.NavUserPrincipal
 import no.nav.tilbakekreving.infrastructure.client.AccessTokenVerifier
 import org.slf4j.LoggerFactory
 
@@ -37,7 +37,7 @@ fun Application.configureAuthentication(
                             }
                         }
                     }?.let { validated ->
-                        UserGroupIdsPrincipal(validated.groupIds)
+                        NavUserPrincipal(navIdent = validated.navIdent, groupIds = validated.groupIds)
                     }
             }
         }

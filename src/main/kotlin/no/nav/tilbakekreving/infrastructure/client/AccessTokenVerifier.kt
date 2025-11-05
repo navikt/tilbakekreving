@@ -7,6 +7,7 @@ interface AccessTokenVerifier {
     suspend fun verifyToken(token: String): Either<VerificationError, ValidatedToken>
 
     data class ValidatedToken(
+        val navIdent: String,
         val groupIds: List<GroupId>,
     )
 

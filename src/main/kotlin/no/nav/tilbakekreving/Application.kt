@@ -12,6 +12,8 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
+import no.nav.tilbakekreving.infrastructure.audit.AuditLog
+import no.nav.tilbakekreving.infrastructure.audit.NavAuditLog
 import no.nav.tilbakekreving.infrastructure.client.TexasClient
 import no.nav.tilbakekreving.infrastructure.client.maskinporten.TexasMaskinportenClient
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.SkatteetatenInnkrevingsoppdragHttpClient
@@ -48,6 +50,11 @@ fun Application.module() {
                     AppEnv.PROD -> {}
                 }
             }
+
+        val auditLog: AuditLog =
+            NavAuditLog(
+                config = tilbakekrevingConfig.auditlog,
+            )
         val httpClient = createHttpClient(CIO.create())
 
         val maskinportenAccessTokenProvider =
@@ -79,7 +86,7 @@ fun Application.module() {
         routing {
             route("/internal") {
                 authenticate(authenticationConfigName.name) {
-                    context(kravAccessControl) {
+                    context(kravAccessControl, auditLog) {
                         route("/kravdetaljer") {
                             hentKravdetaljerRoute(innkrevingsoppdragHttpClient)
                         }

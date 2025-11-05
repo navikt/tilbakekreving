@@ -47,6 +47,7 @@ class TexasClientTest :
                                 "active": true,
                                 "exp": 1609459200,
                                 "iat": 1609455600,
+                                "NAVident": "Z123456",
                                 "groups": ["group1", "group2", "group3"]
                             }
                             """.trimIndent(),
@@ -61,6 +62,7 @@ class TexasClientTest :
 
                 result.shouldBeRight(
                     AccessTokenVerifier.ValidatedToken(
+                        "Z123456",
                         listOf(
                             "group1",
                             "group2",

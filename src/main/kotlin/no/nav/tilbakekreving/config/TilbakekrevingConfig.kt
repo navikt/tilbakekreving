@@ -1,6 +1,7 @@
 package no.nav.tilbakekreving.config
 
 import no.nav.tilbakekreving.domain.Kravtype
+import no.nav.tilbakekreving.infrastructure.audit.AuditLog
 import no.nav.tilbakekreving.infrastructure.auth.GroupId
 
 data class TilbakekrevingConfig(
@@ -8,4 +9,5 @@ data class TilbakekrevingConfig(
     val skatteetaten: SkatteetatenConfig,
     val kravAcl: Map<Kravtype, Set<GroupId>>,
     val kravTilgangsgruppe: GroupId,
+    val auditlog: AuditLog.Config,
 )

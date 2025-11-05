@@ -70,13 +70,15 @@ sealed class VerifyTokenResponse {
     @SerialName("valid")
     data class ValidTokenResponse(
         override val active: Boolean,
+        @Suppress("PropertyName") val NAVident: String,
         val exp: Long,
         val iat: Long,
         val groups: List<String>,
     ) : VerifyTokenResponse() {
         fun toDomain(): AccessTokenVerifier.ValidatedToken =
             AccessTokenVerifier.ValidatedToken(
-                groups.map(::GroupId),
+                navIdent = NAVident,
+                groupIds = groups.map(::GroupId),
             )
     }
 

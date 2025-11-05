@@ -6,16 +6,24 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import no.nav.tilbakekreving.app.HentKravdetaljer
+import no.nav.tilbakekreving.infrastructure.audit.AuditLog
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravdetaljerJsonRequest
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravdetaljerJsonResponse
-import no.nav.tilbakekreving.infrastructure.route.util.groupIdsFromPrincipal
+import no.nav.tilbakekreving.infrastructure.route.util.navUserPrincipal
 import org.slf4j.LoggerFactory
 
+context(auditLog: AuditLog)
 fun Route.hentKravdetaljerRoute(hentKravdetaljer: HentKravdetaljer) {
     val logger = LoggerFactory.getLogger("HentKravdetaljerRoute")
 
     post<HentKravdetaljerJsonRequest> { hentKravdetaljerJson ->
-        val groupIds = groupIdsFromPrincipal()
+        val principal =
+            navUserPrincipal() ?: run {
+                logger.warn("Fant ikke navUserPrincipal ved henting av kravdetaljer")
+                call.respond(HttpStatusCode.Unauthorized, "Ugyldig bruker")
+                return@post
+            }
+        val groupIds = principal.groupIds.toSet()
         logger.info("Henter kravoversikt for bruker med userGroups=$groupIds")
         val kravidentifikator = hentKravdetaljerJson.toDomain()
         val kravdetaljer =
@@ -34,6 +42,15 @@ fun Route.hentKravdetaljerRoute(hentKravdetaljer: HentKravdetaljer) {
                 }
                 return@post
             }
+
+        auditLog.info(
+            AuditLog.Message(
+                sourceUserId = principal.navIdent,
+                destinationUserId = kravdetaljer.skyldner.identifikator,
+                event = AuditLog.EventType.ACCESS,
+                message = "Hentet kravdetaljer for innkrevingskrav",
+            ),
+        )
 
         call.respond(HttpStatusCode.OK, HentKravdetaljerJsonResponse.fromDomain(kravdetaljer))
     }

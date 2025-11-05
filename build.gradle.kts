@@ -27,6 +27,7 @@ application {
 
 repositories {
     mavenCentral()
+    maven("https://github-package-registry-mirror.gc.nav.no/cached/maven-release")
 }
 
 dependencies {
@@ -47,6 +48,7 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
     implementation("ch.qos.logback:logback-classic:1.5.20")
+    implementation("no.nav.common:audit-log:2.2023.01.10_13.49-81ddc732df3a")
 
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1-0.6.x-compat")
 

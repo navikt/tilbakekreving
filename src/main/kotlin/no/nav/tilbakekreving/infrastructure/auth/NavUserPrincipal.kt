@@ -1,6 +1,7 @@
 package no.nav.tilbakekreving.infrastructure.auth
 
-data class UserGroupIdsPrincipal(
+data class NavUserPrincipal(
+    val navIdent: String,
     val groupIds: List<GroupId>,
 )
 

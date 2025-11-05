@@ -1,12 +1,45 @@
 <configuration>
+    <appender name="AuditLogger" class="com.papertrailapp.logback.Syslog4jAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%m%n%xEx</pattern>
+        </layout>
+
+        <syslogConfig class="org.productivity.java.syslog4j.impl.net.tcp.TCPNetSyslogConfig">
+            <host>audit.nais</host>
+            <port>6514</port>
+            <ident>${NAIS_APP_NAME}</ident>
+            <maxMessageLength>128000</maxMessageLength>
+        </syslogConfig>
+    </appender>
+
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
+
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
+
     <logger name="org.eclipse.jetty" level="INFO"/>
     <logger name="io.netty" level="INFO"/>
+
+    <condition class="ch.qos.logback.core.boolex.IsPropertyDefinedCondition">
+        <key>NAIS_APP_NAME</key>
+    </condition>
+    <if>
+        <then>
+            <!-- Appender til Naudit -->
+            <logger name="AuditLogger" level="INFO" additivity="false">
+                <appender-ref ref="AuditLogger"/>
+            </logger>
+        </then>
+        <else>
+            <!-- Appender til stdout når man kjører appen lokalt uten at NAIS_APP_NAME er definert -->
+            <logger name="AuditLogger" level="INFO" additivity="false">
+                <appender-ref ref="STDOUT"/>
+            </logger>
+        </else>
+    </if>
 </configuration>
