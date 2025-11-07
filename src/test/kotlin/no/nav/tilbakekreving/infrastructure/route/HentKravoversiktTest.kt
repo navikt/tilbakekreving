@@ -19,10 +19,8 @@ import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.bearer
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
-import io.mockk.clearMocks
 import io.mockk.coEvery
 import io.mockk.mockk
-import io.mockk.verify
 import no.nav.tilbakekreving.app.SøkEtterInnkrevingskrav
 import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.Kravbeskrivelse
@@ -31,7 +29,6 @@ import no.nav.tilbakekreving.domain.Kravoversikt
 import no.nav.tilbakekreving.domain.KravoversiktSkyldner
 import no.nav.tilbakekreving.domain.Kravtype
 import no.nav.tilbakekreving.domain.Oppdragsgiver
-import no.nav.tilbakekreving.infrastructure.audit.AuditLog
 import no.nav.tilbakekreving.infrastructure.auth.GroupId
 import no.nav.tilbakekreving.infrastructure.auth.NavUserPrincipal
 import no.nav.tilbakekreving.setup.configureSerialization
@@ -41,7 +38,6 @@ import java.util.Locale
 class HentKravoversiktTest :
     WordSpec({
         val søkEtterInnkrevingskrav = mockk<SøkEtterInnkrevingskrav>()
-        val auditLog = mockk<AuditLog>(relaxed = true)
         val kravAccessControl =
             KravAccessControl(mapOf(Kravtype("Kravtype") to setOf(GroupId("enhet_1"))), GroupId("tilgang_til_krav"))
         val client =
@@ -58,7 +54,7 @@ class HentKravoversiktTest :
                     routing {
                         authenticate("entra-id") {
                             route("/kravoversikt") {
-                                context(kravAccessControl, auditLog) {
+                                context(kravAccessControl) {
                                     hentKravoversikt(søkEtterInnkrevingskrav)
                                 }
                             }
@@ -66,8 +62,6 @@ class HentKravoversiktTest :
                     }
                 }
             }.client
-        // Reset audit mocks for å kunne telle kall per test
-        afterTest { clearMocks(auditLog) }
 
         "hent kravoversikt" should {
             "returnere 200 med kravoversikt" {
@@ -133,8 +127,6 @@ class HentKravoversiktTest :
                         }
                         """.trimIndent(),
                     )
-
-                verify(exactly = 1) { auditLog.info(any()) }
             }
 
             /**
@@ -211,7 +203,6 @@ class HentKravoversiktTest :
                         }
                         """.trimIndent(),
                     )
-                verify(exactly = 1) { auditLog.info(any()) }
             }
         }
     })

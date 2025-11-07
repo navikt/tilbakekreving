@@ -20,10 +20,17 @@ class NavAuditLog(
                 .event(message.event.toCefMessageEvent()) // Create, Access, Update, Delete
                 .sourceUserId(message.sourceUserId) // suid
                 .destinationUserId(message.destinationUserId) // duid
-                .timeEnded(System.currentTimeMillis()) // end
+                .timeEnded(message.timestamp) // end
                 .severity(CefMessageSeverity.INFO)
                 .extension("msg", message.message) // extension, msg i dette tilfellet
-                .build()
+                .apply {
+                    if (message.firstAttribute != null) {
+                        flexString(1, message.firstAttribute.first.label, message.firstAttribute.second.value)
+                    }
+                    if (message.secondAttribute != null) {
+                        flexString(2, message.secondAttribute.first.label, message.secondAttribute.second.value)
+                    }
+                }.build()
 
         auditLogger.log(cefMessage)
     }

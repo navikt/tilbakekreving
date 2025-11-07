@@ -6,13 +6,12 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import no.nav.tilbakekreving.app.SøkEtterInnkrevingskrav
-import no.nav.tilbakekreving.infrastructure.audit.AuditLog
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravoversiktJsonRequest
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravoversiktJsonResponse
 import no.nav.tilbakekreving.infrastructure.route.util.navUserPrincipal
 import org.slf4j.LoggerFactory
 
-context(kravAccessControl: KravAccessControl, auditLog: AuditLog)
+context(kravAccessControl: KravAccessControl)
 fun Route.hentKravoversikt(søkEtterInnkrevingskrav: SøkEtterInnkrevingskrav) {
     val logger = LoggerFactory.getLogger("HentKravoversiktRoute")
     post<HentKravoversiktJsonRequest> { hentKravoversiktJsonRequest ->
@@ -41,15 +40,6 @@ fun Route.hentKravoversikt(søkEtterInnkrevingskrav: SøkEtterInnkrevingskrav) {
 
         val filteredKrav = kravoversikt.krav.filterByAccess(groupIds)
         val filteredKravoversikt = kravoversikt.copy(krav = filteredKrav)
-
-        auditLog.info(
-            AuditLog.Message(
-                sourceUserId = principal.navIdent,
-                destinationUserId = filteredKravoversikt.skyldner.identifikator,
-                event = AuditLog.EventType.ACCESS,
-                message = "Hentet kravoversikt for skyldner",
-            ),
-        )
 
         call.respond(HttpStatusCode.OK, HentKravoversiktJsonResponse.fromDomain(filteredKravoversikt))
     }

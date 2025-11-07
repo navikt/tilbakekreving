@@ -49,6 +49,11 @@ fun Route.hentKravdetaljerRoute(hentKravdetaljer: HentKravdetaljer) {
                 destinationUserId = kravdetaljer.skyldner.identifikator,
                 event = AuditLog.EventType.ACCESS,
                 message = "Hentet kravdetaljer for innkrevingskrav",
+                firstAttribute =
+                    Pair(
+                        AuditLog.AttributeLabel("Nav-kravidentifikator"),
+                        AuditLog.AttributeValue(kravdetaljer.krav.kravgrunnlag.oppdragsgiversKravidentifikator),
+                    ),
             ),
         )
 

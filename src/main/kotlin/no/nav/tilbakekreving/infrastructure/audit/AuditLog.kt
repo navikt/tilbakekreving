@@ -16,6 +16,19 @@ interface AuditLog {
         val destinationUserId: String,
         val event: EventType,
         val message: String,
+        val timestamp: Long = System.currentTimeMillis(),
+        val firstAttribute: Pair<AttributeLabel, AttributeValue>? = null,
+        val secondAttribute: Pair<AttributeLabel, AttributeValue>? = null,
+    )
+
+    @JvmInline
+    value class AttributeLabel(
+        val label: String,
+    )
+
+    @JvmInline
+    value class AttributeValue(
+        val value: String,
     )
 
     /**

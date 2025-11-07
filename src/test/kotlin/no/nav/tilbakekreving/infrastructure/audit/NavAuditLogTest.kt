@@ -1,7 +1,7 @@
 package no.nav.tilbakekreving.infrastructure.audit
 
 import io.kotest.core.spec.style.WordSpec
-import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.equals.shouldBeEqual
 import io.mockk.every
 import io.mockk.slot
 import io.mockk.spyk
@@ -16,38 +16,34 @@ class NavAuditLogTest :
                 val auditLogger = spyk(AuditLoggerImpl())
                 val config =
                     AuditLog.Config(
-                        applicationName = "test-app",
-                        loggerName = "test-logger",
-                        loggType = "audit-test",
+                        applicationName = "Tilbakekreving",
+                        loggerName = "Auditlog",
+                        loggType = "Sporingslogg",
                     )
                 val navAuditLog = NavAuditLog(auditLogger, config)
 
                 val cefMessageSlot = slot<CefMessage>()
                 every { auditLogger.log(capture(cefMessageSlot)) } answers { callOriginal() }
 
+                val timestamp = System.currentTimeMillis()
                 val message =
                     AuditLog.Message(
                         sourceUserId = "Z123456",
                         destinationUserId = "12345678901",
                         event = AuditLog.EventType.ACCESS,
-                        message = "Accessed user data",
+                        message = "Hentet kravdetaljer for innkrevingskrav",
+                        timestamp = timestamp,
+                        firstAttribute =
+                            AuditLog.AttributeLabel("Nav-kravidentifikator") to
+                                AuditLog.AttributeValue("K123456"),
                     )
 
                 navAuditLog.info(message)
 
                 verify(exactly = 1) { auditLogger.log(any<CefMessage>()) }
 
-                val capturedMessage = cefMessageSlot.captured
-                val formattedMessage = capturedMessage.toString()
-
-                formattedMessage shouldContain "CEF:0"
-                formattedMessage shouldContain "test-app"
-                formattedMessage shouldContain "test-logger"
-                formattedMessage shouldContain "audit-test"
-                formattedMessage shouldContain "suid=Z123456"
-                formattedMessage shouldContain "duid=12345678901"
-                formattedMessage shouldContain "msg=Accessed user data"
-                formattedMessage shouldContain "end="
+                cefMessageSlot.captured.toString() shouldBeEqual
+                    "CEF:0|Tilbakekreving|Auditlog|1.0|audit:access|Sporingslogg|INFO|msg=Hentet kravdetaljer for innkrevingskrav flexString1=K123456 duid=12345678901 end=$timestamp flexString1Label=Nav-kravidentifikator suid=Z123456"
             }
         }
     })
