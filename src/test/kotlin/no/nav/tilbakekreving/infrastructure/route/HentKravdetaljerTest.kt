@@ -26,6 +26,7 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.datetime.LocalDate
+import no.nav.tilbakekreving.AppEnv
 import no.nav.tilbakekreving.app.HentKravdetaljer
 import no.nav.tilbakekreving.domain.KravDetalj
 import no.nav.tilbakekreving.domain.Kravdetaljer
@@ -71,7 +72,7 @@ class HentKravdetaljerTest :
                     routing {
                         authenticate(authenticationConfigName.name) {
                             route("/kravdetaljer") {
-                                context(auditLog) {
+                                context(auditLog, AppEnv.LOCAL) {
                                     hentKravdetaljerRoute(hentKravdetaljer)
                                 }
                             }
