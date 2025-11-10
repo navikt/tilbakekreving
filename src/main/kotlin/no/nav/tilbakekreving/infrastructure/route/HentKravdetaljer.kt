@@ -5,6 +5,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
+import no.nav.tilbakekreving.AppEnv
 import no.nav.tilbakekreving.app.HentKravdetaljer
 import no.nav.tilbakekreving.infrastructure.audit.AuditLog
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravdetaljerJsonRequest
@@ -12,7 +13,7 @@ import no.nav.tilbakekreving.infrastructure.route.json.HentKravdetaljerJsonRespo
 import no.nav.tilbakekreving.infrastructure.route.util.navUserPrincipal
 import org.slf4j.LoggerFactory
 
-context(auditLog: AuditLog)
+context(auditLog: AuditLog, appEnv: AppEnv)
 fun Route.hentKravdetaljerRoute(hentKravdetaljer: HentKravdetaljer) {
     val logger = LoggerFactory.getLogger("HentKravdetaljerRoute")
 
@@ -26,6 +27,24 @@ fun Route.hentKravdetaljerRoute(hentKravdetaljer: HentKravdetaljer) {
         val groupIds = principal.groupIds.toSet()
         logger.info("Henter kravoversikt for bruker med userGroups=$groupIds")
         val kravidentifikator = hentKravdetaljerJson.toDomain()
+
+        // TODO: Fjern etter at auditlog er verfisert i DEV
+        if (appEnv == AppEnv.DEV) {
+            auditLog.info(
+                AuditLog.Message(
+                    sourceUserId = principal.navIdent,
+                    destinationUserId = "01019012345",
+                    event = AuditLog.EventType.ACCESS,
+                    message = "Hentet kravdetaljer for innkrevingskrav",
+                    firstAttribute =
+                        Pair(
+                            AuditLog.AttributeLabel("Nav-kravidentifikator"),
+                            AuditLog.AttributeValue(kravidentifikator.id),
+                        ),
+                ),
+            )
+        }
+
         val kravdetaljer =
             hentKravdetaljer.hentKravdetaljer(kravidentifikator).getOrElse {
                 when (it) {
