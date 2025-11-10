@@ -25,7 +25,7 @@ fun Route.hentKravdetaljerRoute(hentKravdetaljer: HentKravdetaljer) {
                 return@post
             }
         val groupIds = principal.groupIds.toSet()
-        logger.info("Henter kravoversikt for bruker med userGroups=$groupIds")
+        logger.info("Henter kravdetaljer for bruker med userGroups=$groupIds")
         val kravidentifikator = hentKravdetaljerJson.toDomain()
 
         // TODO: Fjern etter at auditlog er verfisert i DEV
