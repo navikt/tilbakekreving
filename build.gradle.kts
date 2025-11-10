@@ -48,7 +48,7 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
     implementation("ch.qos.logback:logback-classic:1.5.21")
-    implementation("no.nav.common:audit-log:2.2023.01.10_13.49-81ddc732df3a")
+    implementation("no.nav.common:audit-log:3.2025.11.10_14.07-a9f44944d7bc")
 
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1-0.6.x-compat")
 
