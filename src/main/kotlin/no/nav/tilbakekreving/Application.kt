@@ -12,12 +12,10 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
-import no.nav.tilbakekreving.app.HentKravdetaljer
 import no.nav.tilbakekreving.infrastructure.audit.AuditLog
 import no.nav.tilbakekreving.infrastructure.audit.NavAuditLog
 import no.nav.tilbakekreving.infrastructure.client.TexasClient
 import no.nav.tilbakekreving.infrastructure.client.maskinporten.TexasMaskinportenClient
-import no.nav.tilbakekreving.infrastructure.client.skatteetaten.SkatteetatenInnkrevingsoppdrackMockHttpClient
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.SkatteetatenInnkrevingsoppdragHttpClient
 import no.nav.tilbakekreving.infrastructure.route.KravAccessControl
 import no.nav.tilbakekreving.infrastructure.route.hentKravdetaljerRoute
@@ -76,16 +74,6 @@ fun Application.module() {
                 tilbakekrevingConfig.skatteetaten.baseUrl,
                 skatteetatenClient,
             )
-        val hentKravdetaljer: HentKravdetaljer =
-            when (appEnv) {
-                AppEnv.DEV, AppEnv.LOCAL ->
-                    SkatteetatenInnkrevingsoppdrackMockHttpClient(
-                        tilbakekrevingConfig.skatteetaten.baseUrl,
-                        skatteetatenClient,
-                    )
-
-                AppEnv.PROD -> innkrevingsoppdragHttpClient
-            }
 
         val accessTokenVerifier = TexasClient(httpClient, tilbakekrevingConfig.nais.naisTokenIntrospectionEndpoint)
         val kravAccessControl = KravAccessControl(tilbakekrevingConfig.kravAcl, tilbakekrevingConfig.kravTilgangsgruppe)
@@ -100,7 +88,7 @@ fun Application.module() {
                 authenticate(authenticationConfigName.name) {
                     context(kravAccessControl, auditLog) {
                         route("/kravdetaljer") {
-                            hentKravdetaljerRoute(hentKravdetaljer)
+                            hentKravdetaljerRoute(innkrevingsoppdragHttpClient)
                         }
                         route("/kravoversikt") {
                             hentKravoversikt(innkrevingsoppdragHttpClient)

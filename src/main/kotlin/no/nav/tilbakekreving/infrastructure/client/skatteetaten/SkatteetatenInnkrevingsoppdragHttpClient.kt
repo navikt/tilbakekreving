@@ -36,7 +36,7 @@ class SkatteetatenInnkrevingsoppdragHttpClient(
     ): Either<HentKravdetaljer.HentKravdetaljerFeil, Kravdetaljer> =
         either {
             val httpResponse =
-                client.post("$baseUrl/api/innkreving/innkrevingsoppdrag/v1/kravdetaljer") {
+                client.post("$baseUrl/api/innkreving/innkrevingsoppdrag/v1/innkrevingsoppdrag/kravdetaljer") {
                     headers {
                         append("Klientid", "NAV/2.0")
                     }
