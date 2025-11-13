@@ -32,7 +32,7 @@ class SkatteetatenInnkrevingsoppdrackMockHttpClient(
     ): Either<HentKravdetaljer.HentKravdetaljerFeil, Kravdetaljer> =
         either {
             val httpResponse =
-                client.get("$baseUrl/api/innkreving/innkrevingsoppdrag/${kravidentifikator.id}/mock") {
+                client.get("$baseUrl/api/innkreving/innkrevingsoppdrag/v1/innkrevingsoppdrag/${kravidentifikator.id}/mock") {
                     headers {
                         append("Klientid", "NAV/2.0")
                     }
