@@ -37,14 +37,12 @@ data class KravResponseJson(
     val foreldelsesdato: String,
     val fastsettelsesdato: String,
     val kravtype: String,
-    @SerialName("opprinneligBeloep")
-    val opprinneligBeløp: Double,
-    @SerialName("gjenstaaendeBeloep")
-    val gjenståendeBeløp: Double,
+    @SerialName("opprinneligBeloep") val opprinneligBeløp: Double,
+    @SerialName("gjenstaaendeBeloep") val gjenståendeBeløp: Double,
     val skatteetatensKravidentifikator: String,
     val kravlinjer: List<KravlinjeResponseJson>,
     val kravgrunnlag: KravgrunnlagResponseJson,
-    val innbetalingerPlassertMotKrav: List<InnbetalingPlassertMotKravResponseJson>? = null,
+    val innbetalingerPlassertMotKrav: List<InnbetalingPlassertMotKravResponseJson> = emptyList(),
     val tilleggsinformasjon: TilleggsinformasjonResponseJson? = null,
 ) {
     fun toDomain(): KravDetalj =
@@ -58,7 +56,7 @@ data class KravResponseJson(
             skatteetatensKravidentifikator = skatteetatensKravidentifikator,
             kravlinjer = kravlinjer.map(KravlinjeResponseJson::toDomain),
             kravgrunnlag = kravgrunnlag.toDomain(),
-            innbetalingerPlassertMotKrav = innbetalingerPlassertMotKrav?.map { it.toDomain() } ?: emptyList(),
+            innbetalingerPlassertMotKrav = innbetalingerPlassertMotKrav.map { it.toDomain() },
             tilleggsinformasjon = tilleggsinformasjon?.toDomain(),
         )
 }
@@ -109,8 +107,7 @@ data class InnbetalingPlassertMotKravResponseJson(
     val innbetalingsIdentifikator: String,
     val innbetalingstype: String,
     val innbetalingsdato: String,
-    @SerialName("innbetaltBeloep")
-    val innbetaltBeløp: Double,
+    @SerialName("innbetaltBeloep") val innbetaltBeløp: Double,
 ) {
     fun toDomain(): InnbetalingPlassertMotKrav =
         InnbetalingPlassertMotKrav(
@@ -123,8 +120,8 @@ data class InnbetalingPlassertMotKravResponseJson(
 
 @Serializable
 data class TilleggsinformasjonResponseJson(
-    @SerialName("tilleggsinformasjonBroennoeysundRegistrene")
-    val tilleggsinformasjonBrønnøysundRegistrene: TilleggsinformasjonBrønnøysundRegistreneResponseJson? = null,
+    @SerialName("tilleggsinformasjonBroennoeysundRegistrene") val tilleggsinformasjonBrønnøysundRegistrene:
+        TilleggsinformasjonBrønnøysundRegistreneResponseJson? = null,
     val tilleggsinformasjonNav: TilleggsinformasjonNavResponseJson? = null,
 ) {
     fun toDomain(): Tilleggsinformasjon? =
@@ -138,8 +135,7 @@ data class TilleggsinformasjonResponseJson(
 @Serializable
 data class TilleggsinformasjonBrønnøysundRegistreneResponseJson(
     val periode: PeriodeMedTvangsmulktResponseJson,
-    @SerialName("stoppdatoForLoependeMulkt")
-    val stoppdatoForLøpendeMulkt: String? = null,
+    @SerialName("stoppdatoForLoependeMulkt") val stoppdatoForLøpendeMulkt: String? = null,
 ) {
     fun toDomain(): Tilleggsinformasjon.BrønnøysundRegistrene =
         Tilleggsinformasjon.BrønnøysundRegistrene(
@@ -175,8 +171,7 @@ data class PeriodeMedTvangsmulktResponseJson(
 @Serializable
 data class YtelseForAvregningBeløpResponseJson(
     val valuta: String,
-    @SerialName("beloep")
-    val beløp: Long,
+    @SerialName("beloep") val beløp: Long,
 ) {
     fun toDomain(): YtelseForAvregningBeløp =
         YtelseForAvregningBeløp(

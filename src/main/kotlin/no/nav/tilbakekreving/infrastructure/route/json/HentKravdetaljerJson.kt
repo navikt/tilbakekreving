@@ -37,16 +37,16 @@ data class HentKravdetaljerJsonResponse(
 
 @Serializable
 data class KravDetaljResponseJson(
-    val forfallsdato: LocalDate,
-    val foreldelsesdato: LocalDate,
-    val fastsettelsesdato: LocalDate,
+    val forfallsdato: LocalDate?,
+    val foreldelsesdato: LocalDate?,
+    val fastsettelsesdato: LocalDate?,
     val kravtype: String,
     val opprinneligBeløp: Double,
     val gjenståendeBeløp: Double,
     val skatteetatensKravidentifikator: String,
-    val kravlinjer: List<KravlinjeResponseJson>,
+    val kravlinjer: List<KravlinjeResponseJson> = emptyList(),
     val kravgrunnlag: KravgrunnlagResponseJson,
-    val innbetalingerPlassertMotKrav: List<InnbetalingPlassertMotKravResponseJson>,
+    val innbetalingerPlassertMotKrav: List<InnbetalingPlassertMotKravResponseJson> = emptyList(),
     val tilleggsinformasjon: TilleggsinformasjonResponseJson? = null,
 ) {
     companion object {
@@ -89,7 +89,7 @@ data class OppdragsgiverResponseJson(
 @Serializable
 data class KravdetaljerSkyldnerResponseJson(
     val identifikator: String,
-    val skyldnersNavn: String? = null,
+    val skyldnersNavn: String?,
 ) {
     companion object {
         fun fromDomain(skyldner: KravdetaljerSkyldner): KravdetaljerSkyldnerResponseJson =
@@ -120,7 +120,7 @@ data class AvvikResponseJson(
 
 @Serializable
 data class KravgrunnlagResponseJson(
-    val oppdragsgiversKravidentifikator: String,
+    val oppdragsgiversKravidentifikator: String?,
     val oppdragsgiversReferanse: String?,
 ) {
     companion object {
@@ -136,8 +136,8 @@ data class KravgrunnlagResponseJson(
 data class KravlinjeResponseJson(
     val kravlinjetype: String,
     val opprinneligBeløp: Double,
-    val gjenståendeBeløp: Double,
-    val kravlinjeBeskrivelse: Map<String, String>,
+    val gjenståendeBeløp: Double?,
+    val kravlinjeBeskrivelse: Map<String, String> = emptyMap(),
 ) {
     companion object {
         fun fromDomain(kravlinje: Kravlinje): KravlinjeResponseJson =

@@ -156,7 +156,8 @@ class HentKravdetaljerTest :
                                     "oppdragsgiversKravidentifikator": "123456789",
                                     "oppdragsgiversReferanse": "ref-123"
                                 },
-                                "innbetalingerPlassertMotKrav": []
+                                "innbetalingerPlassertMotKrav": [],
+                                "tilleggsinformasjon": null
                             },
                             "oppdragsgiver": {
                                 "organisasjonsnummer": "987654321",
@@ -165,7 +166,8 @@ class HentKravdetaljerTest :
                             "skyldner": {
                                 "identifikator": "12345678901",
                                 "skyldnersNavn": "Test Person"
-                            }
+                            },
+                            "avvik": null
                         }
                         """.trimIndent(),
                     )
