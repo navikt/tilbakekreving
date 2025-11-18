@@ -20,7 +20,7 @@ data class HentKravdetaljerResponsJson(
     val krav: KravResponseJson,
     val oppdragsgiver: OppdragsgiverResponseJson,
     val skyldner: SkyldnerResponseJson,
-    val avvik: AvvikResponseJson? = null,
+    val avvik: AvvikResponseJson?,
 ) {
     fun toDomain(): Kravdetaljer =
         Kravdetaljer(
@@ -33,23 +33,23 @@ data class HentKravdetaljerResponsJson(
 
 @Serializable
 data class KravResponseJson(
-    val forfallsdato: String,
-    val foreldelsesdato: String,
-    val fastsettelsesdato: String,
+    val forfallsdato: String?,
+    val foreldelsesdato: String?,
+    val fastsettelsesdato: String?,
     val kravtype: String,
     @SerialName("opprinneligBeloep") val opprinneligBeløp: Double,
     @SerialName("gjenstaaendeBeloep") val gjenståendeBeløp: Double,
     val skatteetatensKravidentifikator: String,
-    val kravlinjer: List<KravlinjeResponseJson>,
+    val kravlinjer: List<KravlinjeResponseJson> = emptyList(),
     val kravgrunnlag: KravgrunnlagResponseJson,
     val innbetalingerPlassertMotKrav: List<InnbetalingPlassertMotKravResponseJson> = emptyList(),
-    val tilleggsinformasjon: TilleggsinformasjonResponseJson? = null,
+    val tilleggsinformasjon: TilleggsinformasjonResponseJson?,
 ) {
     fun toDomain(): KravDetalj =
         KravDetalj(
-            forfallsdato = LocalDate.parse(forfallsdato),
-            foreldelsesdato = LocalDate.parse(foreldelsesdato),
-            fastsettelsesdato = LocalDate.parse(fastsettelsesdato),
+            forfallsdato = forfallsdato?.let { LocalDate.parse(it) },
+            foreldelsesdato = foreldelsesdato?.let { LocalDate.parse(it) },
+            fastsettelsesdato = fastsettelsesdato?.let { LocalDate.parse(it) },
             kravtype = kravtype,
             opprinneligBeløp = opprinneligBeløp,
             gjenståendeBeløp = gjenståendeBeløp,
@@ -76,7 +76,7 @@ data class OppdragsgiverResponseJson(
 @Serializable
 data class SkyldnerResponseJson(
     val identifikator: String,
-    val skyldnersNavn: String? = null,
+    val skyldnersNavn: String?,
 ) {
     fun toDomain(): KravdetaljerSkyldner =
         KravdetaljerSkyldner(

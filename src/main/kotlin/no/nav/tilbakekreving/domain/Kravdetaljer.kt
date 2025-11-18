@@ -10,9 +10,9 @@ data class Kravdetaljer(
 )
 
 data class KravDetalj(
-    val forfallsdato: LocalDate,
-    val foreldelsesdato: LocalDate,
-    val fastsettelsesdato: LocalDate,
+    val forfallsdato: LocalDate?,
+    val foreldelsesdato: LocalDate?,
+    val fastsettelsesdato: LocalDate?,
     val kravtype: String,
     val opprinneligBeløp: Double,
     val gjenståendeBeløp: Double,
