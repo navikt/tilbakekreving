@@ -20,7 +20,7 @@ data class Krav(
 
 data class Oppdragsgiver(
     val organisasjonsnummer: String,
-    val organisasjonsnavn: String,
+    val organisasjonsnavn: String?,
 )
 
 data class KravoversiktSkyldner(

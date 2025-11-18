@@ -75,7 +75,7 @@ data class KravDetaljResponseJson(
 @Serializable
 data class OppdragsgiverResponseJson(
     val organisasjonsnummer: String,
-    val organisasjonsnavn: String,
+    val organisasjonsnavn: String?,
 ) {
     companion object {
         fun fromDomain(oppdragsgiver: Oppdragsgiver): OppdragsgiverResponseJson =

@@ -66,7 +66,7 @@ data class KravResponseJson(
 @Serializable
 data class OppdragsgiverResponseJson(
     val organisasjonsnummer: String,
-    val organisasjonsnavn: String,
+    val organisasjonsnavn: String?,
 ) {
     fun toDomain(): Oppdragsgiver =
         Oppdragsgiver(

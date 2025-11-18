@@ -52,7 +52,7 @@ data class KravResponseJson(
 @Serializable
 data class OppdragsgiverJsonResponse(
     val organisasjonsnummer: String,
-    val organisasjonsnavn: String,
+    val organisasjonsnavn: String?,
 ) {
     companion object {
         fun from(oppdragsgiver: Oppdragsgiver): OppdragsgiverJsonResponse =
