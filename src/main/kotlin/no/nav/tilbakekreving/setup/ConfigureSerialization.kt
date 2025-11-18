@@ -11,7 +11,6 @@ fun Application.configureSerialization() {
         json(
             Json {
                 ignoreUnknownKeys = true
-                explicitNulls = false
             },
         )
     }
