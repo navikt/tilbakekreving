@@ -6,7 +6,7 @@ import no.nav.tilbakekreving.domain.Kravgrunnlag
 @Serializable
 data class KravgrunnlagResponseJson(
     val oppdragsgiversKravidentifikator: String,
-    val oppdragsgiversReferanse: String,
+    val oppdragsgiversReferanse: String?,
 ) {
     fun toDomain(): Kravgrunnlag =
         Kravgrunnlag(

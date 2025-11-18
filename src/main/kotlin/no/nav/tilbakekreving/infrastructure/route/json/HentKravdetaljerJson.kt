@@ -121,7 +121,7 @@ data class AvvikResponseJson(
 @Serializable
 data class KravgrunnlagResponseJson(
     val oppdragsgiversKravidentifikator: String,
-    val oppdragsgiversReferanse: String,
+    val oppdragsgiversReferanse: String?,
 ) {
     companion object {
         fun fromDomain(kravgrunnlag: Kravgrunnlag): KravgrunnlagResponseJson =
