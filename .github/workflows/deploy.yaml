@@ -27,7 +27,7 @@ jobs:
       id-token: "write"
     environment: "${{ inputs.gh_environment }}"
     steps:
-      - uses: "actions/checkout@v5"
+      - uses: "actions/checkout@v6"
       - name: "Deploy to ${{ inputs.cluster }}"
         uses: "nais/deploy/actions/deploy@v2"
         env:
