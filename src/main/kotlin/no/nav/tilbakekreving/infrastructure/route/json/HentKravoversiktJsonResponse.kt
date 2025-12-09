@@ -2,6 +2,7 @@ package no.nav.tilbakekreving.infrastructure.route.json
 
 import kotlinx.serialization.Serializable
 import no.nav.tilbakekreving.domain.Krav
+import no.nav.tilbakekreving.domain.Kravbeskrivelse
 import no.nav.tilbakekreving.domain.Kravoversikt
 import no.nav.tilbakekreving.domain.KravoversiktSkyldner
 import no.nav.tilbakekreving.domain.Oppdragsgiver
@@ -25,12 +26,26 @@ data class HentKravoversiktJsonResponse(
 }
 
 @Serializable
+data class KravbeskrivelseJson(
+    val språk: String,
+    val tekst: String,
+) {
+    companion object {
+        fun fromDomain(kravbeskrivelse: Kravbeskrivelse): KravbeskrivelseJson =
+            KravbeskrivelseJson(
+                språk = kravbeskrivelse.locale.toLanguageTag(),
+                tekst = kravbeskrivelse.beskrivelse,
+            )
+    }
+}
+
+@Serializable
 data class KravResponseJson(
     val skeKravidentifikator: String,
     val navKravidentifikator: String,
     val navReferanse: String?,
     val kravtype: String,
-    val kravbeskrivelse: Map<String, String>,
+    val kravbeskrivelse: List<KravbeskrivelseJson>,
     val gjenståendeBeløp: Double,
 ) {
     companion object {
@@ -40,10 +55,7 @@ data class KravResponseJson(
                 navKravidentifikator = krav.navKravidentifikator.id,
                 navReferanse = krav.navReferanse,
                 kravtype = krav.kravtype.value,
-                kravbeskrivelse =
-                    krav.kravbeskrivelse
-                        .map { (locale, beskrivelse) -> locale.toLanguageTag() to beskrivelse.value }
-                        .toMap(),
+                kravbeskrivelse = krav.kravbeskrivelse.map(KravbeskrivelseJson::fromDomain),
                 gjenståendeBeløp = krav.gjenståendeBeløp,
             )
     }

@@ -206,7 +206,7 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                         navKravidentifikator = Kravidentifikator.Nav("310ade77-8d45-48e8-b053-72659f53b4eb"),
                         navReferanse = "ref1",
                         kravtype = Kravtype("OB04"),
-                        kravbeskrivelse = mapOf(Locale.forLanguageTag("NB") to Kravbeskrivelse("Eksempeltekst")),
+                        kravbeskrivelse = listOf(Kravbeskrivelse(Locale.forLanguageTag("NB"), "Eksempeltekst")),
                         gjenståendeBeløp = 1000.0,
                     ),
                 )

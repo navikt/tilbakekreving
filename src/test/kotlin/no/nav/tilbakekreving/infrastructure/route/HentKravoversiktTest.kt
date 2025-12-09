@@ -75,7 +75,13 @@ class HentKravoversiktTest :
                                     navKravidentifikator = Kravidentifikator.Nav("123456789"),
                                     navReferanse = "ref1",
                                     kravtype = Kravtype("Kravtype"),
-                                    kravbeskrivelse = mapOf(Locale.forLanguageTag("nb") to Kravbeskrivelse("Test beskrivelse")),
+                                    kravbeskrivelse =
+                                        listOf(
+                                            Kravbeskrivelse(
+                                                Locale.forLanguageTag("nb"),
+                                                "Test beskrivelse",
+                                            ),
+                                        ),
                                     gjenståendeBeløp = 1000.0,
                                 ),
                             ),
@@ -103,33 +109,36 @@ class HentKravoversiktTest :
                         // language=json
                         """
                         {
-                            "oppdragsgiver": {
-                                "organisasjonsnummer": "123456789",
-                                "organisasjonsnavn": "Test Oppdragsgiver"
-                            },
-                            "krav": [
+                          "oppdragsgiver": {
+                            "organisasjonsnummer": "123456789",
+                            "organisasjonsnavn": "Test Oppdragsgiver"
+                          },
+                          "krav": [
+                            {
+                              "skeKravidentifikator": "skatte-123456789",
+                              "navKravidentifikator": "123456789",
+                              "navReferanse": "ref1",
+                              "kravtype": "Kravtype",
+                              "kravbeskrivelse": [
                                 {
-                                    "skeKravidentifikator": "skatte-123456789",
-                                    "navKravidentifikator": "123456789",
-                                    "navReferanse": "ref1",
-                                    "kravtype": "Kravtype",
-                                    "kravbeskrivelse": {
-                                        "nb": "Test beskrivelse"
-                                    },
-                                    "gjenståendeBeløp": 1000.0
+                                  "språk": "nb",
+                                  "tekst": "Test beskrivelse"
                                 }
-                            ],
-                            "gjenståendeBeløpForSkyldner": 1000.0,
-                            "skyldner": {
-                                "identifikator": "123456789",
-                                "skyldnersNavn": "Test Skyldner"
+                              ],
+                              "gjenståendeBeløp": 1000.0
                             }
+                          ],
+                          "gjenståendeBeløpForSkyldner": 1000.0,
+                          "skyldner": {
+                            "identifikator": "123456789",
+                            "skyldnersNavn": "Test Skyldner"
+                          }
                         }
                         """.trimIndent(),
                     )
             }
 
-            /**
+            /*
              * TODO: Skru på test når [KravAccessControl.isKravAccessibleTo] er ferdig implementert.
              */
             "returnere 200 med utvalgt kravoversikt basert på roller".config(enabled = false) {
@@ -143,7 +152,13 @@ class HentKravoversiktTest :
                                     navKravidentifikator = Kravidentifikator.Nav("123456789"),
                                     navReferanse = "ref1",
                                     kravtype = Kravtype("Kravtype"),
-                                    kravbeskrivelse = mapOf(Locale.forLanguageTag("nb") to Kravbeskrivelse("Test beskrivelse")),
+                                    kravbeskrivelse =
+                                        listOf(
+                                            Kravbeskrivelse(
+                                                Locale.forLanguageTag("nb"),
+                                                "Test beskrivelse",
+                                            ),
+                                        ),
                                     gjenståendeBeløp = 1000.0,
                                 ),
                                 Krav(
@@ -151,7 +166,13 @@ class HentKravoversiktTest :
                                     navKravidentifikator = Kravidentifikator.Nav("987654321"),
                                     navReferanse = "ref2",
                                     kravtype = Kravtype("Kravtype1"),
-                                    kravbeskrivelse = mapOf(Locale.forLanguageTag("nb") to Kravbeskrivelse("Test beskrivelse 2")),
+                                    kravbeskrivelse =
+                                        listOf(
+                                            Kravbeskrivelse(
+                                                Locale.forLanguageTag("nb"),
+                                                "Test beskrivelse 2",
+                                            ),
+                                        ),
                                     gjenståendeBeløp = 2000.0,
                                 ),
                             ),

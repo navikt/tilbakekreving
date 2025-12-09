@@ -17,9 +17,9 @@ import no.nav.tilbakekreving.domain.YtelseForAvregningBeløp
 
 @Serializable
 data class HentKravdetaljerResponsJson(
-    val krav: KravResponseJson,
     val oppdragsgiver: OppdragsgiverResponseJson,
     val skyldner: SkyldnerResponseJson,
+    val krav: KravResponseJson,
     val avvik: AvvikResponseJson?,
 ) {
     fun toDomain(): Kravdetaljer =

@@ -57,7 +57,7 @@ class AuthenticationTest :
                                         navKravidentifikator = Kravidentifikator.Nav("123"),
                                         navReferanse = null,
                                         kravtype = Kravtype("TYPE_A"),
-                                        kravbeskrivelse = mapOf(Locale.forLanguageTag("nb") to Kravbeskrivelse("Test")),
+                                        kravbeskrivelse = listOf(Kravbeskrivelse(Locale.forLanguageTag("nb"), "Test")),
                                         gjenståendeBeløp = 1000.0,
                                     )
                                 val allowed =

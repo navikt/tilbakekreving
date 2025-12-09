@@ -14,7 +14,7 @@ data class Krav(
     val navKravidentifikator: Kravidentifikator.Nav,
     val navReferanse: String?,
     val kravtype: Kravtype,
-    val kravbeskrivelse: Map<Locale, Kravbeskrivelse>,
+    val kravbeskrivelse: List<Kravbeskrivelse>,
     val gjenståendeBeløp: Double,
 )
 
@@ -28,12 +28,12 @@ data class KravoversiktSkyldner(
     val skyldnersNavn: String?,
 )
 
-@JvmInline
-value class Kravtype(
-    val value: String,
+data class Kravbeskrivelse(
+    val locale: Locale,
+    val beskrivelse: String,
 )
 
 @JvmInline
-value class Kravbeskrivelse(
+value class Kravtype(
     val value: String,
 )

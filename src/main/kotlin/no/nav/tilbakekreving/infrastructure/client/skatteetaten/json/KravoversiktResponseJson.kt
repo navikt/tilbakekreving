@@ -41,13 +41,7 @@ data class KravJson(
             navKravidentifikator = Kravidentifikator.Nav(kravgrunnlag.oppdragsgiversKravidentifikator),
             navReferanse = kravgrunnlag.oppdragsgiversReferanse,
             kravtype = Kravtype(kravtype),
-            kravbeskrivelse =
-                kravbeskrivelse.språkTekst.associate {
-                    Locale.forLanguageTag(it.språk) to
-                        Kravbeskrivelse(
-                            it.tekst,
-                        )
-                },
+            kravbeskrivelse = kravbeskrivelse.toDomain(),
             gjenståendeBeløp = gjenståendeBeløp,
         )
 }
@@ -85,10 +79,14 @@ data class SkyldnerJson(
 @Serializable
 data class MultiSpråkTekstJson(
     @SerialName("spraakTekst") val språkTekst: List<SpråkTekstJson>,
-)
+) {
+    fun toDomain(): List<Kravbeskrivelse> = språkTekst.map(SpråkTekstJson::toDomain)
+}
 
 @Serializable
 data class SpråkTekstJson(
     val tekst: String,
     @SerialName("spraak") val språk: String,
-)
+) {
+    fun toDomain(): Kravbeskrivelse = Kravbeskrivelse(Locale.forLanguageTag(språk), tekst)
+}
