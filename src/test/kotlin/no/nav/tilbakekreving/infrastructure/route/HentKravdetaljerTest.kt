@@ -88,8 +88,8 @@ class HentKravdetaljerTest :
                         foreldelsesdato = LocalDate(2030, 1, 1),
                         fastsettelsesdato = LocalDate(2024, 12, 1),
                         kravtype = "OB04",
-                        opprinneligBeløp = 1000.0,
-                        gjenståendeBeløp = 500.0,
+                        `opprinneligBeløp` = 1000.0,
+                        `gjenståendeBeløp` = 500.0,
                         skatteetatensKravidentifikator = "skatte-123",
                         kravlinjer =
                             listOf(

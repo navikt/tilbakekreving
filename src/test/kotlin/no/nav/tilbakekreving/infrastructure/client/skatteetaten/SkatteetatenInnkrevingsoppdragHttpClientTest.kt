@@ -46,8 +46,8 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                                 foreldelsesdato = LocalDate.parse("2030-01-01"),
                                 fastsettelsesdato = LocalDate.parse("2024-01-01"),
                                 kravtype = "OB04",
-                                opprinneligBeløp = 100.0,
-                                gjenståendeBeløp = 50.0,
+                                `opprinneligBeløp` = 100.0,
+                                `gjenståendeBeløp` = 50.0,
                                 skatteetatensKravidentifikator = "skatte-123",
                                 kravlinjer =
                                     listOf(
