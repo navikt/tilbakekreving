@@ -29,7 +29,7 @@ data class HentKravoversiktResponseJson(
 
 @Serializable
 data class KravJson(
-    val skatteetatensKravidentifikator: String,
+    val skatteetatensKravidentifikator: String?,
     val kravtype: String,
     val kravbeskrivelse: MultiSpråkTekstJson,
     val kravgrunnlag: KravgrunnlagJson,
@@ -37,7 +37,7 @@ data class KravJson(
 ) {
     fun toDomain(): Krav =
         Krav(
-            skeKravidentifikator = Kravidentifikator.Skatteetaten(skatteetatensKravidentifikator),
+            skeKravidentifikator = skatteetatensKravidentifikator?.let { Kravidentifikator.Skatteetaten(it) },
             navKravidentifikator = Kravidentifikator.Nav(kravgrunnlag.oppdragsgiversKravidentifikator),
             navReferanse = kravgrunnlag.oppdragsgiversReferanse,
             kravtype = Kravtype(kravtype),

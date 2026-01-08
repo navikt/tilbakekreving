@@ -10,7 +10,7 @@ data class Kravoversikt(
 )
 
 data class Krav(
-    val skeKravidentifikator: Kravidentifikator.Skatteetaten,
+    val skeKravidentifikator: Kravidentifikator.Skatteetaten?,
     val navKravidentifikator: Kravidentifikator.Nav,
     val navReferanse: String?,
     val kravtype: Kravtype,
