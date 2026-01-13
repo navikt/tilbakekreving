@@ -46,7 +46,10 @@ class TexasClient(
                 raise(AccessTokenVerifier.VerificationError.FailedToVerifyToken)
             } else {
                 when (val verifyTokenResponse = response.body<VerifyTokenResponse>()) {
-                    is VerifyTokenResponse.ValidTokenResponse -> verifyTokenResponse.toDomain()
+                    is VerifyTokenResponse.ValidTokenResponse -> {
+                        verifyTokenResponse.toDomain()
+                    }
+
                     is VerifyTokenResponse.InvalidTokenResponse -> {
                         logger.info("Token is invalid: ${verifyTokenResponse.error}")
                         raise(AccessTokenVerifier.VerificationError.InvalidToken)

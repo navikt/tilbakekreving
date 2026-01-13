@@ -46,7 +46,10 @@ fun Application.module() {
         val tilbakekrevingConfig =
             loadConfiguration().also {
                 when (appEnv) {
-                    AppEnv.LOCAL, AppEnv.DEV -> log.info("Loaded configuration: $it")
+                    AppEnv.LOCAL, AppEnv.DEV -> {
+                        log.info("Loaded configuration: $it")
+                    }
+
                     AppEnv.PROD -> {}
                 }
             }

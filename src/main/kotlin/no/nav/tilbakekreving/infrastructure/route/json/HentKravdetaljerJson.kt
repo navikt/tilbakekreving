@@ -182,14 +182,15 @@ data class TilleggsinformasjonResponseJson(
     companion object {
         fun fromDomain(tilleggsinformasjon: Tilleggsinformasjon): TilleggsinformasjonResponseJson =
             when (tilleggsinformasjon) {
-                is Tilleggsinformasjon.BrønnøysundRegistrene ->
+                is Tilleggsinformasjon.BrønnøysundRegistrene -> {
                     TilleggsinformasjonResponseJson(
                         type = "BrønnøysundRegistrene",
                         periode = PeriodeMedTvangsmulktResponseJson.fromDomain(tilleggsinformasjon.periode),
                         stoppdatoForLøpendeMulkt = tilleggsinformasjon.stoppdatoForLøpendeMulkt,
                     )
+                }
 
-                is Tilleggsinformasjon.Nav ->
+                is Tilleggsinformasjon.Nav -> {
                     TilleggsinformasjonResponseJson(
                         type = "Nav",
                         ytelserForAvregning =
@@ -198,8 +199,12 @@ data class TilleggsinformasjonResponseJson(
                                     it,
                                 )
                             },
-                        tilbakekrevingsperiode = TilbakekrevingsperiodeResponseJson.fromDomain(tilleggsinformasjon.tilbakekrevingsperiode),
+                        tilbakekrevingsperiode =
+                            TilbakekrevingsperiodeResponseJson.fromDomain(
+                                tilleggsinformasjon.tilbakekrevingsperiode,
+                            ),
                     )
+                }
             }
     }
 }
