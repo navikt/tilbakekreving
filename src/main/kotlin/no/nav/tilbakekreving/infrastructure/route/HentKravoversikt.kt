@@ -23,17 +23,17 @@ fun Route.hentKravoversikt(søkEtterInnkrevingskrav: SøkEtterInnkrevingskrav) {
             }
 
         val groupIds = principal.groupIds.toSet()
-        logger.info("Henter kravoversikt for ${principal.navIdent} med userGroups=$groupIds")
 
         val skyldnersøk = hentKravoversiktJsonRequest.toDomain()
         val kravoversikt =
             søkEtterInnkrevingskrav.søk(skyldnersøk).getOrElse {
                 when (it) {
-                    SøkEtterInnkrevingskrav.Feil.SøkEtterInnkrevingskravFeil ->
+                    SøkEtterInnkrevingskrav.Feil.SøkEtterInnkrevingskravFeil -> {
                         call.respond(
                             HttpStatusCode.InternalServerError,
                             "Feil ved henting av kravoversikt",
                         )
+                    }
                 }
                 return@post
             }

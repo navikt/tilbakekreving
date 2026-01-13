@@ -23,23 +23,24 @@ fun Route.hentKravdetaljerRoute(hentKravdetaljer: HentKravdetaljer) {
                 call.respond(HttpStatusCode.Unauthorized, "Ugyldig bruker")
                 return@post
             }
-        val groupIds = principal.groupIds.toSet()
-        logger.info("Henter kravdetaljer for bruker med userGroups=$groupIds")
+        principal.groupIds.toSet()
         val kravidentifikator = hentKravdetaljerJson.toDomain()
 
         val kravdetaljer =
             hentKravdetaljer.hentKravdetaljer(kravidentifikator).getOrElse {
                 when (it) {
-                    HentKravdetaljer.HentKravdetaljerFeil.FantIkkeKravdetaljer ->
+                    HentKravdetaljer.HentKravdetaljerFeil.FantIkkeKravdetaljer -> {
                         call.respond(
                             HttpStatusCode.NoContent,
                         )
+                    }
 
-                    HentKravdetaljer.HentKravdetaljerFeil.FeilVedHentingAvKravdetaljer ->
+                    HentKravdetaljer.HentKravdetaljerFeil.FeilVedHentingAvKravdetaljer -> {
                         call.respond(
                             HttpStatusCode.InternalServerError,
                             "Feil ved henting av kravdetaljer",
                         )
+                    }
                 }
                 return@post
             }
