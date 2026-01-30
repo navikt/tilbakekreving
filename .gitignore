@@ -1,6 +1,7 @@
 # Gradle build outputs
 .gradle/
 build/
+docs/
 
 # IntelliJ IDEA
 .idea/

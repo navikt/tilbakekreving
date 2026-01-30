@@ -23,7 +23,7 @@ fun Route.hentKravdetaljerRoute(hentKravdetaljer: HentKravdetaljer) {
                 call.respond(HttpStatusCode.Unauthorized, "Ugyldig bruker")
                 return@post
             }
-        principal.groupIds.toSet()
+
         val kravidentifikator = hentKravdetaljerJson.toDomain()
 
         val kravdetaljer =

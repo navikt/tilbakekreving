@@ -4,7 +4,7 @@ val kotlinVersion = "2.3.0"
 
 plugins {
     kotlin("jvm") version "2.3.0"
-    id("io.ktor.plugin") version "3.3.3"
+    id("io.ktor.plugin") version "3.4.0"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.3.0"
     id("com.github.ben-manes.versions") version "0.53.0"
 }
@@ -38,12 +38,17 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-server-auth:$ktorVersion")
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
+    implementation("io.ktor:ktor-server-openapi:$ktorVersion")
+    implementation("io.ktor:ktor-server-routing-openapi:$ktorVersion")
+    implementation("io.ktor:ktor-server-swagger:$ktorVersion")
 
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-client-auth:$ktorVersion")
     implementation("io.ktor:ktor-client-logging:$ktorVersion")
+
+    implementation("io.swagger.codegen.v3:swagger-codegen-generators:1.0.59")
 
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
@@ -73,6 +78,14 @@ dependencies {
 
     val mockkVersion = "1.14.9"
     testImplementation("io.mockk:mockk:$mockkVersion")
+}
+
+ktor {
+    openApi {
+        enabled = true
+        codeInferenceEnabled = true
+        onlyCommented = false
+    }
 }
 
 tasks {

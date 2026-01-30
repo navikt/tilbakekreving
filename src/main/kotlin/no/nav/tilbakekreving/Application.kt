@@ -2,16 +2,22 @@ package no.nav.tilbakekreving
 
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.HttpTimeout
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
+import io.ktor.openapi.OpenApiInfo
 import io.ktor.server.application.Application
 import io.ktor.server.application.log
 import io.ktor.server.auth.authenticate
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import io.ktor.server.plugins.openapi.openAPI
+import io.ktor.server.plugins.swagger.swaggerUI
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
+import io.ktor.server.routing.openapi.OpenApiDocSource
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
+import io.ktor.server.routing.routingRoot
 import no.nav.tilbakekreving.infrastructure.audit.AuditLog
 import no.nav.tilbakekreving.infrastructure.audit.NavAuditLog
 import no.nav.tilbakekreving.infrastructure.client.TexasClient
@@ -104,6 +110,14 @@ fun Application.module() {
                 get("/isReady") {
                     call.respond<HttpStatusCode>(HttpStatusCode.OK)
                 }
+            }
+            openAPI("/openApi")
+            swaggerUI("/swagger") {
+                info = OpenApiInfo("Tilbakekreving API", "1.0")
+                source =
+                    OpenApiDocSource.Routing(ContentType.Application.Json) {
+                        routingRoot.descendants()
+                    }
             }
         }
     }

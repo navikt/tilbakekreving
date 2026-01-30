@@ -45,8 +45,8 @@ data class KravResponseJson(
     val navKravidentifikator: String,
     val navReferanse: String?,
     val kravtype: String,
-    val kravbeskrivelse: List<KravbeskrivelseJson>,
-    val gjenståendeBeløp: Double,
+    val kravbeskrivelse: Array<KravbeskrivelseJson>,
+    val `gjenståendeBeløp`: Double,
 ) {
     companion object {
         fun from(krav: Krav): KravResponseJson =
@@ -55,9 +55,35 @@ data class KravResponseJson(
                 navKravidentifikator = krav.navKravidentifikator.id,
                 navReferanse = krav.navReferanse,
                 kravtype = krav.kravtype.value,
-                kravbeskrivelse = krav.kravbeskrivelse.map(KravbeskrivelseJson::fromDomain),
-                gjenståendeBeløp = krav.gjenståendeBeløp,
+                kravbeskrivelse = krav.kravbeskrivelse.map(KravbeskrivelseJson::fromDomain).toTypedArray(),
+                `gjenståendeBeløp` = krav.gjenståendeBeløp,
             )
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as KravResponseJson
+
+        if (`gjenståendeBeløp` != other.`gjenståendeBeløp`) return false
+        if (skeKravidentifikator != other.skeKravidentifikator) return false
+        if (navKravidentifikator != other.navKravidentifikator) return false
+        if (navReferanse != other.navReferanse) return false
+        if (kravtype != other.kravtype) return false
+        if (!kravbeskrivelse.contentEquals(other.kravbeskrivelse)) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = `gjenståendeBeløp`.hashCode()
+        result = 31 * result + (skeKravidentifikator?.hashCode() ?: 0)
+        result = 31 * result + navKravidentifikator.hashCode()
+        result = 31 * result + (navReferanse?.hashCode() ?: 0)
+        result = 31 * result + kravtype.hashCode()
+        result = 31 * result + kravbeskrivelse.contentHashCode()
+        return result
     }
 }
 
