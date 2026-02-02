@@ -1,8 +1,15 @@
+FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/jre:openjdk-25-dev as build
+
+WORKDIR /
+
+# Mappe for genererte OpenAPI- og Swagger-filer
+RUN mkdir /docs
+
 FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/jre:openjdk-25
 
-WORKDIR /tilbakekreving/docs
-
 WORKDIR /tilbakekreving
+
+COPY --from=build --chown=65532:65532 /docs /tilbakekreving/docs
 
 COPY build/install/tilbakekreving/lib/ lib/
 
