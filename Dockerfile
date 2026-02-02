@@ -3,7 +3,7 @@ FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/jre:openjdk-25-dev
 USER root
 
 # Mappe for genererte OpenAPI- og Swagger-filer
-RUN mkdir /prep/docs
+RUN mkdir -p /prep/docs
 
 FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/jre:openjdk-25
 
