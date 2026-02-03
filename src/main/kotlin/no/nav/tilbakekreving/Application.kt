@@ -10,7 +10,6 @@ import io.ktor.server.application.log
 import io.ktor.server.auth.authenticate
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
-import io.ktor.server.plugins.openapi.openAPI
 import io.ktor.server.plugins.swagger.swaggerUI
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
@@ -111,7 +110,6 @@ fun Application.module() {
                     call.respond<HttpStatusCode>(HttpStatusCode.OK)
                 }
             }
-            openAPI("/openApi")
             swaggerUI("/swagger") {
                 info = OpenApiInfo("Tilbakekreving API", "1.0")
                 source =
