@@ -2,6 +2,7 @@ package no.nav.tilbakekreving.infrastructure.route
 
 import arrow.core.getOrElse
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
@@ -16,7 +17,7 @@ context(auditLog: AuditLog)
 fun Route.hentKravdetaljerRoute(hentKravdetaljer: HentKravdetaljer) {
     val logger = LoggerFactory.getLogger("HentKravdetaljerRoute")
 
-    post<HentKravdetaljerJsonRequest> { hentKravdetaljerJson ->
+    post {
         val principal =
             navUserPrincipal() ?: run {
                 logger.warn("Fant ikke navUserPrincipal ved henting av kravdetaljer")
@@ -24,6 +25,7 @@ fun Route.hentKravdetaljerRoute(hentKravdetaljer: HentKravdetaljer) {
                 return@post
             }
 
+        val hentKravdetaljerJson = call.receive<HentKravdetaljerJsonRequest>()
         val kravidentifikator = hentKravdetaljerJson.toDomain()
 
         val kravdetaljer =

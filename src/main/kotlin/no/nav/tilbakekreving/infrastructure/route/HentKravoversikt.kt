@@ -2,6 +2,7 @@ package no.nav.tilbakekreving.infrastructure.route
 
 import arrow.core.getOrElse
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
@@ -14,7 +15,7 @@ import org.slf4j.LoggerFactory
 context(kravAccessControl: KravAccessControl)
 fun Route.hentKravoversikt(søkEtterInnkrevingskrav: SøkEtterInnkrevingskrav) {
     val logger = LoggerFactory.getLogger("HentKravoversiktRoute")
-    post<HentKravoversiktJsonRequest> { hentKravoversiktJsonRequest ->
+    post {
         val principal =
             navUserPrincipal() ?: run {
                 logger.warn("Fant ikke navUserPrincipal ved henting av kravoversikt")
@@ -24,6 +25,7 @@ fun Route.hentKravoversikt(søkEtterInnkrevingskrav: SøkEtterInnkrevingskrav) {
 
         val groupIds = principal.groupIds.toSet()
 
+        val hentKravoversiktJsonRequest = call.receive<HentKravoversiktJsonRequest>()
         val skyldnersøk = hentKravoversiktJsonRequest.toDomain()
         val kravoversikt =
             søkEtterInnkrevingskrav.søk(skyldnersøk).getOrElse {
