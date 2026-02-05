@@ -18,8 +18,8 @@ replicas:
 
 resources:
   requests:
-    cpu: 5m
-    memory: 440Mi
+    cpu: 21m
+    memory: 288Mi
 
 azure:
   application:

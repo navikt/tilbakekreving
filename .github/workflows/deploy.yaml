@@ -3,7 +3,7 @@ on:
   workflow_call:
     inputs:
       image:
-        required: true
+        required: false
         type: string
       cluster:
         required: true
@@ -33,5 +33,5 @@ jobs:
         env:
           CLUSTER: "${{ inputs.cluster }}"
           RESOURCE: "${{ inputs.nais_resource_file }}"
-          VAR: "image=${{ inputs.image }}"
+          WORKLOAD_IMAGE: "${{ inputs.image }}"
           VARS: "${{ inputs.nais_vars_file }}"

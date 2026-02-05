@@ -8,10 +8,32 @@ on:
       - ".github/workflows/alerts.yaml"
 
 permissions:
+  contents: read
   id-token: write
 
 jobs:
+  check-changes:
+    name: "Determine what changed"
+    runs-on: "ubuntu-24.04"
+    permissions:
+      contents: "read"
+      id-token: "write"
+      actions: "read"
+    outputs:
+      changed: ${{ steps.changed-files.outputs.changed }}
+    steps:
+      - uses: "actions/checkout@v6"
+        with:
+          fetch-depth: 0
+      - name: "Determine what to do"
+        id: changed-files
+        uses: "nais/what-changed@main"
+        with:
+          files: .nais/nais.yaml, .nais/vars/dev.yaml, .nais/vars/prod.yaml
+
   build:
+    needs: check-changes
+    if: needs.check-changes.outputs.changed != 'only-inputs'
     uses: ./.github/workflows/build.yaml
     secrets: inherit
     with:
@@ -21,7 +43,8 @@ jobs:
 
   deploy:
     uses: ./.github/workflows/deploy.yaml
-    needs: build
+    needs: [check-changes, build]
+    if: always() && !failure() && !cancelled()
     strategy:
       matrix:
         env:
