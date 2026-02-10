@@ -48,10 +48,6 @@ dependencies {
     implementation("io.ktor:ktor-client-auth:$ktorVersion")
     implementation("io.ktor:ktor-client-logging:$ktorVersion")
 
-    implementation("io.swagger.codegen.v3:swagger-codegen-generators:1.0.59") {
-        exclude(group = "ch.qos.logback")
-    }
-
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
     implementation("ch.qos.logback:logback-classic:1.5.29")

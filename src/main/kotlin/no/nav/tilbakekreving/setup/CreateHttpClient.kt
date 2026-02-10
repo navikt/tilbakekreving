@@ -27,7 +27,7 @@ fun createHttpClient(
         install(Logging) {
             level =
                 when (appEnv) {
-                    AppEnv.DEV -> LogLevel.ALL
+                    AppEnv.LOCAL, AppEnv.DEV -> LogLevel.ALL
                     else -> LogLevel.INFO
                 }
         }
