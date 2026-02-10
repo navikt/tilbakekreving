@@ -90,6 +90,11 @@ class SkatteetatenInnkrevingsoppdragHttpClient(
                 }
 
                 else -> {
+                    logger.error(
+                        "Feil ved søk etter innkrevingskrav: {} - {}",
+                        httpResponse.status.toString(),
+                        httpResponse.bodyAsText(),
+                    )
                     raise(SøkEtterInnkrevingskrav.Feil.SøkEtterInnkrevingskravFeil)
                 }
             }
