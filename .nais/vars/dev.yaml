@@ -7,7 +7,7 @@ env:
 accessPolicy:
   outbound:
     external:
-      - host: api-test.sits.no # Skatteetaten
+      - host: innkrevingsoppdrag.innkreving.skatteetaten-test.no # Skatteetaten
 
 replicas:
   min: 1
