@@ -27,7 +27,11 @@ application {
     mainClass = "no.nav.tilbakekreving.ApplicationKt"
 
     val isDevelopment: Boolean = project.ext.has("development")
-    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
+    applicationDefaultJvmArgs =
+        listOf(
+            "-Dio.ktor.development=$isDevelopment",
+            "-Dlogback.configurationFile=classpath:logback-app.xml",
+        )
 }
 
 repositories {
