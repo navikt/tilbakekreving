@@ -24,7 +24,7 @@
 
     <logger name="org.eclipse.jetty" level="INFO"/>
     <logger name="io.netty" level="INFO"/>
-    <logger name="io.ktor.client.plugins.logging" level="DEBUG"/>
+    <logger name="io.ktor.client.HttpClient" level="DEBUG"/>
 
     <condition class="ch.qos.logback.core.boolex.IsPropertyDefinedCondition">
         <key>NAIS_APP_NAME</key>

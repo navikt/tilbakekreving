@@ -30,7 +30,7 @@ application {
     applicationDefaultJvmArgs =
         listOf(
             "-Dio.ktor.development=$isDevelopment",
-            "-Dlogback.configurationFile=classpath:logback-app.xml",
+            "-Dlogback.configurationFile=logback-app.xml",
         )
 }
 
