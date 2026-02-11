@@ -1,0 +1,38 @@
+{
+    "components": {
+        "schemas": {
+            "HentKravdetaljerForespoersel": {
+                "type": "object",
+                "description": "Kravoversikt tar i mot forespørsler med oppdragsgiver og aktuell skyldner, og spør mot tjenesten oppdragsgivers-reskontroinnsyn som henter informasjon fra PAK.",
+                "properties": {
+                    "krav": {
+                        "description": "identifikator som brukes for å søke opp kravet en ønsker kravdetaljer på",
+                        "$ref": "#/components/schemas/Krav"
+                    }
+                },
+                "required": [
+                    "krav"
+                ]
+            },
+            "Krav": {
+                "type": "object",
+                "description": "identifikator som skal brukes til å søke opp kravdetaljer for et krav.",
+                "properties": {
+                    "skatteetatensKravidentifikator": {
+                        "description": "Unik id som tildeles av skatteetaten ved mottak av innkrevingsoppdraget.",
+                        "$ref": "#/components/schemas/Tekst"
+                    },
+                    "oppdragsgiversKravidentifikator": {
+                        "description": "Unik id til kravet hos oppdragsgiver.",
+                        "$ref": "#/components/schemas/Tekst"
+                    }
+                }
+            },
+            "Tekst": {
+                "type": "string",
+                "description": "vilkårlig lang sekvens av tegn inkludert aksenter og spesielle tegn fra standardiserte tegnsett (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52af3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+                "maxLength": 4000
+            }
+        }
+    }
+}

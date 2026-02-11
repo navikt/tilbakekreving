@@ -17,6 +17,7 @@ import io.ktor.server.routing.openapi.OpenApiDocSource
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.ktor.server.routing.routingRoot
+import no.nav.tilbakekreving.config.AuthenticationConfigName
 import no.nav.tilbakekreving.infrastructure.audit.AuditLog
 import no.nav.tilbakekreving.infrastructure.audit.NavAuditLog
 import no.nav.tilbakekreving.infrastructure.client.TexasClient
@@ -26,7 +27,6 @@ import no.nav.tilbakekreving.infrastructure.route.KravAccessControl
 import no.nav.tilbakekreving.infrastructure.route.hentKravdetaljerRoute
 import no.nav.tilbakekreving.infrastructure.route.hentKravoversikt
 import no.nav.tilbakekreving.plugin.MaskinportenAuthHeaderPlugin
-import no.nav.tilbakekreving.setup.AuthenticationConfigName
 import no.nav.tilbakekreving.setup.configureAuthentication
 import no.nav.tilbakekreving.setup.configureCallLogging
 import no.nav.tilbakekreving.setup.configureSerialization

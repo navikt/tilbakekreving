@@ -15,6 +15,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import io.mockk.coEvery
 import io.mockk.mockk
+import no.nav.tilbakekreving.config.AuthenticationConfigName
 import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.Kravbeskrivelse
 import no.nav.tilbakekreving.domain.Kravidentifikator
@@ -22,7 +23,6 @@ import no.nav.tilbakekreving.domain.Kravtype
 import no.nav.tilbakekreving.infrastructure.client.AccessTokenVerifier
 import no.nav.tilbakekreving.infrastructure.route.KravAccessControl
 import no.nav.tilbakekreving.infrastructure.route.util.navUserPrincipal
-import no.nav.tilbakekreving.setup.AuthenticationConfigName
 import no.nav.tilbakekreving.setup.configureAuthentication
 import no.nav.tilbakekreving.util.specWideTestApplication
 import java.util.Locale
@@ -61,9 +61,11 @@ class AuthenticationTest :
                                         gjenståendeBeløp = 1000.0,
                                     )
                                 val allowed =
-                                    kravAccessControl.isKravAccessibleTo(principal?.groupIds?.toSet() ?: emptySet())(
-                                        krav,
-                                    )
+                                    kravAccessControl
+                                        .filterByAccess(
+                                            listOf(krav),
+                                            principal?.groupIds?.toSet() ?: emptySet(),
+                                        ).isNotEmpty()
                                 if (allowed) {
                                     call.respond(HttpStatusCode.OK)
                                 } else {

@@ -1,0 +1,38 @@
+{
+    "components": {
+        "schemas": {
+            "HentKravoversiktForespoersel": {
+                "type": "object",
+                "description": "Forespørsel for å hent oversikt over alle krav oppdragsgiver har på en skyldner",
+                "properties": {
+                    "skyldner": {
+                        "description": "Identifikator for skyldneren kravene skal hentes på. organisasjonsnummer eller fødselsnummer",
+                        "$ref": "#/components/schemas/Identifikator"
+                    },
+                    "kravfilter": {
+                        "description": "attributter som vil la oppdragsgiver fremvise krav basert på status",
+                        "$ref": "#/components/schemas/Kravfilter"
+                    }
+                },
+                "required": [
+                    "skyldner",
+                    "kravfilter"
+                ]
+            },
+            "Kravfilter": {
+                "type": "string",
+                "description": "attributter som vil brukes til å filtrere hvilke krav som returneres basert på status",
+                "enum": [
+                    "alle",
+                    "åpne",
+                    "lukkede",
+                    "ingen"
+                ]
+            },
+            "Identifikator": {
+                "type": "string",
+                "description": "(<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e2f8-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+            }
+        }
+    }
+}

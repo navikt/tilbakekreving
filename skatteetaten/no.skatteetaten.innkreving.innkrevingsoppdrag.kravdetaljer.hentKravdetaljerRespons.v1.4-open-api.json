@@ -1,0 +1,440 @@
+{
+    "components": {
+        "schemas": {
+            "HentKravdetaljerRespons": {
+                "type": "object",
+                "description": "Respons fra HentKravdetaljer tjenesten. Gir utfyllende informasjon om et spesifikt krav",
+                "properties": {
+                    "krav": {
+                        "description": "Aggregert nivå for alle kravlinjene (<a href='f1e5fbc6-cd80-11e9-a53e-005056823b15'>Begrepsreferanse</a>)",
+                        "$ref": "#/components/schemas/Krav"
+                    },
+                    "oppdragsgiver": {
+                        "description": "Oppdragsgiveren som står som eier av kravet",
+                        "$ref": "#/components/schemas/Oppdragsgiver"
+                    },
+                    "skyldner": {
+                        "description": "Skyldneren for kravet",
+                        "$ref": "#/components/schemas/Skyldner"
+                    },
+                    "avvik": {
+                        "description": "Avvik som kan forekomme, informerer vagt om feilsituasjonen",
+                        "$ref": "#/components/schemas/Avvik"
+                    }
+                }
+            },
+            "Avvik": {
+                "type": "object",
+                "description": "Del av svar som inneholder varsel om planlagt nedetid eller beskrivelse av teknisk feil ved oppslagstid. Eks: Vi har dessverre problemer med våre systemer.''Kravene vil derfor ikke være tilgjengelige.''Vi jobber med å løse feilen, prøv igjen senere",
+                "properties": {
+                    "avvikstype": {
+                        "description": "type avvik som har forekommet",
+                        "$ref": "#/components/schemas/Avvikstype"
+                    },
+                    "utdypendeAvviksbeskrivelse": {
+                        "description": "detaljert avvik beskrivelse",
+                        "$ref": "#/components/schemas/Tekst"
+                    }
+                },
+                "required": [
+                    "avvikstype",
+                    "utdypendeAvviksbeskrivelse"
+                ]
+            },
+            "InnbetalingPlassertMotKrav": {
+                "type": "object",
+                "description": "viser detaljer av hvilken innbetaling er plassert mot krav",
+                "properties": {
+                    "innbetalingsIdentifikator": {
+                        "description": "unikt identifikator for innbetaling",
+                        "$ref": "#/components/schemas/Tekst"
+                    },
+                    "innbetalingstype": {
+                        "description": "klassifisering av innbetalinger",
+                        "$ref": "#/components/schemas/Innbetalingstype"
+                    },
+                    "innbetalingsdato": {
+                        "description": "Dato innbetaling var effektuert",
+                        "$ref": "#/components/schemas/Dato"
+                    },
+                    "innbetaltBeloep": {
+                        "description": "beløp innbetalt",
+                        "$ref": "#/components/schemas/Beloep"
+                    }
+                },
+                "required": [
+                    "innbetalingsIdentifikator",
+                    "innbetalingstype",
+                    "innbetalingsdato",
+                    "innbetaltBeloep"
+                ]
+            },
+            "Krav": {
+                "type": "object",
+                "description": "Aggregert nivå for alle kravlinjene",
+                "properties": {
+                    "forfallsdato": {
+                        "description": "siste betalingsdato for rettidig oppgjør av et pengekrav",
+                        "$ref": "#/components/schemas/Dato"
+                    },
+                    "foreldelsesdato": {
+                        "description": "datoen plikten til å dekke kravet bortfaller",
+                        "$ref": "#/components/schemas/Dato"
+                    },
+                    "fastsettelsesdato": {
+                        "description": "oppdragsgiver bruker datoen som er riktig for dem, eks. vedtaksdato, rettskraftig dato",
+                        "$ref": "#/components/schemas/Dato"
+                    },
+                    "kravtype": {
+                        "description": "kravtypen til kravet",
+                        "$ref": "#/components/schemas/Kravtype"
+                    },
+                    "opprinneligBeloep": {
+                        "description": "summert opprinnelig beløp for kravlinjene",
+                        "$ref": "#/components/schemas/Beloep"
+                    },
+                    "gjenstaaendeBeloep": {
+                        "description": "Summert gjenstående beløp for alle kravlinjene",
+                        "$ref": "#/components/schemas/Beloep"
+                    },
+                    "skatteetatensKravidentifikator": {
+                        "description": "Kravidentifikatoren til innkrevingsoppdraget som skal avskrives. Kravidentifikatoren må tilhøre et innkrevingsoppdrag som er reskontroført hos Skatteetaten.",
+                        "$ref": "#/components/schemas/Identifikator"
+                    },
+                    "kravlinjer": {
+                        "type": "array",
+                        "description": "kravlinjer på kravet. Type kravlinje, f.eks Hovedstol, Renter, Omkostninger, Gebyrer",
+                        "items": {
+                            "$ref": "#/components/schemas/Kravlinje"
+                        }
+                    },
+                    "kravgrunnlag": {
+                        "description": "kravgrunnlaget for kravet. inneholder oppdragsgiverens egne identifikatorer",
+                        "$ref": "#/components/schemas/Kravgrunnlag"
+                    },
+                    "innbetalingerPlassertMotKrav": {
+                        "type": "array",
+                        "description": "innbetaling plassert mot kravet. innebærer også avskrivninger",
+                        "items": {
+                            "$ref": "#/components/schemas/InnbetalingPlassertMotKrav"
+                        }
+                    },
+                    "tilleggsinformasjon": {
+                        "description": "Tilleggsinformasjon variabel etter kravtype med ekstra felt",
+                        "$ref": "#/components/schemas/Tilleggsinformasjon"
+                    }
+                },
+                "required": [
+                    "forfallsdato",
+                    "foreldelsesdato",
+                    "fastsettelsesdato",
+                    "kravtype",
+                    "opprinneligBeloep",
+                    "gjenstaaendeBeloep",
+                    "skatteetatensKravidentifikator",
+                    "kravlinjer",
+                    "kravgrunnlag"
+                ]
+            },
+            "Kravgrunnlag": {
+                "type": "object",
+                "description": "kravgrunnlaget for gjeldende krav. Inneholder identifikatorer oppdragsgiveren har til kravet i egne systemer",
+                "properties": {
+                    "oppdragsgiversKravidentifikator": {
+                        "description": "kravidentifikator oppdragsgiver har satt på kravet",
+                        "$ref": "#/components/schemas/Tekst"
+                    },
+                    "oppdragsgiversReferanse": {
+                        "description": "Saksnummer/vedtaksnummer hos oppdragsgiver.",
+                        "$ref": "#/components/schemas/Tekst"
+                    }
+                },
+                "required": [
+                    "oppdragsgiversKravidentifikator",
+                    "oppdragsgiversReferanse"
+                ]
+            },
+            "Kravlinje": {
+                "type": "object",
+                "description": "Kravlinje på kravet. Type kravlinje, f.eks Hovedstol, Renter, Omkostninger, Gebyrer",
+                "properties": {
+                    "kravlinjetype": {
+                        "description": "detaljering av kontering f. eks. hovedstol, rentetillegg m.m.",
+                        "$ref": "#/components/schemas/Kravlinjetype"
+                    },
+                    "opprinneligBeloep": {
+                        "description": "opprinnelig beløp for kravlinjen",
+                        "$ref": "#/components/schemas/Beloep"
+                    },
+                    "gjenstaaendeBeloep": {
+                        "description": "Gjenstående beløp for kravlinjen",
+                        "$ref": "#/components/schemas/Beloep"
+                    },
+                    "kravlinjeBeskrivelse": {
+                        "description": "beskrivelse av kravlinjen",
+                        "$ref": "#/components/schemas/MultiSpraakTekst"
+                    }
+                },
+                "required": [
+                    "kravlinjetype",
+                    "opprinneligBeloep",
+                    "gjenstaaendeBeloep"
+                ]
+            },
+            "Oppdragsgiver": {
+                "type": "object",
+                "description": "Oppdragsgiveren som er eier av kravet. inneholder navn og orgnummer på denne.",
+                "properties": {
+                    "organisasjonsnummer": {
+                        "description": "oppdragsgiverens organisasjonsnummer",
+                        "$ref": "#/components/schemas/Organisasjonsnummer"
+                    },
+                    "organisasjonsnavn": {
+                        "description": "oppdragsgiverens organisasjonsnavn",
+                        "$ref": "#/components/schemas/Tekst"
+                    }
+                },
+                "required": [
+                    "organisasjonsnummer",
+                    "organisasjonsnavn"
+                ]
+            },
+            "Skyldner": {
+                "type": "object",
+                "description": "Skyldner krav er søkt opp på",
+                "properties": {
+                    "identifikator": {
+                        "description": "identifikator på skyldner, fødselsnummer eller organisasjonsnummer (<a href='20b2e2f8-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+                        "$ref": "#/components/schemas/Identifikator"
+                    },
+                    "skyldnersNavn": {
+                        "description": "skyldners navn enten personnavn eller virksomhetsnavn",
+                        "$ref": "#/components/schemas/Tekst"
+                    }
+                },
+                "required": [
+                    "identifikator"
+                ]
+            },
+            "Tilleggsinformasjon": {
+                "type": "object",
+                "description": "Tilleggsinformasjon for den gitte kravtypen",
+                "properties": {
+                    "tilleggsinformasjonBroennoeysundRegistrene": {
+                        "description": "Tilleggsinformasjon for kravtypene fra Brønnøysundregistrene",
+                        "$ref": "#/components/schemas/TilleggsinformasjonBroennoeysundRegistrene"
+                    },
+                    "tilleggsinformasjonNav": {
+                        "description": "Tilleggsinformasjon for tilbakebetalingskravtypene fra NAV",
+                        "$ref": "#/components/schemas/TilleggsinformasjonNav"
+                    }
+                },
+                "anyOf": [
+                    {
+                        "oneOf": [
+                            {
+                                "required": [
+                                    "tilleggsinformasjonBroennoeysundRegistrene"
+                                ]
+                            },
+                            {
+                                "required": [
+                                    "tilleggsinformasjonNav"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "Avvikstype": {
+                "type": "string",
+                "description": "kodeliste for type avvik som kan oppstå ved oppslag av tjeneste.",
+                "enum": [
+                    "tekniskfeil",
+                    "planlagtNedetid"
+                ]
+            },
+            "Tekst": {
+                "type": "string",
+                "description": "vilkårlig lang sekvens av tegn inkludert aksenter og spesielle tegn fra standardiserte tegnsett (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52af3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+                "maxLength": 4000
+            },
+            "Innbetalingstype": {
+                "type": "string",
+                "description": ""
+            },
+            "Dato": {
+                "type": "string",
+                "description": "gir verdier for år, måned og dag. Kodes som en tekststreng etter datoformatering spesifisert i  ISO 8601 (ISO 8601:2004 Data elements and interchange formats -- Information interchange -- Representation of dates and times). Eksempel : 1998-12-21 eller 19981221. (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52aed-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+                "format": "date"
+            },
+            "Beloep": {
+                "type": "number",
+                "description": "en sum av penger brukt i en kontekst. Dette kan være en transaksjon, saldo o.l. (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e146-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+                "format": "double"
+            },
+            "Kravtype": {
+                "type": "string",
+                "description": "(<a href='https://data.skatteetaten.no/web/datakatalog/kodeliste/1928cfe6-a02e-40a9-bc3d-581d73570424/1/'>Kodelistereferanse</a>)"
+            },
+            "Identifikator": {
+                "type": "string",
+                "description": "(<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e2f8-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+            },
+            "Kravlinjetype": {
+                "type": "string",
+                "description": "kodeliste for detaljering av krav basert på kontering spesifikasjon  (<a href='http://kodelistekatalog-v2.skead.no/kodeliste/innkreving/kravlinjetype'>Kodelistereferanse</a>)"
+            },
+            "MultiSpraakTekst": {
+                "type": "object",
+                "description": "tekster som representerer samme mening på flere språk (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e242-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+                "properties": {
+                    "spraakTekst": {
+                        "type": "array",
+                        "description": "(<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e244-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+                        "items": {
+                            "$ref": "#/components/schemas/SpraakTekst"
+                        }
+                    }
+                },
+                "required": [
+                    "spraakTekst"
+                ]
+            },
+            "Organisasjonsnummer": {
+                "type": "string",
+                "description": "9 sifret nummer gitt de som er registrert i Enhetsregisteret. (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e1a8-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+                "minLength": 9,
+                "pattern": "[0-9]+",
+                "maxLength": 9
+            },
+            "TilleggsinformasjonBroennoeysundRegistrene": {
+                "type": "object",
+                "description": "",
+                "properties": {
+                    "periode": {
+                        "description": "Periode som angir tidsintervallet for fastsatt og påløpt tvangsmulkt.",
+                        "$ref": "#/components/schemas/PeriodeMedTvangsmulkt"
+                    },
+                    "stoppdatoForLoependeMulkt": {
+                        "description": "Format: YYYY-MM-DD Datoen settes dersom den løpende tvangsmulkten er avsluttet av oppdragsgiver. Ikke påkrevd. Kan ikke være i fremtiden.",
+                        "$ref": "#/components/schemas/Dato"
+                    }
+                },
+                "required": [
+                    "periode"
+                ]
+            },
+            "TilleggsinformasjonNav": {
+                "type": "object",
+                "description": "",
+                "properties": {
+                    "ytelserForAvregning": {
+                        "description": "",
+                        "$ref": "#/components/schemas/YtelseForAvregningBeloep"
+                    },
+                    "tilbakekrevingsperiode": {
+                        "description": "",
+                        "$ref": "#/components/schemas/Tilbakekrevingsperiode"
+                    }
+                },
+                "required": [
+                    "tilbakekrevingsperiode"
+                ]
+            },
+            "SpraakTekst": {
+                "type": "object",
+                "description": "tekst på spesifisert språk (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e244-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+                "properties": {
+                    "tekst": {
+                        "description": "(<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52af3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+                        "$ref": "#/components/schemas/Tekst"
+                    },
+                    "spraak": {
+                        "description": "(<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e1a1-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+                        "$ref": "#/components/schemas/Spraakkode"
+                    }
+                },
+                "required": [
+                    "tekst",
+                    "spraak"
+                ]
+            },
+            "PeriodeMedTvangsmulkt": {
+                "type": "object",
+                "description": "",
+                "properties": {
+                    "fom": {
+                        "description": "Fra og med dato for perioden med påløpt tvangsmulkt.",
+                        "$ref": "#/components/schemas/Dato"
+                    },
+                    "tom": {
+                        "description": "Til og med dato for perioden med påløpt tvangsmulkt.",
+                        "$ref": "#/components/schemas/Dato"
+                    }
+                },
+                "required": [
+                    "fom",
+                    "tom"
+                ]
+            },
+            "YtelseForAvregningBeloep": {
+                "type": "object",
+                "description": "",
+                "properties": {
+                    "valuta": {
+                        "description": "",
+                        "$ref": "#/components/schemas/Valutakode"
+                    },
+                    "beloep": {
+                        "description": "Heltall, desimaler støttes ikke. Avrunding må i så fall gjøres hos oppdragsgiver. Angis som hovedenhet i valutaen, dvs. kroner ikke ører, euro ikke cent, osv.",
+                        "$ref": "#/components/schemas/BeloepSomHeltall"
+                    }
+                },
+                "required": [
+                    "valuta",
+                    "beloep"
+                ]
+            },
+            "Tilbakekrevingsperiode": {
+                "type": "object",
+                "description": "Tidsperioden hvor det ble foretatt utbetalinger som senere er avdekket som feilaktige, og som det derfor kreves tilbakebetaling for.",
+                "properties": {
+                    "fom": {
+                        "description": "Fra og med dato for perioden med påløpt tvangsmulkt.",
+                        "$ref": "#/components/schemas/Dato"
+                    },
+                    "tom": {
+                        "description": "Til og med dato for perioden med påløpt tvangsmulkt.",
+                        "$ref": "#/components/schemas/Dato"
+                    }
+                },
+                "required": [
+                    "fom",
+                    "tom"
+                ]
+            },
+            "Spraakkode": {
+                "type": "string",
+                "description": "kode for entydig angivelse av spesifikt språk etter ISO 639-1 (to bokstaver, f.eks nb, nn, en, se, for henholdsvis bokmål, nynorsk, engelsk, samisk) (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e1a1-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+            },
+            "Valutakode": {
+                "type": "string",
+                "description": "koder for offisielle valutaer etter ISO 4217",
+                "enum": [
+                    "NOK",
+                    "SEK",
+                    "DKK",
+                    "EUR",
+                    "USD",
+                    "..."
+                ]
+            },
+            "BeloepSomHeltall": {
+                "type": "integer",
+                "description": "en sum av penger i hele kroner brukt i en kontekst. Dette kan være en transaksjon, saldo o.l. (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e146-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+                "format": "int64"
+            }
+        }
+    }
+}

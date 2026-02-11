@@ -9,7 +9,6 @@ import no.nav.tilbakekreving.domain.KravDetalj
 import no.nav.tilbakekreving.domain.Kravdetaljer
 import no.nav.tilbakekreving.domain.KravdetaljerSkyldner
 import no.nav.tilbakekreving.domain.Kravgrunnlag
-import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravlinje
 import no.nav.tilbakekreving.domain.Oppdragsgiver
 import no.nav.tilbakekreving.domain.PeriodeMedTvangsmulkt
@@ -249,22 +248,4 @@ data class TilbakekrevingsperiodeResponseJson(
                 tom = periode.tom,
             )
     }
-}
-
-@Serializable
-data class HentKravdetaljerJsonRequest(
-    val id: String,
-    val type: KravidentifikatorType,
-) {
-    fun toDomain(): Kravidentifikator =
-        when (type) {
-            KravidentifikatorType.NAV -> Kravidentifikator.Nav(id)
-            KravidentifikatorType.SKATTEETATEN -> Kravidentifikator.Skatteetaten(id)
-        }
-}
-
-@Serializable
-enum class KravidentifikatorType {
-    NAV,
-    SKATTEETATEN,
 }

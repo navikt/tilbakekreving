@@ -8,6 +8,7 @@ import io.ktor.client.request.accept
 import io.ktor.client.request.headers
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
@@ -18,11 +19,13 @@ import no.nav.tilbakekreving.domain.Kravdetaljer
 import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravoversikt
 import no.nav.tilbakekreving.domain.Skyldnersøk
-import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.HentKravdetaljerRequestJson
-import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.HentKravdetaljerResponsJson
-import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.HentKravoversiktRequestJson
-import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.HentKravoversiktResponseJson
+import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.SkeHentKravdetaljerRequestJson
+import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.SkeHentKravdetaljerResponsJson
+import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.SkeHentKravoversiktRequestJson
+import no.nav.tilbakekreving.infrastructure.client.skatteetaten.json.SkeHentKravoversiktResponseJson
 import org.slf4j.LoggerFactory
+
+private const val KLIENTID = "NAV/2.0"
 
 class SkatteetatenInnkrevingsoppdragHttpClient(
     private val baseUrl: String,
@@ -35,19 +38,11 @@ class SkatteetatenInnkrevingsoppdragHttpClient(
         kravidentifikator: Kravidentifikator,
     ): Either<HentKravdetaljer.HentKravdetaljerFeil, Kravdetaljer> =
         either {
-            val httpResponse =
-                client.post("$baseUrl/api/innkreving/innkrevingsoppdrag/v1/innkrevingsoppdrag/kravdetaljer") {
-                    headers {
-                        append("Klientid", "NAV/2.0")
-                    }
-                    setBody(HentKravdetaljerRequestJson.from(kravidentifikator))
-                    contentType(ContentType.Application.Json)
-                    accept(ContentType.Application.Json)
-                }
+            val httpResponse = postToSkatteetaten("kravdetaljer", SkeHentKravdetaljerRequestJson.from(kravidentifikator))
 
             when (httpResponse.status) {
                 HttpStatusCode.OK -> {
-                    httpResponse.body<HentKravdetaljerResponsJson>().toDomain()
+                    httpResponse.body<SkeHentKravdetaljerResponsJson>().toDomain()
                 }
 
                 HttpStatusCode.NotFound -> {
@@ -74,19 +69,11 @@ class SkatteetatenInnkrevingsoppdragHttpClient(
 
     override suspend fun søk(skyldnersøk: Skyldnersøk): Either<SøkEtterInnkrevingskrav.Feil, Kravoversikt> =
         either {
-            val httpResponse =
-                client.post("$baseUrl/api/innkreving/innkrevingsoppdrag/v1/innkrevingsoppdrag/kravoversikt") {
-                    headers {
-                        append("Klientid", "NAV/2.0")
-                    }
-                    setBody(HentKravoversiktRequestJson.from(skyldnersøk))
-                    contentType(ContentType.Application.Json)
-                    accept(ContentType.Application.Json)
-                }
+            val httpResponse = postToSkatteetaten("kravoversikt", SkeHentKravoversiktRequestJson.from(skyldnersøk))
 
             when (httpResponse.status) {
                 HttpStatusCode.OK -> {
-                    httpResponse.body<HentKravoversiktResponseJson>().toDomain()
+                    httpResponse.body<SkeHentKravoversiktResponseJson>().toDomain()
                 }
 
                 else -> {
@@ -98,5 +85,18 @@ class SkatteetatenInnkrevingsoppdragHttpClient(
                     raise(SøkEtterInnkrevingskrav.Feil.SøkEtterInnkrevingskravFeil)
                 }
             }
+        }
+
+    private suspend inline fun <reified T> postToSkatteetaten(
+        endpoint: String,
+        body: T,
+    ): HttpResponse =
+        client.post("$baseUrl/api/innkreving/innkrevingsoppdrag/v1/innkrevingsoppdrag/$endpoint") {
+            headers {
+                append("Klientid", KLIENTID)
+            }
+            setBody(body)
+            contentType(ContentType.Application.Json)
+            accept(ContentType.Application.Json)
         }
 }

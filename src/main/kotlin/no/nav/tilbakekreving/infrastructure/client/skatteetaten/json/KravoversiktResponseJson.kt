@@ -12,27 +12,27 @@ import no.nav.tilbakekreving.domain.Oppdragsgiver
 import java.util.Locale
 
 @Serializable
-data class HentKravoversiktResponseJson(
-    val oppdragsgiver: OppdragsgiverJson,
-    val krav: List<KravJson>? = null,
+data class SkeHentKravoversiktResponseJson(
+    val oppdragsgiver: SkeOppdragsgiverJson,
+    val krav: List<SkeKravJson>? = null,
     @SerialName("gjenstaaendeBeloepForSkyldner") val gjenståendeBeløpForSkyldner: Double,
-    val skyldner: SkyldnerJson,
+    val skyldner: SkeSkyldnerJson,
 ) {
     fun toDomain(): Kravoversikt =
         Kravoversikt(
             oppdragsgiver = oppdragsgiver.toDomain(),
-            krav = krav?.map(KravJson::toDomain) ?: emptyList(),
+            krav = krav?.map(SkeKravJson::toDomain) ?: emptyList(),
             gjenståendeBeløpForSkyldner = gjenståendeBeløpForSkyldner,
             skyldner = skyldner.toDomain(),
         )
 }
 
 @Serializable
-data class KravJson(
+data class SkeKravJson(
     val skatteetatensKravidentifikator: String?,
     val kravtype: String,
-    val kravbeskrivelse: MultiSpråkTekstJson,
-    val kravgrunnlag: KravgrunnlagJson,
+    val kravbeskrivelse: SkeMultiSpråkTekstJson,
+    val kravgrunnlag: SkeKravgrunnlagJson,
     @SerialName("gjenstaaendeBeloep") val gjenståendeBeløp: Double,
 ) {
     fun toDomain(): Krav =
@@ -47,13 +47,13 @@ data class KravJson(
 }
 
 @Serializable
-data class KravgrunnlagJson(
+data class SkeKravgrunnlagJson(
     val oppdragsgiversKravidentifikator: String,
     val oppdragsgiversReferanse: String? = null,
 )
 
 @Serializable
-data class OppdragsgiverJson(
+data class SkeOppdragsgiverJson(
     val organisasjonsnummer: String,
     val organisasjonsnavn: String?,
 ) {
@@ -65,7 +65,7 @@ data class OppdragsgiverJson(
 }
 
 @Serializable
-data class SkyldnerJson(
+data class SkeSkyldnerJson(
     val identifikator: String,
     val skyldnersNavn: String? = null,
 ) {
@@ -77,14 +77,14 @@ data class SkyldnerJson(
 }
 
 @Serializable
-data class MultiSpråkTekstJson(
-    @SerialName("spraakTekst") val språkTekst: List<SpråkTekstJson>,
+data class SkeMultiSpråkTekstJson(
+    @SerialName("spraakTekst") val språkTekst: List<SkeSpråkTekstJson>,
 ) {
-    fun toDomain(): List<Kravbeskrivelse> = språkTekst.map(SpråkTekstJson::toDomain)
+    fun toDomain(): List<Kravbeskrivelse> = språkTekst.map(SkeSpråkTekstJson::toDomain)
 }
 
 @Serializable
-data class SpråkTekstJson(
+data class SkeSpråkTekstJson(
     val tekst: String,
     @SerialName("spraak") val språk: String,
 ) {

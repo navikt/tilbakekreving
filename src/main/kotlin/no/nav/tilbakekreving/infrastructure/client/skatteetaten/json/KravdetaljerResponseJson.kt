@@ -16,11 +16,11 @@ import no.nav.tilbakekreving.domain.Tilleggsinformasjon
 import no.nav.tilbakekreving.domain.YtelseForAvregningBeløp
 
 @Serializable
-data class HentKravdetaljerResponsJson(
-    val oppdragsgiver: OppdragsgiverResponseJson,
-    val skyldner: SkyldnerResponseJson,
-    val krav: KravResponseJson,
-    val avvik: AvvikResponseJson?,
+data class SkeHentKravdetaljerResponsJson(
+    val oppdragsgiver: SkeOppdragsgiverResponseJson,
+    val skyldner: SkeSkyldnerResponseJson,
+    val krav: SkeKravResponseJson,
+    val avvik: SkeAvvikResponseJson?,
 ) {
     fun toDomain(): Kravdetaljer =
         Kravdetaljer(
@@ -32,29 +32,29 @@ data class HentKravdetaljerResponsJson(
 }
 
 @Serializable
-data class KravResponseJson(
-    val forfallsdato: String?,
-    val foreldelsesdato: String?,
-    val fastsettelsesdato: String?,
+data class SkeKravResponseJson(
+    val forfallsdato: LocalDate?,
+    val foreldelsesdato: LocalDate?,
+    val fastsettelsesdato: LocalDate?,
     val kravtype: String,
     @SerialName("opprinneligBeloep") val `opprinneligBeløp`: Double,
     @SerialName("gjenstaaendeBeloep") val `gjenståendeBeløp`: Double,
     val skatteetatensKravidentifikator: String?,
-    val kravlinjer: List<KravlinjeResponseJson> = emptyList(),
-    val kravgrunnlag: KravgrunnlagResponseJson,
-    val innbetalingerPlassertMotKrav: List<InnbetalingPlassertMotKravResponseJson> = emptyList(),
-    val tilleggsinformasjon: TilleggsinformasjonResponseJson?,
+    val kravlinjer: List<SkeKravlinjeResponseJson> = emptyList(),
+    val kravgrunnlag: SkeKravgrunnlagResponseJson,
+    val innbetalingerPlassertMotKrav: List<SkeInnbetalingPlassertMotKravResponseJson> = emptyList(),
+    val tilleggsinformasjon: SkeTilleggsinformasjonResponseJson?,
 ) {
     fun toDomain(): KravDetalj =
         KravDetalj(
-            forfallsdato = forfallsdato?.let { LocalDate.parse(it) },
-            foreldelsesdato = foreldelsesdato?.let { LocalDate.parse(it) },
-            fastsettelsesdato = fastsettelsesdato?.let { LocalDate.parse(it) },
+            forfallsdato = forfallsdato,
+            foreldelsesdato = foreldelsesdato,
+            fastsettelsesdato = fastsettelsesdato,
             kravtype = kravtype,
             `opprinneligBeløp` = opprinneligBeløp,
             `gjenståendeBeløp` = gjenståendeBeløp,
             skatteetatensKravidentifikator = skatteetatensKravidentifikator,
-            kravlinjer = kravlinjer.map(KravlinjeResponseJson::toDomain),
+            kravlinjer = kravlinjer.map(SkeKravlinjeResponseJson::toDomain),
             kravgrunnlag = kravgrunnlag.toDomain(),
             innbetalingerPlassertMotKrav = innbetalingerPlassertMotKrav.map { it.toDomain() },
             tilleggsinformasjon = tilleggsinformasjon?.toDomain(),
@@ -62,7 +62,7 @@ data class KravResponseJson(
 }
 
 @Serializable
-data class OppdragsgiverResponseJson(
+data class SkeOppdragsgiverResponseJson(
     val organisasjonsnummer: String,
     val organisasjonsnavn: String?,
 ) {
@@ -74,7 +74,7 @@ data class OppdragsgiverResponseJson(
 }
 
 @Serializable
-data class SkyldnerResponseJson(
+data class SkeSkyldnerResponseJson(
     val identifikator: String,
     val skyldnersNavn: String?,
 ) {
@@ -86,7 +86,7 @@ data class SkyldnerResponseJson(
 }
 
 @Serializable
-data class AvvikResponseJson(
+data class SkeAvvikResponseJson(
     val avvikstype: String,
     val utdypendeAvviksbeskrivelse: String,
 ) {
@@ -103,26 +103,26 @@ data class AvvikResponseJson(
 }
 
 @Serializable
-data class InnbetalingPlassertMotKravResponseJson(
+data class SkeInnbetalingPlassertMotKravResponseJson(
     val innbetalingsIdentifikator: String,
     val innbetalingstype: String,
-    val innbetalingsdato: String,
+    val innbetalingsdato: LocalDate,
     @SerialName("innbetaltBeloep") val innbetaltBeløp: Double,
 ) {
     fun toDomain(): InnbetalingPlassertMotKrav =
         InnbetalingPlassertMotKrav(
             innbetalingsIdentifikator = innbetalingsIdentifikator,
             innbetalingstype = innbetalingstype,
-            innbetalingsdato = LocalDate.parse(innbetalingsdato),
+            innbetalingsdato = innbetalingsdato,
             innbetaltBeløp = innbetaltBeløp,
         )
 }
 
 @Serializable
-data class TilleggsinformasjonResponseJson(
+data class SkeTilleggsinformasjonResponseJson(
     @SerialName("tilleggsinformasjonBroennoeysundRegistrene") val tilleggsinformasjonBrønnøysundRegistrene:
-        TilleggsinformasjonBrønnøysundRegistreneResponseJson? = null,
-    val tilleggsinformasjonNav: TilleggsinformasjonNavResponseJson? = null,
+        SkeTilleggsinformasjonBrønnøysundRegistreneResponseJson? = null,
+    val tilleggsinformasjonNav: SkeTilleggsinformasjonNavResponseJson? = null,
 ) {
     fun toDomain(): Tilleggsinformasjon? =
         when {
@@ -133,21 +133,21 @@ data class TilleggsinformasjonResponseJson(
 }
 
 @Serializable
-data class TilleggsinformasjonBrønnøysundRegistreneResponseJson(
-    val periode: PeriodeMedTvangsmulktResponseJson,
-    @SerialName("stoppdatoForLoependeMulkt") val stoppdatoForLøpendeMulkt: String? = null,
+data class SkeTilleggsinformasjonBrønnøysundRegistreneResponseJson(
+    val periode: SkePeriodeMedTvangsmulktResponseJson,
+    @SerialName("stoppdatoForLoependeMulkt") val stoppdatoForLøpendeMulkt: LocalDate? = null,
 ) {
     fun toDomain(): Tilleggsinformasjon.BrønnøysundRegistrene =
         Tilleggsinformasjon.BrønnøysundRegistrene(
             periode = periode.toDomain(),
-            stoppdatoForLøpendeMulkt = stoppdatoForLøpendeMulkt?.let { LocalDate.parse(it) },
+            stoppdatoForLøpendeMulkt = stoppdatoForLøpendeMulkt,
         )
 }
 
 @Serializable
-data class TilleggsinformasjonNavResponseJson(
-    val ytelserForAvregning: YtelseForAvregningBeløpResponseJson? = null,
-    val tilbakekrevingsperiode: TilbakekrevingsperiodeResponseJson,
+data class SkeTilleggsinformasjonNavResponseJson(
+    val ytelserForAvregning: SkeYtelseForAvregningBeløpResponseJson? = null,
+    val tilbakekrevingsperiode: SkeTilbakekrevingsperiodeResponseJson,
 ) {
     fun toDomain(): Tilleggsinformasjon.Nav =
         Tilleggsinformasjon.Nav(
@@ -157,19 +157,19 @@ data class TilleggsinformasjonNavResponseJson(
 }
 
 @Serializable
-data class PeriodeMedTvangsmulktResponseJson(
-    val fom: String,
-    val tom: String,
+data class SkePeriodeMedTvangsmulktResponseJson(
+    val fom: LocalDate,
+    val tom: LocalDate,
 ) {
     fun toDomain(): PeriodeMedTvangsmulkt =
         PeriodeMedTvangsmulkt(
-            fom = LocalDate.parse(fom),
-            tom = LocalDate.parse(tom),
+            fom = fom,
+            tom = tom,
         )
 }
 
 @Serializable
-data class YtelseForAvregningBeløpResponseJson(
+data class SkeYtelseForAvregningBeløpResponseJson(
     val valuta: String,
     @SerialName("beloep") val beløp: Long,
 ) {
@@ -181,13 +181,13 @@ data class YtelseForAvregningBeløpResponseJson(
 }
 
 @Serializable
-data class TilbakekrevingsperiodeResponseJson(
-    val fom: String,
-    val tom: String,
+data class SkeTilbakekrevingsperiodeResponseJson(
+    val fom: LocalDate,
+    val tom: LocalDate,
 ) {
     fun toDomain(): Tilbakekrevingsperiode =
         Tilbakekrevingsperiode(
-            fom = LocalDate.parse(fom),
-            tom = LocalDate.parse(tom),
+            fom = fom,
+            tom = tom,
         )
 }

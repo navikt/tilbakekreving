@@ -40,7 +40,7 @@ fun Route.hentKravoversikt(søkEtterInnkrevingskrav: SøkEtterInnkrevingskrav) {
                 return@post
             }
 
-        val filteredKrav = kravoversikt.krav.filterByAccess(groupIds)
+        val filteredKrav = kravAccessControl.filterByAccess(kravoversikt.krav, groupIds)
         val filteredKravoversikt = kravoversikt.copy(krav = filteredKrav)
 
         call.respond(HttpStatusCode.OK, HentKravoversiktJsonResponse.fromDomain(filteredKravoversikt))

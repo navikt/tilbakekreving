@@ -5,9 +5,6 @@ import no.nav.tilbakekreving.domain.Kravtype
 import no.nav.tilbakekreving.infrastructure.auth.GroupId
 import org.slf4j.LoggerFactory
 
-context(kravAccessControl: KravAccessControl)
-fun List<Krav>.filterByAccess(groupIds: Set<GroupId>): List<Krav> = filter(kravAccessControl.isKravAccessibleTo(groupIds))
-
 class KravAccessControl(
     private val enhetAccess: Map<Kravtype, Set<GroupId>>,
     private val kravAccessGroup: GroupId,
@@ -18,7 +15,12 @@ class KravAccessControl(
         logger.info("KravAccessControl initialized with access: $enhetAccess")
     }
 
-    fun isKravAccessibleTo(groupIds: Set<GroupId>): (Krav) -> Boolean =
+    fun filterByAccess(
+        krav: List<Krav>,
+        groupIds: Set<GroupId>,
+    ): List<Krav> = krav.filter(isKravAccessibleTo(groupIds))
+
+    private fun isKravAccessibleTo(groupIds: Set<GroupId>): (Krav) -> Boolean =
         { krav ->
             groupIds.contains(kravAccessGroup)
             // TODO: Skru på tilgangskontroll når mapping fra kravtype til enhet er på plass

@@ -2,7 +2,7 @@ package no.nav.tilbakekreving.infrastructure.client.skatteetaten.json
 
 import no.nav.tilbakekreving.domain.Kravidentifikator
 
-enum class KravidentifikatortypeQuery {
+enum class SkeKravidentifikatortypeQuery {
     OPPDRAGSGIVERS_KRAVIDENTIFIKATOR,
     SKATTEETATENS_KRAVIDENTIFIKATOR,
     ;

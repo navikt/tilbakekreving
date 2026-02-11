@@ -7,13 +7,13 @@ import no.nav.tilbakekreving.domain.Kravlinjebeskrivelse
 import java.util.Locale
 
 @Serializable
-data class KravlinjeResponseJson(
+data class SkeKravlinjeResponseJson(
     val kravlinjetype: String,
     @SerialName("opprinneligBeloep")
     val opprinneligBeløp: Double,
     @SerialName("gjenstaaendeBeloep")
     val gjenståendeBeløp: Double,
-    val kravlinjeBeskrivelse: MultiSpråkTekstResponseJson? = null,
+    val kravlinjeBeskrivelse: SkeMultiSpråkTekstResponseJson? = null,
 ) {
     fun toDomain(): Kravlinje =
         Kravlinje(
@@ -31,13 +31,13 @@ data class KravlinjeResponseJson(
 }
 
 @Serializable
-data class MultiSpråkTekstResponseJson(
+data class SkeMultiSpråkTekstResponseJson(
     @SerialName("spraakTekst")
-    val språkTekst: List<SpråkTekstResponseJson>,
+    val språkTekst: List<SkeSpråkTekstResponseJson>,
 )
 
 @Serializable
-data class SpråkTekstResponseJson(
+data class SkeSpråkTekstResponseJson(
     val tekst: String,
     @SerialName("spraak")
     val språk: String,

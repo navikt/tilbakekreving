@@ -6,21 +6,21 @@ import no.nav.tilbakekreving.domain.Kravfilter
 import no.nav.tilbakekreving.domain.Skyldnersøk
 
 @Serializable
-data class HentKravoversiktRequestJson(
+data class SkeHentKravoversiktRequestJson(
     val skyldner: String,
-    val kravfilter: KravfilterJson,
+    val kravfilter: SkeKravfilterJson,
 ) {
     companion object {
-        fun from(skyldnersøk: Skyldnersøk): HentKravoversiktRequestJson =
-            HentKravoversiktRequestJson(
+        fun from(skyldnersøk: Skyldnersøk): SkeHentKravoversiktRequestJson =
+            SkeHentKravoversiktRequestJson(
                 skyldner = skyldnersøk.skyldner.skyldnerId.value,
-                kravfilter = KravfilterJson.fromDomain(skyldnersøk.kravfilter),
+                kravfilter = SkeKravfilterJson.fromDomain(skyldnersøk.kravfilter),
             )
     }
 }
 
 @Serializable
-enum class KravfilterJson {
+enum class SkeKravfilterJson {
     @SerialName("alle")
     ALLE,
 
@@ -34,7 +34,7 @@ enum class KravfilterJson {
     INGEN, ;
 
     companion object {
-        fun fromDomain(kravfilter: Kravfilter): KravfilterJson =
+        fun fromDomain(kravfilter: Kravfilter): SkeKravfilterJson =
             when (kravfilter) {
                 Kravfilter.ALLE -> ALLE
                 Kravfilter.ÅPNE -> ÅPNE

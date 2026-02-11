@@ -1,0 +1,184 @@
+{
+    "components": {
+        "schemas": {
+            "HentKravoversiktRespons": {
+                "type": "object",
+                "description": "Respons på forespørsel om HentKravoversikt som returnerer en liste av alle krav satt på skyldneren gjeldende oppdragsgiver har forespurt",
+                "properties": {
+                    "oppdragsgiver": {
+                        "description": "gjeldende oppdragsgiver",
+                        "$ref": "#/components/schemas/Oppdragsgiver"
+                    },
+                    "krav": {
+                        "type": "array",
+                        "description": "Krav på skyldneren",
+                        "items": {
+                            "$ref": "#/components/schemas/Krav"
+                        }
+                    },
+                    "gjenstaaendeBeloepForSkyldner": {
+                        "description": "gjenstående beløp samlet fra alle kravene",
+                        "$ref": "#/components/schemas/Beloep"
+                    },
+                    "skyldner": {
+                        "description": "skyldner som krav er søkt opp på",
+                        "$ref": "#/components/schemas/Skyldner"
+                    }
+                },
+                "required": [
+                    "oppdragsgiver",
+                    "gjenstaaendeBeloepForSkyldner",
+                    "skyldner"
+                ]
+            },
+            "Krav": {
+                "type": "object",
+                "description": "Krav oppdragsgiveren har på skyldneren",
+                "properties": {
+                    "skatteetatensKravidentifikator": {
+                        "description": "unikt kravidentifikator etablert ved mottak. I intern løsning i mottak komponenten heter skatteetatensKravidentifikator;",
+                        "$ref": "#/components/schemas/Identifikator"
+                    },
+                    "kravtype": {
+                        "description": "nærmere beskrivelse av kravets egenart",
+                        "$ref": "#/components/schemas/Kravtype"
+                    },
+                    "kravbeskrivelse": {
+                        "description": "beskrivelse av krav; teksten som blir formidlet til skyldner. (<a href='https://data.skatteetaten.no/begrep/fd8fb470-6732-11e9-ad12-0050568351d2'>Begrepsreferanse</a>)",
+                        "$ref": "#/components/schemas/MultiSpraakTekst"
+                    },
+                    "kravgrunnlag": {
+                        "description": "kravgrunnlaget for kravet på skyldneren",
+                        "$ref": "#/components/schemas/Kravgrunnlag"
+                    },
+                    "gjenstaaendeBeloep": {
+                        "description": "gjenstående beløp summert for alle kravlinjer på kravet",
+                        "$ref": "#/components/schemas/Beloep"
+                    }
+                },
+                "required": [
+                    "skatteetatensKravidentifikator",
+                    "kravtype",
+                    "kravbeskrivelse",
+                    "kravgrunnlag",
+                    "gjenstaaendeBeloep"
+                ]
+            },
+            "Kravgrunnlag": {
+                "type": "object",
+                "description": "Kravgrunnlag på et Krav med identifikator og navn på oppdragsgiveren",
+                "properties": {
+                    "oppdragsgiversKravidentifikator": {
+                        "description": "krav identifikator fra oppdragsgiver, f. eks. NAV",
+                        "$ref": "#/components/schemas/Tekst"
+                    },
+                    "oppdragsgiversReferanse": {
+                        "description": "Oppdragsgivers referanse til saken hvor kravet er fastsatt, eksempelvis et saksnummer.",
+                        "$ref": "#/components/schemas/Tekst"
+                    }
+                },
+                "required": [
+                    "oppdragsgiversKravidentifikator"
+                ]
+            },
+            "Oppdragsgiver": {
+                "type": "object",
+                "description": "Oppdragsgiver detaljer (<a href='5b8718dc-ff62-4991-8d4f-2cfbdc6471cd'>Begrepsreferanse</a>)",
+                "properties": {
+                    "organisasjonsnummer": {
+                        "description": "oppdragsgiverens organisasjonsnummer",
+                        "$ref": "#/components/schemas/Organisasjonsnummer"
+                    },
+                    "organisasjonsnavn": {
+                        "description": "navn på oppdragsgiver",
+                        "$ref": "#/components/schemas/Tekst"
+                    }
+                },
+                "required": [
+                    "organisasjonsnummer",
+                    "organisasjonsnavn"
+                ]
+            },
+            "Skyldner": {
+                "type": "object",
+                "description": "Skyldner krav er søkt opp på",
+                "properties": {
+                    "identifikator": {
+                        "description": "identifikator på skyldner, fødselsnummer eller organisasjonsnummer (<a href='20b2e2f8-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+                        "$ref": "#/components/schemas/Identifikator"
+                    },
+                    "skyldnersNavn": {
+                        "description": "skyldners navn enten personnavn eller virksomhetsnavn",
+                        "$ref": "#/components/schemas/Tekst"
+                    }
+                },
+                "required": [
+                    "identifikator"
+                ]
+            },
+            "Beloep": {
+                "type": "number",
+                "description": "en sum av penger brukt i en kontekst. Dette kan være en transaksjon, saldo o.l. (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e146-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+                "format": "double"
+            },
+            "Tekst": {
+                "type": "string",
+                "description": "vilkårlig lang sekvens av tegn inkludert aksenter og spesielle tegn fra standardiserte tegnsett (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52af3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+                "maxLength": 4000
+            },
+            "Identifikator": {
+                "type": "string",
+                "description": "(<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e2f8-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+            },
+            "Kravtype": {
+                "type": "string",
+                "description": "(<a href='https://data.skatteetaten.no/web/datakatalog/kodeliste/1928cfe6-a02e-40a9-bc3d-581d73570424/1/'>Kodelistereferanse</a>)"
+            },
+            "MultiSpraakTekst": {
+                "type": "object",
+                "description": "tekster som representerer samme mening på flere språk (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e242-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+                "properties": {
+                    "spraakTekst": {
+                        "type": "array",
+                        "description": "(<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e244-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+                        "items": {
+                            "$ref": "#/components/schemas/SpraakTekst"
+                        }
+                    }
+                },
+                "required": [
+                    "spraakTekst"
+                ]
+            },
+            "Organisasjonsnummer": {
+                "type": "string",
+                "description": "9 sifret nummer gitt de som er registrert i Enhetsregisteret. (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e1a8-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+                "minLength": 9,
+                "pattern": "[0-9]+",
+                "maxLength": 9
+            },
+            "SpraakTekst": {
+                "type": "object",
+                "description": "tekst på spesifisert språk (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e244-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+                "properties": {
+                    "tekst": {
+                        "description": "(<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b52af3-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+                        "$ref": "#/components/schemas/Tekst"
+                    },
+                    "spraak": {
+                        "description": "(<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e1a1-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)",
+                        "$ref": "#/components/schemas/Spraakkode"
+                    }
+                },
+                "required": [
+                    "tekst",
+                    "spraak"
+                ]
+            },
+            "Spraakkode": {
+                "type": "string",
+                "description": "kode for entydig angivelse av spesifikt språk etter ISO 639-1 (to bokstaver, f.eks nb, nn, en, se, for henholdsvis bokmål, nynorsk, engelsk, samisk) (<a href='https://data.skatteetaten.no/web/datakatalog/begrep/20b2e1a1-9fe1-11e5-a9f8-e4115b280940'>Begrepsreferanse</a>)"
+            }
+        }
+    }
+}

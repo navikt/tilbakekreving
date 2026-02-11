@@ -9,6 +9,7 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import io.ktor.http.isSuccess
 import no.nav.tilbakekreving.infrastructure.client.AccessTokenProvider
 import no.nav.tilbakekreving.infrastructure.client.maskinporten.json.TexasTokenRequestJson
 import no.nav.tilbakekreving.infrastructure.client.maskinporten.json.TexasTokenResponseJson
@@ -38,8 +39,8 @@ class TexasMaskinportenClient(
                     )
                 }
 
-            if (response.status.value !in 200..299) {
-                logger.error("Failed to get access token from Texas: ${response.status} - ${response.bodyAsText()}")
+            if (!response.status.isSuccess()) {
+                logger.error("Failed to get access token from Texas: {} - {}", response.status, response.bodyAsText())
                 raise(AccessTokenProvider.GetAccessTokenError.FailedToGetAccessToken)
             } else {
                 response.body<TexasTokenResponseJson>().accessToken

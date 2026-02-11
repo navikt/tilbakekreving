@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 import no.nav.tilbakekreving.domain.Kravgrunnlag
 
 @Serializable
-data class KravgrunnlagResponseJson(
+data class SkeKravgrunnlagResponseJson(
     val oppdragsgiversKravidentifikator: String,
     val oppdragsgiversReferanse: String?,
 ) {
