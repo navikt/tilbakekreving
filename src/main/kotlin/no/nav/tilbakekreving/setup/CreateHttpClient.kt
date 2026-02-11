@@ -30,6 +30,9 @@ fun createHttpClient(
                     AppEnv.LOCAL, AppEnv.DEV -> LogLevel.ALL
                     else -> LogLevel.INFO
                 }
+            filter { request ->
+                request.url.build().encodedPath !in setOf("/api/v1/introspect", "/api/v1/token")
+            }
         }
         httpClientConfig()
     }
