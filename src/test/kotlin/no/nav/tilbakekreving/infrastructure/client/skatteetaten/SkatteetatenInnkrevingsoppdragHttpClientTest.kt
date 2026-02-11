@@ -1,5 +1,6 @@
 package no.nav.tilbakekreving.infrastructure.client.skatteetaten
 
+import io.kotest.assertions.arrow.core.shouldBeLeft
 import io.kotest.assertions.arrow.core.shouldBeRight
 import io.kotest.assertions.json.shouldEqualJson
 import io.kotest.core.spec.style.WordSpec
@@ -16,6 +17,8 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import kotlinx.datetime.LocalDate
 import no.nav.tilbakekreving.AppEnv
+import no.nav.tilbakekreving.app.HentKravdetaljer
+import no.nav.tilbakekreving.app.SøkEtterInnkrevingskrav
 import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.KravDetalj
 import no.nav.tilbakekreving.domain.Kravbeskrivelse
@@ -210,6 +213,80 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                         gjenståendeBeløp = 1000.0,
                     ),
                 )
+            }
+
+            "returnere feil ved uventet statuskode" {
+                val mockEngine =
+                    MockEngine {
+                        respond(
+                            content = """{"error": "internal error"}""",
+                            status = HttpStatusCode.InternalServerError,
+                            headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                        )
+                    }
+
+                val client = with(AppEnv.DEV) { createHttpClient(mockEngine) }
+                val skatteetatenClient = SkatteetatenInnkrevingsoppdragHttpClient("http://localhost:8080", client)
+
+                val result = skatteetatenClient.søk(Skyldnersøk(Skyldner(SkyldnerId("12345678901")), Kravfilter.ALLE))
+
+                result.shouldBeLeft(SøkEtterInnkrevingskrav.Feil.SøkEtterInnkrevingskravFeil)
+            }
+        }
+
+        "hent kravdetaljer" should {
+            "returnere FantIkkeKravdetaljer ved 404" {
+                val mockEngine =
+                    MockEngine {
+                        respond(
+                            content = "",
+                            status = HttpStatusCode.NotFound,
+                            headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                        )
+                    }
+
+                val client = with(AppEnv.DEV) { createHttpClient(mockEngine) }
+                val skatteetatenClient = SkatteetatenInnkrevingsoppdragHttpClient("http://localhost:8080", client)
+
+                val result = skatteetatenClient.hentKravdetaljer(Kravidentifikator.Nav("unknown"))
+
+                result.shouldBeLeft(HentKravdetaljer.HentKravdetaljerFeil.FantIkkeKravdetaljer)
+            }
+
+            "returnere FeilVedHentingAvKravdetaljer ved 500" {
+                val mockEngine =
+                    MockEngine {
+                        respond(
+                            content = """{"error": "server error"}""",
+                            status = HttpStatusCode.InternalServerError,
+                            headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                        )
+                    }
+
+                val client = with(AppEnv.DEV) { createHttpClient(mockEngine) }
+                val skatteetatenClient = SkatteetatenInnkrevingsoppdragHttpClient("http://localhost:8080", client)
+
+                val result = skatteetatenClient.hentKravdetaljer(Kravidentifikator.Nav("123"))
+
+                result.shouldBeLeft(HentKravdetaljer.HentKravdetaljerFeil.FeilVedHentingAvKravdetaljer)
+            }
+
+            "returnere FeilVedHentingAvKravdetaljer ved 400" {
+                val mockEngine =
+                    MockEngine {
+                        respond(
+                            content = """{"error": "bad request"}""",
+                            status = HttpStatusCode.BadRequest,
+                            headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                        )
+                    }
+
+                val client = with(AppEnv.DEV) { createHttpClient(mockEngine) }
+                val skatteetatenClient = SkatteetatenInnkrevingsoppdragHttpClient("http://localhost:8080", client)
+
+                val result = skatteetatenClient.hentKravdetaljer(Kravidentifikator.Skatteetaten("123"))
+
+                result.shouldBeLeft(HentKravdetaljer.HentKravdetaljerFeil.FeilVedHentingAvKravdetaljer)
             }
         }
     })

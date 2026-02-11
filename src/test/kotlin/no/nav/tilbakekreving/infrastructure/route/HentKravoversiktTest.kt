@@ -1,9 +1,12 @@
 package no.nav.tilbakekreving.infrastructure.route
 
+import arrow.core.left
 import arrow.core.right
 import io.kotest.assertions.json.shouldEqualJson
+import io.kotest.assertions.ktor.client.shouldBeBadRequest
 import io.kotest.assertions.ktor.client.shouldBeOK
 import io.kotest.assertions.ktor.client.shouldHaveContentType
+import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.core.spec.style.WordSpec
 import io.ktor.client.request.header
 import io.ktor.client.request.post
@@ -11,6 +14,7 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.http.withCharset
 import io.ktor.server.application.install
@@ -136,6 +140,40 @@ class HentKravoversiktTest :
                         }
                         """.trimIndent(),
                     )
+            }
+
+            "returnere 500 ved feil i tjenesten" {
+                coEvery { søkEtterInnkrevingskrav.søk(any()) } returns
+                    SøkEtterInnkrevingskrav.Feil.SøkEtterInnkrevingskravFeil.left()
+
+                client
+                    .post("/kravoversikt") {
+                        header(HttpHeaders.Authorization, "Bearer any-token")
+                        setBody(
+                            // language=json
+                            """
+                            {
+                              "skyldner": "123456789",
+                              "kravfilter": "ALLE"
+                            }
+                            """.trimIndent(),
+                        )
+                        contentType(ContentType.Application.Json)
+                    }.shouldHaveStatus(HttpStatusCode.InternalServerError)
+            }
+
+            "returnere 400 når json ikke er riktig" {
+                client
+                    .post("/kravoversikt") {
+                        header(HttpHeaders.Authorization, "Bearer any-token")
+                        setBody(
+                            // language=json
+                            """
+                            {}
+                            """.trimIndent(),
+                        )
+                        contentType(ContentType.Application.Json)
+                    }.shouldBeBadRequest()
             }
 
             /*
