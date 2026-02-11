@@ -6,7 +6,12 @@ plugins {
     kotlin("jvm") version "2.3.10"
     id("io.ktor.plugin") version "3.4.0"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.3.10"
+    id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
     id("com.github.ben-manes.versions") version "0.53.0"
+}
+
+ktlint {
+    version = "1.8.0"
 }
 
 kotlin {
