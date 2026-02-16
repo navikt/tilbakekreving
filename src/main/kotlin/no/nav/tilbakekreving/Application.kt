@@ -23,9 +23,9 @@ import no.nav.tilbakekreving.infrastructure.audit.NavAuditLog
 import no.nav.tilbakekreving.infrastructure.client.TexasClient
 import no.nav.tilbakekreving.infrastructure.client.maskinporten.TexasMaskinportenClient
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.SkatteetatenInnkrevingsoppdragHttpClient
-import no.nav.tilbakekreving.infrastructure.route.KravAccessControl
 import no.nav.tilbakekreving.infrastructure.route.hentKravdetaljerRoute
 import no.nav.tilbakekreving.infrastructure.route.hentKravoversikt
+import no.nav.tilbakekreving.infrastructure.route.kravAccessPolicy
 import no.nav.tilbakekreving.plugin.MaskinportenAuthHeaderPlugin
 import no.nav.tilbakekreving.setup.configureAuthentication
 import no.nav.tilbakekreving.setup.configureCallLogging
@@ -84,7 +84,7 @@ fun Application.module() {
             )
 
         val accessTokenVerifier = TexasClient(httpClient, tilbakekrevingConfig.nais.naisTokenIntrospectionEndpoint)
-        val kravAccessControl = KravAccessControl(tilbakekrevingConfig.kravAcl, tilbakekrevingConfig.kravTilgangsgruppe)
+        val kravAccessPolicy = kravAccessPolicy(tilbakekrevingConfig.kravTilgangsgruppe, tilbakekrevingConfig.kravAcl)
         configureSerialization()
         configureCallLogging()
 
@@ -94,7 +94,7 @@ fun Application.module() {
         routing {
             route("/internal") {
                 authenticate(authenticationConfigName.name) {
-                    context(kravAccessControl, auditLog) {
+                    context(kravAccessPolicy, auditLog) {
                         route("/kravdetaljer") {
                             hentKravdetaljerRoute(innkrevingsoppdragHttpClient)
                         }

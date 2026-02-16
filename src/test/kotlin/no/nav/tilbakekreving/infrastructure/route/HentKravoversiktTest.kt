@@ -42,8 +42,8 @@ import java.util.Locale
 class HentKravoversiktTest :
     WordSpec({
         val søkEtterInnkrevingskrav = mockk<SøkEtterInnkrevingskrav>()
-        val kravAccessControl =
-            KravAccessControl(mapOf(Kravtype("Kravtype") to setOf(GroupId("enhet_1"))), GroupId("tilgang_til_krav"))
+        val kravAccessPolicy =
+            kravAccessPolicy(GroupId("tilgang_til_krav"), mapOf(Kravtype("Kravtype") to setOf(GroupId("enhet_1"))))
         val client =
             specWideTestApplication {
                 application {
@@ -58,7 +58,7 @@ class HentKravoversiktTest :
                     routing {
                         authenticate("entra-id") {
                             route("/kravoversikt") {
-                                context(kravAccessControl) {
+                                context(kravAccessPolicy) {
                                     hentKravoversikt(søkEtterInnkrevingskrav)
                                 }
                             }

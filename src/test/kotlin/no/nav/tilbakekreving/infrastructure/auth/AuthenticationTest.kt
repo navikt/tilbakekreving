@@ -21,7 +21,8 @@ import no.nav.tilbakekreving.domain.Kravbeskrivelse
 import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravtype
 import no.nav.tilbakekreving.infrastructure.client.AccessTokenVerifier
-import no.nav.tilbakekreving.infrastructure.route.KravAccessControl
+import no.nav.tilbakekreving.infrastructure.route.KravAccessSubject
+import no.nav.tilbakekreving.infrastructure.route.kravAccessPolicy
 import no.nav.tilbakekreving.infrastructure.route.util.navUserPrincipal
 import no.nav.tilbakekreving.setup.configureAuthentication
 import no.nav.tilbakekreving.util.specWideTestApplication
@@ -33,10 +34,10 @@ class AuthenticationTest :
         val navIdent = "Z123456"
         val groupIds = (listOf("group1", "group2", "tilgang_til_krav").map(::GroupId))
         val authenticationConfigName = AuthenticationConfigName("entra-id")
-        val kravAccessControl =
-            KravAccessControl(
-                mapOf(Kravtype("TYPE_A") to setOf(GroupId("group1"))),
+        val kravAccessPolicy =
+            kravAccessPolicy(
                 GroupId("tilgang_til_krav"),
+                mapOf(Kravtype("TYPE_A") to setOf(GroupId("group1"))),
             )
         val client =
             specWideTestApplication {
@@ -61,10 +62,10 @@ class AuthenticationTest :
                                         gjenståendeBeløp = 1000.0,
                                     )
                                 val allowed =
-                                    kravAccessControl
-                                        .filterByAccess(
+                                    kravAccessPolicy
+                                        .filter(
+                                            KravAccessSubject(principal?.groupIds?.toSet() ?: emptySet()),
                                             listOf(krav),
-                                            principal?.groupIds?.toSet() ?: emptySet(),
                                         ).isNotEmpty()
                                 if (allowed) {
                                     call.respond(HttpStatusCode.OK)
@@ -128,7 +129,7 @@ class AuthenticationTest :
         }
 
         "routes using krav access control" should {
-            "authorize access using KravAccessControl and user groups" {
+            "authorize access using krav access policy and user groups" {
                 coEvery {
                     accessTokenVerifier.verifyToken("valid-token")
                 } returns AccessTokenVerifier.ValidatedToken(navIdent, groupIds).right()

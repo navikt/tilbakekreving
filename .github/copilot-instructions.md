@@ -76,10 +76,22 @@ parameters.
 - **Auth in tests**: Inject bearer tokens via test client; mock `AccessTokenVerifier`
 - **Arrow assertions**: Use `kotest-assertions-arrow` for `Either` assertions
 
+### Access Control (ABAC DSL)
+
+Access control uses a custom attribute-based access control (ABAC) DSL defined in `infrastructure/auth/abac/`. Policies
+are built with `accessPolicy<Subject, Resource> { }` using composable rules:
+
+- `require { }` — all must pass for access to be granted
+- `deny { }` — if any matches, access is denied (checked first)
+
+The krav access policy (`kravAccessPolicy()`) gates access to krav resources based on user group membership. It is
+injected via context parameters and used in routes to filter krav lists. The enhet-based kravtype filtering rule is
+designed and tested but currently disabled pending kravtype-to-enhet mapping.
+
 ### Routes
 
-All business routes are under `/internal/` and require authentication + access control via
-`KravAccessControl.filterByAccess(groupIds)`. Health checks at `/internal/isAlive` and `/internal/isReady`.
+All business routes are under `/internal/` and require authentication. The kravoversikt route applies access control via
+`AccessPolicy.filter()`. Health checks at `/internal/isAlive` and `/internal/isReady`.
 
 ### Serialization
 
