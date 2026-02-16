@@ -18,10 +18,11 @@ class MaskinportenAuthHeaderPluginTest :
     WordSpec({
         "MaskinportenAuthHeaderPlugin" should {
             "add Bearer auth header to requests" {
-                val client = createClientWithPlugin(
-                    accessTokenProvider = fakeTokenProvider("my-token".right()),
-                    scopes = listOf("scope1", "scope2"),
-                )
+                val client =
+                    createClientWithPlugin(
+                        accessTokenProvider = fakeTokenProvider("my-token".right()),
+                        scopes = listOf("scope1", "scope2"),
+                    )
 
                 client.get("http://localhost/test")
 
@@ -37,10 +38,11 @@ class MaskinportenAuthHeaderPluginTest :
             }
 
             "throw when token retrieval fails" {
-                val client = createClientWithPlugin(
-                    accessTokenProvider = fakeTokenProvider(GetAccessTokenError.FailedToGetAccessToken.left()),
-                    scopes = listOf("scope1"),
-                )
+                val client =
+                    createClientWithPlugin(
+                        accessTokenProvider = fakeTokenProvider(GetAccessTokenError.FailedToGetAccessToken.left()),
+                        scopes = listOf("scope1"),
+                    )
 
                 shouldThrow<IllegalStateException> {
                     client.get("http://localhost/test")
@@ -49,11 +51,10 @@ class MaskinportenAuthHeaderPluginTest :
         }
     })
 
-private fun fakeTokenProvider(
-    result: arrow.core.Either<GetAccessTokenError, String>,
-) = object : AccessTokenProvider {
-    override suspend fun getAccessToken(vararg scopes: String) = result
-}
+private fun fakeTokenProvider(result: arrow.core.Either<GetAccessTokenError, String>) =
+    object : AccessTokenProvider {
+        override suspend fun getAccessToken(vararg scopes: String) = result
+    }
 
 private fun createClientWithPlugin(
     accessTokenProvider: AccessTokenProvider,

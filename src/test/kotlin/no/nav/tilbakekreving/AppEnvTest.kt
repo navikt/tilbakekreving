@@ -52,11 +52,13 @@ private fun getEditableEnvMap(): MutableMap<String, String> {
     return field.get(env) as MutableMap<String, String>
 }
 
-private fun setEnvVar(key: String, value: String) {
+private fun setEnvVar(
+    key: String,
+    value: String,
+) {
     getEditableEnvMap()[key] = value
 }
 
 private fun removeEnvVar(key: String) {
     getEditableEnvMap().remove(key)
 }
-
