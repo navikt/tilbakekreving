@@ -78,7 +78,7 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1-0.6.x-compat")
 
-    implementation("io.getunleash:unleash-client-java:12.1.1")
+    implementation("io.getunleash:unleash-client-java:12.1.2")
 
     val arrowVersion = "2.2.1.1"
     implementation("io.arrow-kt:arrow-core:$arrowVersion")
