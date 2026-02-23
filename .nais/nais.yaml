@@ -47,6 +47,8 @@ spec:
     scopes:
       consumes:
         - name: "skatteetaten:innkrevingsoppdrag"
+  envFrom:
+    - secret: tilbakekreving-unleash-api-token
   env:
     {{#each env}}
     - name: {{@key}}

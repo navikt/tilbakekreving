@@ -17,6 +17,7 @@ import io.ktor.server.routing.openapi.OpenApiDocSource
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.ktor.server.routing.routingRoot
+import no.nav.tilbakekreving.app.FeatureToggles
 import no.nav.tilbakekreving.config.AuthenticationConfigName
 import no.nav.tilbakekreving.infrastructure.audit.AuditLog
 import no.nav.tilbakekreving.infrastructure.audit.NavAuditLog
@@ -26,6 +27,8 @@ import no.nav.tilbakekreving.infrastructure.client.skatteetaten.SkatteetatenInnk
 import no.nav.tilbakekreving.infrastructure.route.hentKravdetaljerRoute
 import no.nav.tilbakekreving.infrastructure.route.hentKravoversikt
 import no.nav.tilbakekreving.infrastructure.route.kravAccessPolicy
+import no.nav.tilbakekreving.infrastructure.unleash.StubFeatureToggles
+import no.nav.tilbakekreving.infrastructure.unleash.UnleashFeatureToggles
 import no.nav.tilbakekreving.plugin.MaskinportenAuthHeaderPlugin
 import no.nav.tilbakekreving.setup.configureAuthentication
 import no.nav.tilbakekreving.setup.configureCallLogging
@@ -59,6 +62,20 @@ fun Application.module() {
                 }
             }
 
+        val featureToggles: FeatureToggles =
+            when (appEnv) {
+                AppEnv.LOCAL -> {
+                    StubFeatureToggles()
+                }
+
+                AppEnv.DEV, AppEnv.PROD -> {
+                    UnleashFeatureToggles(
+                        unleashServerApiUrl = tilbakekrevingConfig.unleash.serverApiUrl,
+                        unleashServerApiToken = tilbakekrevingConfig.unleash.serverApiToken,
+                    )
+                }
+            }
+
         val auditLog: AuditLog =
             NavAuditLog(
                 config = tilbakekrevingConfig.auditlog,
@@ -84,7 +101,10 @@ fun Application.module() {
             )
 
         val accessTokenVerifier = TexasClient(httpClient, tilbakekrevingConfig.nais.naisTokenIntrospectionEndpoint)
-        val kravAccessPolicy = kravAccessPolicy(tilbakekrevingConfig.kravTilgangsgruppe, tilbakekrevingConfig.kravAcl)
+        val kravAccessPolicy =
+            context(featureToggles) {
+                kravAccessPolicy(tilbakekrevingConfig.kravTilgangsgruppe, tilbakekrevingConfig.kravAcl)
+            }
         configureSerialization()
         configureCallLogging()
 

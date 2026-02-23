@@ -8,6 +8,10 @@ accessPolicy:
   outbound:
     external:
       - host: innkrevingsoppdrag.innkreving.skatteetaten-test.no # Skatteetaten
+      - host: utenlandsadresser-unleash-api.nav.cloud.nais.io # Unleash
+
+unleash:
+  environment: development
 
 replicas:
   min: 1

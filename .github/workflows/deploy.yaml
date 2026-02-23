@@ -32,6 +32,6 @@ jobs:
         uses: "nais/deploy/actions/deploy@v2"
         env:
           CLUSTER: "${{ inputs.cluster }}"
-          RESOURCE: "${{ inputs.nais_resource_file }}"
+          RESOURCE: "${{ inputs.nais_resource_file }},.nais/unleash-apitoken.yaml"
           WORKLOAD_IMAGE: "${{ inputs.image }}"
           VARS: "${{ inputs.nais_vars_file }}"

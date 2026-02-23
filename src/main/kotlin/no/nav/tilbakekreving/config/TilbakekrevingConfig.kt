@@ -7,6 +7,7 @@ import no.nav.tilbakekreving.infrastructure.auth.GroupId
 data class TilbakekrevingConfig(
     val nais: NaisConfig,
     val skatteetaten: SkatteetatenConfig,
+    val unleash: UnleashConfig,
     val kravAcl: Map<Kravtype, Set<GroupId>>,
     val kravTilgangsgruppe: GroupId,
     val auditlog: AuditLog.Config,

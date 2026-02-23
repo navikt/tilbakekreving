@@ -35,6 +35,7 @@ import no.nav.tilbakekreving.domain.Kravtype
 import no.nav.tilbakekreving.domain.Oppdragsgiver
 import no.nav.tilbakekreving.infrastructure.auth.GroupId
 import no.nav.tilbakekreving.infrastructure.auth.NavUserPrincipal
+import no.nav.tilbakekreving.infrastructure.unleash.StubFeatureToggles
 import no.nav.tilbakekreving.setup.configureSerialization
 import no.nav.tilbakekreving.util.specWideTestApplication
 import java.util.Locale
@@ -43,7 +44,9 @@ class HentKravoversiktTest :
     WordSpec({
         val søkEtterInnkrevingskrav = mockk<SøkEtterInnkrevingskrav>()
         val kravAccessPolicy =
-            kravAccessPolicy(GroupId("tilgang_til_krav"), mapOf(Kravtype("Kravtype") to setOf(GroupId("enhet_1"))))
+            context(StubFeatureToggles()) {
+                kravAccessPolicy(GroupId("tilgang_til_krav"), mapOf(Kravtype("Kravtype") to setOf(GroupId("enhet_1"))))
+            }
         val client =
             specWideTestApplication {
                 application {

@@ -24,6 +24,7 @@ import no.nav.tilbakekreving.infrastructure.client.AccessTokenVerifier
 import no.nav.tilbakekreving.infrastructure.route.KravAccessSubject
 import no.nav.tilbakekreving.infrastructure.route.kravAccessPolicy
 import no.nav.tilbakekreving.infrastructure.route.util.navUserPrincipal
+import no.nav.tilbakekreving.infrastructure.unleash.StubFeatureToggles
 import no.nav.tilbakekreving.setup.configureAuthentication
 import no.nav.tilbakekreving.util.specWideTestApplication
 import java.util.Locale
@@ -35,10 +36,12 @@ class AuthenticationTest :
         val groupIds = (listOf("group1", "group2", "tilgang_til_krav").map(::GroupId))
         val authenticationConfigName = AuthenticationConfigName("entra-id")
         val kravAccessPolicy =
-            kravAccessPolicy(
-                GroupId("tilgang_til_krav"),
-                mapOf(Kravtype("TYPE_A") to setOf(GroupId("group1"))),
-            )
+            context(StubFeatureToggles()) {
+                kravAccessPolicy(
+                    GroupId("tilgang_til_krav"),
+                    mapOf(Kravtype("TYPE_A") to setOf(GroupId("group1"))),
+                )
+            }
         val client =
             specWideTestApplication {
                 application {
