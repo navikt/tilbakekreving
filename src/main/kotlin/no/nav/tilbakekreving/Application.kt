@@ -71,7 +71,7 @@ fun Application.module() {
                 AppEnv.DEV, AppEnv.PROD -> {
                     UnleashFeatureToggles(
                         unleashServerApiUrl = tilbakekrevingConfig.unleash.serverApiUrl,
-                        unleashServerApiToken = tilbakekrevingConfig.unleash.serverApiToken,
+                        unleashServerApiToken = tilbakekrevingConfig.unleash.serverApiToken.value,
                     )
                 }
             }
