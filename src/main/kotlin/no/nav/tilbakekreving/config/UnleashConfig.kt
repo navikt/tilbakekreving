@@ -5,4 +5,5 @@ import com.sksamuel.hoplite.Masked
 data class UnleashConfig(
     val serverApiUrl: String,
     val serverApiToken: Masked,
+    val appName: String = "tilbakekreving",
 )

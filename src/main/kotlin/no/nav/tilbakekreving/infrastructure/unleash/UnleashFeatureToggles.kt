@@ -1,23 +1,22 @@
 package no.nav.tilbakekreving.infrastructure.unleash
 
 import io.getunleash.DefaultUnleash
-import io.getunleash.util.UnleashConfig
 import no.nav.tilbakekreving.app.FeatureToggles
 import no.nav.tilbakekreving.app.Toggle
+import no.nav.tilbakekreving.config.UnleashConfig
+import io.getunleash.util.UnleashConfig as SdkUnleashConfig
 
 class UnleashFeatureToggles(
-    unleashServerApiUrl: String,
-    unleashServerApiToken: String,
-    appName: String = "tilbakekreving",
+    config: UnleashConfig,
 ) : FeatureToggles {
     private val unleash =
         DefaultUnleash(
-            UnleashConfig
+            SdkUnleashConfig
                 .builder()
-                .appName(appName)
-                .instanceId(appName)
-                .unleashAPI("$unleashServerApiUrl/api")
-                .apiKey(unleashServerApiToken)
+                .appName(config.appName)
+                .instanceId(config.appName)
+                .unleashAPI("${config.serverApiUrl}/api")
+                .apiKey(config.serverApiToken.value)
                 .build(),
         )
 

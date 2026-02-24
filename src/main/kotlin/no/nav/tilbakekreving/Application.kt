@@ -1,5 +1,6 @@
 package no.nav.tilbakekreving
 
+import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.http.ContentType
@@ -10,6 +11,7 @@ import io.ktor.server.application.log
 import io.ktor.server.auth.authenticate
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import io.ktor.server.plugins.di.dependencies
 import io.ktor.server.plugins.swagger.swaggerUI
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
@@ -19,11 +21,18 @@ import io.ktor.server.routing.routing
 import io.ktor.server.routing.routingRoot
 import no.nav.tilbakekreving.app.FeatureToggles
 import no.nav.tilbakekreving.config.AuthenticationConfigName
+import no.nav.tilbakekreving.config.NaisConfig
+import no.nav.tilbakekreving.config.SkatteetatenConfig
+import no.nav.tilbakekreving.config.TilbakekrevingConfig
+import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.infrastructure.audit.AuditLog
 import no.nav.tilbakekreving.infrastructure.audit.NavAuditLog
+import no.nav.tilbakekreving.infrastructure.auth.abac.AccessPolicy
+import no.nav.tilbakekreving.infrastructure.client.AccessTokenVerifier
 import no.nav.tilbakekreving.infrastructure.client.TexasClient
 import no.nav.tilbakekreving.infrastructure.client.maskinporten.TexasMaskinportenClient
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.SkatteetatenInnkrevingsoppdragHttpClient
+import no.nav.tilbakekreving.infrastructure.route.KravAccessSubject
 import no.nav.tilbakekreving.infrastructure.route.hentKravdetaljerRoute
 import no.nav.tilbakekreving.infrastructure.route.hentKravoversikt
 import no.nav.tilbakekreving.infrastructure.route.kravAccessPolicy
@@ -46,70 +55,72 @@ fun main() {
     ).start(wait = true)
 }
 
-fun Application.module() {
+suspend fun Application.module() {
     val appEnv = context(log) { AppEnv.getFromEnvVariable("NAIS_CLUSTER_NAME") }
     log.info("Starting application in $appEnv")
 
     context(appEnv) {
-        val tilbakekrevingConfig =
-            loadConfiguration().also {
+        dependencies {
+            provide { loadConfiguration() }
+            provide { resolve<TilbakekrevingConfig>().nais }
+            provide { resolve<TilbakekrevingConfig>().skatteetaten }
+            provide { resolve<TilbakekrevingConfig>().unleash }
+            provide { resolve<TilbakekrevingConfig>().auditlog }
+
+            provide<HttpClient> { createHttpClient(CIO.create()) }
+
+            provide<FeatureToggles> {
                 when (appEnv) {
-                    AppEnv.LOCAL, AppEnv.DEV -> {
-                        log.info("Loaded configuration: $it")
-                    }
-
-                    AppEnv.PROD -> {}
+                    AppEnv.LOCAL -> StubFeatureToggles()
+                    AppEnv.DEV, AppEnv.PROD -> UnleashFeatureToggles(config = resolve())
                 }
             }
 
-        val featureToggles: FeatureToggles =
-            when (appEnv) {
-                AppEnv.LOCAL -> {
-                    StubFeatureToggles()
-                }
+            provide<AuditLog>(NavAuditLog::class)
 
-                AppEnv.DEV, AppEnv.PROD -> {
-                    UnleashFeatureToggles(
-                        unleashServerApiUrl = tilbakekrevingConfig.unleash.serverApiUrl,
-                        unleashServerApiToken = tilbakekrevingConfig.unleash.serverApiToken.value,
+            provide<AccessTokenVerifier> {
+                TexasClient(resolve(), resolve<NaisConfig>().naisTokenIntrospectionEndpoint)
+            }
+
+            provide<SkatteetatenInnkrevingsoppdragHttpClient> {
+                val skatteetatenConfig = resolve<SkatteetatenConfig>()
+                val maskinportenClient =
+                    TexasMaskinportenClient(
+                        resolve(),
+                        resolve<NaisConfig>().naisTokenEndpoint,
                     )
+                val skatteetatenClient =
+                    resolve<HttpClient>().config {
+                        install(MaskinportenAuthHeaderPlugin) {
+                            accessTokenProvider = maskinportenClient
+                            scopes = skatteetatenConfig.scopes
+                        }
+                        install(HttpTimeout) {
+                            requestTimeoutMillis = 30.seconds.inWholeMilliseconds
+                        }
+                    }
+                SkatteetatenInnkrevingsoppdragHttpClient(skatteetatenConfig.baseUrl, skatteetatenClient)
+            }
+
+            provide<AccessPolicy<KravAccessSubject, Krav>> {
+                context(resolve<FeatureToggles>()) {
+                    val config = resolve<TilbakekrevingConfig>()
+                    kravAccessPolicy(config.kravTilgangsgruppe, config.kravAcl)
                 }
             }
 
-        val auditLog: AuditLog =
-            NavAuditLog(
-                config = tilbakekrevingConfig.auditlog,
-            )
-        val httpClient = createHttpClient(CIO.create())
+            provide { AuthenticationConfigName("entra-id") }
+        }
 
-        val maskinportenAccessTokenProvider =
-            TexasMaskinportenClient(httpClient, tilbakekrevingConfig.nais.naisTokenEndpoint)
-        val skatteetatenClient =
-            createHttpClient(CIO.create()) {
-                install(MaskinportenAuthHeaderPlugin) {
-                    accessTokenProvider = maskinportenAccessTokenProvider
-                    scopes = tilbakekrevingConfig.skatteetaten.scopes
-                }
-                install(HttpTimeout) {
-                    requestTimeoutMillis = 30.seconds.inWholeMilliseconds
-                }
-            }
-        val innkrevingsoppdragHttpClient =
-            SkatteetatenInnkrevingsoppdragHttpClient(
-                tilbakekrevingConfig.skatteetaten.baseUrl,
-                skatteetatenClient,
-            )
-
-        val accessTokenVerifier = TexasClient(httpClient, tilbakekrevingConfig.nais.naisTokenIntrospectionEndpoint)
-        val kravAccessPolicy =
-            context(featureToggles) {
-                kravAccessPolicy(tilbakekrevingConfig.kravTilgangsgruppe, tilbakekrevingConfig.kravAcl)
-            }
         configureSerialization()
         configureCallLogging()
 
-        val authenticationConfigName = AuthenticationConfigName("entra-id")
-        configureAuthentication(authenticationConfigName, accessTokenVerifier)
+        val authenticationConfigName: AuthenticationConfigName by dependencies
+        configureAuthentication(authenticationConfigName, dependencies.resolve())
+
+        val innkrevingsoppdragHttpClient: SkatteetatenInnkrevingsoppdragHttpClient by dependencies
+        val kravAccessPolicy: AccessPolicy<KravAccessSubject, Krav> by dependencies
+        val auditLog: AuditLog by dependencies
 
         routing {
             route("/internal") {

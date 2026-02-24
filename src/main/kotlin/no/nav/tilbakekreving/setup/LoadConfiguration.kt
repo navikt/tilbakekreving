@@ -26,4 +26,13 @@ fun loadConfiguration(): TilbakekrevingConfig {
         .withExplicitSealedTypes()
         .build()
         .loadConfigOrThrow<TilbakekrevingConfig>(resourceFiles)
+        .also {
+            when (appEnv) {
+                AppEnv.DEV, AppEnv.LOCAL -> {
+                    println("Loaded configuration: $it")
+                }
+
+                AppEnv.PROD -> {}
+            }
+        }
 }
