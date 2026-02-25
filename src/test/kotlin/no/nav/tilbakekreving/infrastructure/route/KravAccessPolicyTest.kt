@@ -62,7 +62,7 @@ class KravAccessPolicyTest :
                             kravAccessGroup,
                             enhetAccess,
                         )
-                }
+                    }
                 val subject = KravAccessSubject(setOf(kravAccessGroup))
                 val kravList = listOf(krav("TYPE_A"), krav("TYPE_B"))
 
@@ -77,8 +77,8 @@ class KravAccessPolicyTest :
                         lesKravAccessPolicy(
                             kravAccessGroup,
                             enhetAccess,
-                    )
-                }
+                        )
+                    }
 
                 val subjectWithEnhetA = KravAccessSubject(setOf(kravAccessGroup, GroupId("enhet_a")))
                 val kravList = listOf(krav("TYPE_A"), krav("TYPE_B"))
@@ -91,9 +91,9 @@ class KravAccessPolicyTest :
                     context(StubFeatureToggles(default = true)) {
                         lesKravAccessPolicy(
                             kravAccessGroup,
-                        enhetAccess
-                    )
-                }
+                            enhetAccess,
+                        )
+                    }
 
                 val subject = KravAccessSubject(setOf(kravAccessGroup))
                 policy.filter(subject, listOf(krav("TYPE_A"))) shouldBe emptyList()
@@ -104,9 +104,9 @@ class KravAccessPolicyTest :
                     context(StubFeatureToggles(default = true)) {
                         lesKravAccessPolicy(
                             kravAccessGroup,
-                        enhetAccess
-                    )
-                }
+                            enhetAccess,
+                        )
+                    }
 
                 val subject = KravAccessSubject(setOf(kravAccessGroup, GroupId("enhet_a"), GroupId("enhet_b")))
                 val kravList = listOf(krav("TYPE_A"), krav("TYPE_B"))
