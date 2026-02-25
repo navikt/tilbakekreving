@@ -9,6 +9,7 @@ import io.ktor.server.routing.post
 import no.nav.tilbakekreving.app.SøkEtterInnkrevingskrav
 import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.infrastructure.auth.abac.AccessPolicy
+import no.nav.tilbakekreving.infrastructure.auth.abac.policy.KravAccessSubject
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravoversiktJsonRequest
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravoversiktJsonResponse
 import no.nav.tilbakekreving.infrastructure.route.util.navUserPrincipal

@@ -20,9 +20,9 @@ import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.Kravbeskrivelse
 import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravtype
+import no.nav.tilbakekreving.infrastructure.auth.abac.policy.KravAccessSubject
+import no.nav.tilbakekreving.infrastructure.auth.abac.policy.lesKravAccessPolicy
 import no.nav.tilbakekreving.infrastructure.client.AccessTokenVerifier
-import no.nav.tilbakekreving.infrastructure.route.KravAccessSubject
-import no.nav.tilbakekreving.infrastructure.route.kravAccessPolicy
 import no.nav.tilbakekreving.infrastructure.route.util.navUserPrincipal
 import no.nav.tilbakekreving.infrastructure.unleash.StubFeatureToggles
 import no.nav.tilbakekreving.setup.configureAuthentication
@@ -37,7 +37,7 @@ class AuthenticationTest :
         val authenticationConfigName = AuthenticationConfigName("entra-id")
         val kravAccessPolicy =
             context(StubFeatureToggles()) {
-                kravAccessPolicy(
+                lesKravAccessPolicy(
                     GroupId("tilgang_til_krav"),
                     mapOf(Kravtype("TYPE_A") to setOf(GroupId("group1"))),
                 )

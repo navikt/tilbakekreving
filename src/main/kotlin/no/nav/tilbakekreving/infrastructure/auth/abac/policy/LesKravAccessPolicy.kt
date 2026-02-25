@@ -1,4 +1,4 @@
-package no.nav.tilbakekreving.infrastructure.route
+package no.nav.tilbakekreving.infrastructure.auth.abac.policy
 
 import no.nav.tilbakekreving.app.FeatureToggles
 import no.nav.tilbakekreving.app.Toggle
@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory
  * Når toggle er deaktivert, ser brukeren alle krav så lenge de har [lesKravAccessGroup].
  */
 context(featureToggles: FeatureToggles)
-fun kravAccessPolicy(
+fun lesKravAccessPolicy(
     lesKravAccessGroup: GroupId,
     enhetAccess: Map<Kravtype, Set<GroupId>> = emptyMap(),
 ): AccessPolicy<KravAccessSubject, Krav> {
@@ -40,3 +40,9 @@ fun kravAccessPolicy(
         }
     }
 }
+
+typealias LesKravAccessPolicy = AccessPolicy<KravAccessSubject, Krav>
+
+data class KravAccessSubject(
+    val groupIds: Set<GroupId>,
+)

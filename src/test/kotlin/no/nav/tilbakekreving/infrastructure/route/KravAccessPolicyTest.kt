@@ -7,6 +7,8 @@ import no.nav.tilbakekreving.domain.Kravbeskrivelse
 import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravtype
 import no.nav.tilbakekreving.infrastructure.auth.GroupId
+import no.nav.tilbakekreving.infrastructure.auth.abac.policy.KravAccessSubject
+import no.nav.tilbakekreving.infrastructure.auth.abac.policy.lesKravAccessPolicy
 import no.nav.tilbakekreving.infrastructure.unleash.StubFeatureToggles
 import java.util.Locale
 
@@ -31,19 +33,19 @@ class KravAccessPolicyTest :
 
         "kravAccessPolicy with toggle disabled" should {
             "allow access when user has the krav access group" {
-                val policy = context(StubFeatureToggles(default = false)) { kravAccessPolicy(kravAccessGroup) }
+                val policy = context(StubFeatureToggles(default = false)) { lesKravAccessPolicy(kravAccessGroup) }
                 val subject = KravAccessSubject(setOf(kravAccessGroup))
                 policy.isAllowed(subject, krav("TYPE_A")) shouldBe true
             }
 
             "deny access when user does not have the krav access group" {
-                val policy = context(StubFeatureToggles(default = false)) { kravAccessPolicy(kravAccessGroup) }
+                val policy = context(StubFeatureToggles(default = false)) { lesKravAccessPolicy(kravAccessGroup) }
                 val subject = KravAccessSubject(setOf(GroupId("other_group")))
                 policy.isAllowed(subject, krav("TYPE_A")) shouldBe false
             }
 
             "filter krav list based on group membership" {
-                val policy = context(StubFeatureToggles(default = false)) { kravAccessPolicy(kravAccessGroup) }
+                val policy = context(StubFeatureToggles(default = false)) { lesKravAccessPolicy(kravAccessGroup) }
                 val kravList = listOf(krav("TYPE_A"), krav("TYPE_B"))
 
                 val allowedSubject = KravAccessSubject(setOf(kravAccessGroup))
@@ -54,7 +56,13 @@ class KravAccessPolicyTest :
             }
 
             "not filter by enhet when toggle is disabled" {
-                val policy = context(StubFeatureToggles(default = false)) { kravAccessPolicy(kravAccessGroup, enhetAccess) }
+                val policy =
+                    context(StubFeatureToggles(default = false)) {
+                        lesKravAccessPolicy(
+                            kravAccessGroup,
+                            enhetAccess,
+                        )
+                }
                 val subject = KravAccessSubject(setOf(kravAccessGroup))
                 val kravList = listOf(krav("TYPE_A"), krav("TYPE_B"))
 
@@ -64,7 +72,13 @@ class KravAccessPolicyTest :
 
         "kravAccessPolicy with toggle enabled" should {
             "filter krav by kravtype when enhet rule is enabled via toggle" {
-                val policy = context(StubFeatureToggles(default = true)) { kravAccessPolicy(kravAccessGroup, enhetAccess) }
+                val policy =
+                    context(StubFeatureToggles(default = true)) {
+                        lesKravAccessPolicy(
+                            kravAccessGroup,
+                            enhetAccess,
+                    )
+                }
 
                 val subjectWithEnhetA = KravAccessSubject(setOf(kravAccessGroup, GroupId("enhet_a")))
                 val kravList = listOf(krav("TYPE_A"), krav("TYPE_B"))
@@ -73,14 +87,26 @@ class KravAccessPolicyTest :
             }
 
             "deny all krav when user has base group but no enhet groups" {
-                val policy = context(StubFeatureToggles(default = true)) { kravAccessPolicy(kravAccessGroup, enhetAccess) }
+                val policy =
+                    context(StubFeatureToggles(default = true)) {
+                        lesKravAccessPolicy(
+                            kravAccessGroup,
+                        enhetAccess
+                    )
+                }
 
                 val subject = KravAccessSubject(setOf(kravAccessGroup))
                 policy.filter(subject, listOf(krav("TYPE_A"))) shouldBe emptyList()
             }
 
             "allow krav when user has both base group and matching enhet group" {
-                val policy = context(StubFeatureToggles(default = true)) { kravAccessPolicy(kravAccessGroup, enhetAccess) }
+                val policy =
+                    context(StubFeatureToggles(default = true)) {
+                        lesKravAccessPolicy(
+                            kravAccessGroup,
+                        enhetAccess
+                    )
+                }
 
                 val subject = KravAccessSubject(setOf(kravAccessGroup, GroupId("enhet_a"), GroupId("enhet_b")))
                 val kravList = listOf(krav("TYPE_A"), krav("TYPE_B"))
