@@ -104,8 +104,6 @@ suspend fun Application.module() {
         val authenticationConfigName: AuthenticationConfigName by dependencies
         configureAuthentication(authenticationConfigName, dependencies.resolve())
 
-        context(dependencies) {
-            this@module.configureRouting()
-        }
+        configureRouting()
     }
 }
