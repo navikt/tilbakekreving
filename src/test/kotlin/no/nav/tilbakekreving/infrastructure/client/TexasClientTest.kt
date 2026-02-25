@@ -16,12 +16,13 @@ import io.ktor.http.content.TextContent
 import io.ktor.http.headersOf
 import no.nav.tilbakekreving.AppEnv
 import no.nav.tilbakekreving.infrastructure.auth.GroupId
+import no.nav.tilbakekreving.infrastructure.auth.NavUserPrincipal
 import no.nav.tilbakekreving.setup.createHttpClient
 
 class TexasClientTest :
     WordSpec({
         "verifyToken" should {
-            "return ValidatedToken when token verification is successful" {
+            "return NavUserPrincipal when token verification is successful" {
                 val mockEngine =
                     MockEngine { request ->
                         request.body.contentType
@@ -61,7 +62,7 @@ class TexasClientTest :
                 val result = texasClient.verifyToken("valid-token")
 
                 result.shouldBeRight(
-                    AccessTokenVerifier.ValidatedToken(
+                    NavUserPrincipal(
                         "Z123456",
                         listOf(
                             "group1",

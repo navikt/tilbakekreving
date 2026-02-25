@@ -9,6 +9,7 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
+import no.nav.tilbakekreving.infrastructure.auth.NavUserPrincipal
 import no.nav.tilbakekreving.infrastructure.client.json.VerifyTokenRequest
 import no.nav.tilbakekreving.infrastructure.client.json.VerifyTokenResponse
 import org.slf4j.LoggerFactory
@@ -16,7 +17,7 @@ import org.slf4j.LoggerFactory
 class TexasClient(
     private val httpClient: HttpClient,
     private val baseUrl: String,
-) : AccessTokenVerifier {
+) : AccessTokenVerifier<NavUserPrincipal> {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override suspend fun verifyToken(token: String) =

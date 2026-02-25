@@ -12,7 +12,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.jsonPrimitive
 import no.nav.tilbakekreving.infrastructure.auth.GroupId
-import no.nav.tilbakekreving.infrastructure.client.AccessTokenVerifier
+import no.nav.tilbakekreving.infrastructure.auth.NavUserPrincipal
 
 @Serializable(with = VerifyTokenResponseSerializer::class)
 sealed class VerifyTokenResponse {
@@ -27,8 +27,8 @@ sealed class VerifyTokenResponse {
         val iat: Long,
         val groups: List<String>,
     ) : VerifyTokenResponse() {
-        fun toDomain(): AccessTokenVerifier.ValidatedToken =
-            AccessTokenVerifier.ValidatedToken(
+        fun toDomain(): NavUserPrincipal =
+            NavUserPrincipal(
                 navIdent = NAVident,
                 groupIds = groups.map(::GroupId),
             )

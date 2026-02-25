@@ -37,6 +37,7 @@ import no.nav.tilbakekreving.domain.Kravlinje
 import no.nav.tilbakekreving.domain.Oppdragsgiver
 import no.nav.tilbakekreving.infrastructure.audit.AuditLog
 import no.nav.tilbakekreving.infrastructure.auth.GroupId
+import no.nav.tilbakekreving.infrastructure.auth.NavUserPrincipal
 import no.nav.tilbakekreving.infrastructure.client.AccessTokenVerifier
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravdetaljerJsonRequest
 import no.nav.tilbakekreving.infrastructure.route.json.KravidentifikatorType
@@ -50,15 +51,14 @@ class HentKravdetaljerTest :
         val hentKravdetaljer = mockk<HentKravdetaljer>()
         val auditLog = mockk<AuditLog>(relaxed = true)
 
-        val accessTokenVerifier = mockk<AccessTokenVerifier>()
+        val accessTokenVerifier = mockk<AccessTokenVerifier<NavUserPrincipal>>()
         coEvery { accessTokenVerifier.verifyToken(any()) } returns
             AccessTokenVerifier.VerificationError.InvalidToken.left()
         coEvery { accessTokenVerifier.verifyToken("valid-token") } returns
-            AccessTokenVerifier
-                .ValidatedToken(
-                    navIdent = "Z123456",
-                    groupIds = listOf("gruppe1").map { GroupId(it) },
-                ).right()
+            NavUserPrincipal(
+                navIdent = "Z123456",
+                groupIds = listOf("gruppe1").map { GroupId(it) },
+            ).right()
 
         // Reset audit mocks for å kunne telle kall per test
         afterTest { clearMocks(auditLog) }

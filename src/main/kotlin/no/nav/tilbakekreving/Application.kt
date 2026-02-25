@@ -15,6 +15,7 @@ import no.nav.tilbakekreving.config.SkatteetatenConfig
 import no.nav.tilbakekreving.config.TilbakekrevingConfig
 import no.nav.tilbakekreving.infrastructure.audit.AuditLog
 import no.nav.tilbakekreving.infrastructure.audit.NavAuditLog
+import no.nav.tilbakekreving.infrastructure.auth.NavUserPrincipal
 import no.nav.tilbakekreving.infrastructure.auth.abac.policy.LesKravAccessPolicy
 import no.nav.tilbakekreving.infrastructure.auth.abac.policy.lesKravAccessPolicy
 import no.nav.tilbakekreving.infrastructure.client.AccessTokenVerifier
@@ -64,7 +65,7 @@ suspend fun Application.module() {
 
             provide<AuditLog>(NavAuditLog::class)
 
-            provide<AccessTokenVerifier> {
+            provide<AccessTokenVerifier<NavUserPrincipal>> {
                 TexasClient(resolve(), resolve<NaisConfig>().naisTokenIntrospectionEndpoint)
             }
 

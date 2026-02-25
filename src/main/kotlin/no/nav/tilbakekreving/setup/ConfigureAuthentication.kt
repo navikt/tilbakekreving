@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory
 
 fun Application.configureAuthentication(
     authenticationConfigName: AuthenticationConfigName,
-    accessTokenVerifier: AccessTokenVerifier,
+    accessTokenVerifier: AccessTokenVerifier<NavUserPrincipal>,
 ) {
     install(Authentication) {
         val logger = LoggerFactory.getLogger("Authentication")
@@ -32,8 +32,6 @@ fun Application.configureAuthentication(
                                 null
                             }
                         }
-                    }?.let { validated ->
-                        NavUserPrincipal(navIdent = validated.navIdent, groupIds = validated.groupIds)
                     }
             }
         }

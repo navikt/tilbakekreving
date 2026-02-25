@@ -1,15 +1,9 @@
 package no.nav.tilbakekreving.infrastructure.client
 
 import arrow.core.Either
-import no.nav.tilbakekreving.infrastructure.auth.GroupId
 
-interface AccessTokenVerifier {
-    suspend fun verifyToken(token: String): Either<VerificationError, ValidatedToken>
-
-    data class ValidatedToken(
-        val navIdent: String,
-        val groupIds: List<GroupId>,
-    )
+interface AccessTokenVerifier<VerifiedToken> {
+    suspend fun verifyToken(token: String): Either<VerificationError, VerifiedToken>
 
     sealed class VerificationError {
         data object FailedToVerifyToken : VerificationError()

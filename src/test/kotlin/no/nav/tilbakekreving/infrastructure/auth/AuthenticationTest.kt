@@ -31,7 +31,7 @@ import java.util.Locale
 
 class AuthenticationTest :
     WordSpec({
-        val accessTokenVerifier = mockk<AccessTokenVerifier>()
+        val accessTokenVerifier = mockk<AccessTokenVerifier<NavUserPrincipal>>()
         val navIdent = "Z123456"
         val groupIds = (listOf("group1", "group2", "tilgang_til_krav").map(::GroupId))
         val authenticationConfigName = AuthenticationConfigName.ENTRA_ID
@@ -90,7 +90,7 @@ class AuthenticationTest :
 
                 coEvery {
                     accessTokenVerifier.verifyToken("valid-token")
-                } returns AccessTokenVerifier.ValidatedToken(navIdent, groupIds).right()
+                } returns NavUserPrincipal(navIdent, groupIds).right()
 
                 // Public route should be accessible without a token
                 client.get("/public").shouldBeOK()
@@ -135,7 +135,7 @@ class AuthenticationTest :
             "authorize access using krav access policy and user groups" {
                 coEvery {
                     accessTokenVerifier.verifyToken("valid-token")
-                } returns AccessTokenVerifier.ValidatedToken(navIdent, groupIds).right()
+                } returns NavUserPrincipal(navIdent, groupIds).right()
 
                 client
                     .get("/protected-krav") {
