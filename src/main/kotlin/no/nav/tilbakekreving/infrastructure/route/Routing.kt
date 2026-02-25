@@ -14,17 +14,15 @@ import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.ktor.server.routing.routingRoot
 import no.nav.tilbakekreving.config.AuthenticationConfigName
-import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.infrastructure.audit.AuditLog
-import no.nav.tilbakekreving.infrastructure.auth.abac.AccessPolicy
-import no.nav.tilbakekreving.infrastructure.auth.abac.policy.KravAccessSubject
+import no.nav.tilbakekreving.infrastructure.auth.abac.policy.LesKravAccessPolicy
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.SkatteetatenInnkrevingsoppdragHttpClient
 
 context(dependencies: DependencyRegistry)
 suspend fun Application.configureRouting() {
     val authConfigName = dependencies.resolve<AuthenticationConfigName>()
     val innkrevingsoppdragHttpClient = dependencies.resolve<SkatteetatenInnkrevingsoppdragHttpClient>()
-    val kravAccessPolicy: AccessPolicy<KravAccessSubject, Krav> = dependencies.resolve()
+    val kravAccessPolicy: LesKravAccessPolicy = dependencies.resolve()
     val auditLog: AuditLog = dependencies.resolve()
 
     this.routing {

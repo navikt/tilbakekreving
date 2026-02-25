@@ -24,7 +24,7 @@ context(featureToggles: FeatureToggles)
 fun lesKravAccessPolicy(
     lesKravAccessGroup: GroupId,
     enhetAccess: Map<Kravtype, Set<GroupId>> = emptyMap(),
-): AccessPolicy<KravAccessSubject, Krav> {
+): LesKravAccessPolicy {
     val logger = LoggerFactory.getLogger("KravAccessPolicy")
     logger.info("KravAccessPolicy initialized with enhetAccess: $enhetAccess")
 

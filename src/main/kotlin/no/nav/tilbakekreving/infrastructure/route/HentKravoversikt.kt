@@ -7,15 +7,14 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import no.nav.tilbakekreving.app.SøkEtterInnkrevingskrav
-import no.nav.tilbakekreving.domain.Krav
-import no.nav.tilbakekreving.infrastructure.auth.abac.AccessPolicy
 import no.nav.tilbakekreving.infrastructure.auth.abac.policy.KravAccessSubject
+import no.nav.tilbakekreving.infrastructure.auth.abac.policy.LesKravAccessPolicy
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravoversiktJsonRequest
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravoversiktJsonResponse
 import no.nav.tilbakekreving.infrastructure.route.util.navUserPrincipal
 import org.slf4j.LoggerFactory
 
-context(kravAccessPolicy: AccessPolicy<KravAccessSubject, Krav>)
+context(kravAccessPolicy: LesKravAccessPolicy)
 fun Route.hentKravoversikt(søkEtterInnkrevingskrav: SøkEtterInnkrevingskrav) {
     val logger = LoggerFactory.getLogger("HentKravoversiktRoute")
     post {

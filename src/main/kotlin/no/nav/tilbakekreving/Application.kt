@@ -13,11 +13,9 @@ import no.nav.tilbakekreving.config.AuthenticationConfigName
 import no.nav.tilbakekreving.config.NaisConfig
 import no.nav.tilbakekreving.config.SkatteetatenConfig
 import no.nav.tilbakekreving.config.TilbakekrevingConfig
-import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.infrastructure.audit.AuditLog
 import no.nav.tilbakekreving.infrastructure.audit.NavAuditLog
-import no.nav.tilbakekreving.infrastructure.auth.abac.AccessPolicy
-import no.nav.tilbakekreving.infrastructure.auth.abac.policy.KravAccessSubject
+import no.nav.tilbakekreving.infrastructure.auth.abac.policy.LesKravAccessPolicy
 import no.nav.tilbakekreving.infrastructure.auth.abac.policy.lesKravAccessPolicy
 import no.nav.tilbakekreving.infrastructure.client.AccessTokenVerifier
 import no.nav.tilbakekreving.infrastructure.client.TexasClient
@@ -90,7 +88,7 @@ suspend fun Application.module() {
                 SkatteetatenInnkrevingsoppdragHttpClient(skatteetatenConfig.baseUrl, skatteetatenClient)
             }
 
-            provide<AccessPolicy<KravAccessSubject, Krav>> {
+            provide<LesKravAccessPolicy> {
                 context(resolve<FeatureToggles>()) {
                     val config = resolve<TilbakekrevingConfig>()
                     lesKravAccessPolicy(config.kravTilgangsgruppe, config.kravAcl)
