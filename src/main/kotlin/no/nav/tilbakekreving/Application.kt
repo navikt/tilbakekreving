@@ -94,15 +94,12 @@ suspend fun Application.module() {
                     lesKravAccessPolicy(config.kravTilgangsgruppe, config.kravAcl)
                 }
             }
-
-            provide { AuthenticationConfigName("entra-id") }
         }
 
         configureSerialization()
         configureCallLogging()
 
-        val authenticationConfigName: AuthenticationConfigName by dependencies
-        configureAuthentication(authenticationConfigName, dependencies.resolve())
+        configureAuthentication(AuthenticationConfigName.ENTRA_ID, dependencies.resolve())
 
         configureRouting()
     }

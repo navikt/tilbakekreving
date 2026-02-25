@@ -46,7 +46,7 @@ import no.nav.tilbakekreving.util.specWideTestApplication
 
 class HentKravdetaljerTest :
     WordSpec({
-        val authenticationConfigName = AuthenticationConfigName("test")
+        val authenticationConfigName = AuthenticationConfigName.ENTRA_ID
         val hentKravdetaljer = mockk<HentKravdetaljer>()
         val auditLog = mockk<AuditLog>(relaxed = true)
 
@@ -69,7 +69,7 @@ class HentKravdetaljerTest :
                     configureSerialization()
                     configureAuthentication(authenticationConfigName, accessTokenVerifier)
                     routing {
-                        authenticate(authenticationConfigName.name) {
+                        authenticate(authenticationConfigName.configName) {
                             route("/kravdetaljer") {
                                 context(auditLog) {
                                     hentKravdetaljerRoute(hentKravdetaljer)

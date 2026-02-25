@@ -19,14 +19,13 @@ import no.nav.tilbakekreving.infrastructure.auth.abac.policy.LesKravAccessPolicy
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.SkatteetatenInnkrevingsoppdragHttpClient
 
 fun Application.configureRouting() {
-    val authConfigName: AuthenticationConfigName by dependencies
     val innkrevingsoppdragHttpClient: SkatteetatenInnkrevingsoppdragHttpClient by dependencies
     val kravAccessPolicy: LesKravAccessPolicy by dependencies
     val auditLog: AuditLog by dependencies
 
     this.routing {
         route("/internal") {
-            authenticate(authConfigName.name) {
+            authenticate(AuthenticationConfigName.ENTRA_ID.configName) {
                 context(kravAccessPolicy, auditLog) {
                     route("/kravdetaljer") {
                         hentKravdetaljerRoute(innkrevingsoppdragHttpClient)

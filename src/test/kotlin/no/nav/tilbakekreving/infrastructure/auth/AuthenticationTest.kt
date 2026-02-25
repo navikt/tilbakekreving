@@ -34,7 +34,7 @@ class AuthenticationTest :
         val accessTokenVerifier = mockk<AccessTokenVerifier>()
         val navIdent = "Z123456"
         val groupIds = (listOf("group1", "group2", "tilgang_til_krav").map(::GroupId))
-        val authenticationConfigName = AuthenticationConfigName("entra-id")
+        val authenticationConfigName = AuthenticationConfigName.ENTRA_ID
         val kravAccessPolicy =
             context(StubFeatureToggles()) {
                 lesKravAccessPolicy(
@@ -48,7 +48,7 @@ class AuthenticationTest :
                     configureAuthentication(authenticationConfigName, accessTokenVerifier)
 
                     routing {
-                        authenticate(authenticationConfigName.name) {
+                        authenticate(authenticationConfigName.configName) {
                             get("/protected") {
                                 call.respond(HttpStatusCode.OK)
                             }

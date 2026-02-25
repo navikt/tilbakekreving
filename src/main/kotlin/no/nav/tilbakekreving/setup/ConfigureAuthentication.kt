@@ -16,7 +16,7 @@ fun Application.configureAuthentication(
 ) {
     install(Authentication) {
         val logger = LoggerFactory.getLogger("Authentication")
-        bearer(authenticationConfigName.name) {
+        bearer(authenticationConfigName.configName) {
             authenticate { credentials ->
                 accessTokenVerifier
                     .verifyToken(credentials.token)
