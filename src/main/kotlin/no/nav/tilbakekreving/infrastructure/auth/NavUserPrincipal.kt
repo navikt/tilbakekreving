@@ -2,7 +2,7 @@ package no.nav.tilbakekreving.infrastructure.auth
 
 data class NavUserPrincipal(
     val navIdent: String,
-    val groupIds: List<GroupId>,
+    val groupIds: Set<GroupId>,
 )
 
 @JvmInline

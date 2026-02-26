@@ -30,7 +30,7 @@ sealed class VerifyTokenResponse {
         fun toDomain(): NavUserPrincipal =
             NavUserPrincipal(
                 navIdent = NAVident,
-                groupIds = groups.map(::GroupId),
+                groupIds = groups.map(::GroupId).toSet(),
             )
     }
 

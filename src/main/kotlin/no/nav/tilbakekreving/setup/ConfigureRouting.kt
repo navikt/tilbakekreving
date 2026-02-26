@@ -1,4 +1,4 @@
-package no.nav.tilbakekreving.infrastructure.route
+package no.nav.tilbakekreving.setup
 
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
@@ -13,25 +13,29 @@ import io.ktor.server.routing.openapi.OpenApiDocSource
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.ktor.server.routing.routingRoot
+import no.nav.tilbakekreving.app.HentKravdetaljer
+import no.nav.tilbakekreving.app.SøkEtterInnkrevingskrav
 import no.nav.tilbakekreving.config.AuthenticationConfigName
 import no.nav.tilbakekreving.infrastructure.audit.AuditLog
 import no.nav.tilbakekreving.infrastructure.auth.abac.policy.LesKravAccessPolicy
-import no.nav.tilbakekreving.infrastructure.client.skatteetaten.SkatteetatenInnkrevingsoppdragHttpClient
+import no.nav.tilbakekreving.infrastructure.route.hentKravdetaljerRoute
+import no.nav.tilbakekreving.infrastructure.route.hentKravoversikt
 
 fun Application.configureRouting() {
-    val innkrevingsoppdragHttpClient: SkatteetatenInnkrevingsoppdragHttpClient by dependencies
+    val hentKravdetaljer: HentKravdetaljer by dependencies
+    val søkEtterInnkrevingskrav: SøkEtterInnkrevingskrav by dependencies
     val kravAccessPolicy: LesKravAccessPolicy by dependencies
     val auditLog: AuditLog by dependencies
 
-    this.routing {
+    routing {
         route("/internal") {
             authenticate(AuthenticationConfigName.ENTRA_ID.configName) {
                 context(kravAccessPolicy, auditLog) {
                     route("/kravdetaljer") {
-                        hentKravdetaljerRoute(innkrevingsoppdragHttpClient)
+                        hentKravdetaljerRoute(hentKravdetaljer)
                     }
                     route("/kravoversikt") {
-                        hentKravoversikt(innkrevingsoppdragHttpClient)
+                        hentKravoversikt(søkEtterInnkrevingskrav)
                     }
                 }
             }

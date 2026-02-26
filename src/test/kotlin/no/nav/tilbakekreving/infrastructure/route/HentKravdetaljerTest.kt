@@ -57,7 +57,7 @@ class HentKravdetaljerTest :
         coEvery { accessTokenVerifier.verifyToken("valid-token") } returns
             NavUserPrincipal(
                 navIdent = "Z123456",
-                groupIds = listOf("gruppe1").map { GroupId(it) },
+                groupIds = listOf("gruppe1").map { GroupId(it) }.toSet(),
             ).right()
 
         // Reset audit mocks for å kunne telle kall per test

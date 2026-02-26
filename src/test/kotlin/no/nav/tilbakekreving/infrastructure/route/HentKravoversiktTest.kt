@@ -45,7 +45,7 @@ class HentKravoversiktTest :
     WordSpec({
         val søkEtterInnkrevingskrav = mockk<SøkEtterInnkrevingskrav>()
         val kravAccessPolicy =
-            context(StubFeatureToggles()) {
+            context(StubFeatureToggles(default = true)) {
                 lesKravAccessPolicy(
                     GroupId("tilgang_til_krav"),
                     mapOf(Kravtype("Kravtype") to setOf(GroupId("enhet_1"))),
@@ -58,7 +58,7 @@ class HentKravoversiktTest :
                     install(Authentication) {
                         bearer("entra-id") {
                             authenticate { _ ->
-                                NavUserPrincipal("Z123456", listOf(GroupId("tilgang_til_krav"), GroupId("enhet_1")))
+                                NavUserPrincipal("Z123456", setOf(GroupId("tilgang_til_krav"), GroupId("enhet_1")))
                             }
                         }
                     }
@@ -183,10 +183,7 @@ class HentKravoversiktTest :
                     }.shouldBeBadRequest()
             }
 
-            /*
-             * TODO: Skru på test når [KravAccessControl.isKravAccessibleTo] er ferdig implementert.
-             */
-            "returnere 200 med utvalgt kravoversikt basert på roller".config(enabled = false) {
+            "returnere 200 med utvalgt kravoversikt basert på roller" {
                 coEvery { søkEtterInnkrevingskrav.søk(any()) } returns
                     Kravoversikt(
                         oppdragsgiver = Oppdragsgiver("123456789", "Test Oppdragsgiver"),
@@ -255,9 +252,12 @@ class HentKravoversiktTest :
                                     "navKravidentifikator": "123456789",
                                     "navReferanse": "ref1",
                                     "kravtype": "Kravtype",
-                                    "kravbeskrivelse": {
-                                        "nb": "Test beskrivelse"
-                                    },
+                                    "kravbeskrivelse": [
+                                        {
+                                            "språk": "nb",
+                                            "tekst": "Test beskrivelse"
+                                        }
+                                    ],
                                     "gjenståendeBeløp": 1000.0
                                 }
                             ],

@@ -33,7 +33,7 @@ class AuthenticationTest :
     WordSpec({
         val accessTokenVerifier = mockk<AccessTokenVerifier<NavUserPrincipal>>()
         val navIdent = "Z123456"
-        val groupIds = (listOf("group1", "group2", "tilgang_til_krav").map(::GroupId))
+        val groupIds = listOf("group1", "group2", "tilgang_til_krav").map(::GroupId).toSet()
         val authenticationConfigName = AuthenticationConfigName.ENTRA_ID
         val kravAccessPolicy =
             context(StubFeatureToggles()) {
@@ -67,7 +67,7 @@ class AuthenticationTest :
                                 val allowed =
                                     kravAccessPolicy
                                         .filter(
-                                            KravAccessSubject(principal?.groupIds?.toSet() ?: emptySet()),
+                                            KravAccessSubject(principal?.groupIds ?: emptySet()),
                                             listOf(krav),
                                         ).isNotEmpty()
                                 if (allowed) {

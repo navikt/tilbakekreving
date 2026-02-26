@@ -5,30 +5,17 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
-import io.ktor.server.routing.post
 import no.nav.tilbakekreving.app.SøkEtterInnkrevingskrav
 import no.nav.tilbakekreving.infrastructure.auth.abac.policy.KravAccessSubject
 import no.nav.tilbakekreving.infrastructure.auth.abac.policy.LesKravAccessPolicy
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravoversiktJsonRequest
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravoversiktJsonResponse
-import no.nav.tilbakekreving.infrastructure.route.util.navUserPrincipal
-import org.slf4j.LoggerFactory
+import no.nav.tilbakekreving.infrastructure.route.util.authenticatedPost
 
 context(kravAccessPolicy: LesKravAccessPolicy)
 fun Route.hentKravoversikt(søkEtterInnkrevingskrav: SøkEtterInnkrevingskrav) {
-    val logger = LoggerFactory.getLogger("HentKravoversiktRoute")
-    post {
-        val principal =
-            navUserPrincipal() ?: run {
-                logger.warn("Fant ikke navUserPrincipal ved henting av kravoversikt")
-                call.respond(HttpStatusCode.Unauthorized, "Ugyldig bruker")
-                return@post
-            }
-
-        val groupIds = principal.groupIds.toSet()
-
-        val hentKravoversiktJsonRequest = call.receive<HentKravoversiktJsonRequest>()
-        val skyldnersøk = hentKravoversiktJsonRequest.toDomain()
+    authenticatedPost { principal ->
+        val skyldnersøk = call.receive<HentKravoversiktJsonRequest>().toDomain()
         val kravoversikt =
             søkEtterInnkrevingskrav.søk(skyldnersøk).getOrElse {
                 when (it) {
@@ -39,10 +26,10 @@ fun Route.hentKravoversikt(søkEtterInnkrevingskrav: SøkEtterInnkrevingskrav) {
                         )
                     }
                 }
-                return@post
+                return@authenticatedPost
             }
 
-        val filteredKrav = kravAccessPolicy.filter(KravAccessSubject(groupIds), kravoversikt.krav)
+        val filteredKrav = kravAccessPolicy.filter(KravAccessSubject(principal.groupIds), kravoversikt.krav)
         val filteredKravoversikt = kravoversikt.copy(krav = filteredKrav)
 
         call.respond(HttpStatusCode.OK, HentKravoversiktJsonResponse.fromDomain(filteredKravoversikt))

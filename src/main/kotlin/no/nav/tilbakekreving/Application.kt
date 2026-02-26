@@ -22,12 +22,12 @@ import no.nav.tilbakekreving.infrastructure.client.AccessTokenVerifier
 import no.nav.tilbakekreving.infrastructure.client.TexasClient
 import no.nav.tilbakekreving.infrastructure.client.maskinporten.TexasMaskinportenClient
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.SkatteetatenInnkrevingsoppdragHttpClient
-import no.nav.tilbakekreving.infrastructure.route.configureRouting
 import no.nav.tilbakekreving.infrastructure.unleash.StubFeatureToggles
 import no.nav.tilbakekreving.infrastructure.unleash.UnleashFeatureToggles
 import no.nav.tilbakekreving.plugin.MaskinportenAuthHeaderPlugin
 import no.nav.tilbakekreving.setup.configureAuthentication
 import no.nav.tilbakekreving.setup.configureCallLogging
+import no.nav.tilbakekreving.setup.configureRouting
 import no.nav.tilbakekreving.setup.configureSerialization
 import no.nav.tilbakekreving.setup.createHttpClient
 import no.nav.tilbakekreving.setup.loadConfiguration
@@ -99,9 +99,10 @@ suspend fun Application.module() {
 
         configureSerialization()
         configureCallLogging()
-
-        configureAuthentication(AuthenticationConfigName.ENTRA_ID, dependencies.resolve())
-
+        configureAuthentication(
+            AuthenticationConfigName.ENTRA_ID,
+            dependencies.resolve<AccessTokenVerifier<NavUserPrincipal>>(),
+        )
         configureRouting()
     }
 }

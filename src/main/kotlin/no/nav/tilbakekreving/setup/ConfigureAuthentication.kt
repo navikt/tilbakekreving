@@ -6,13 +6,12 @@ import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.bearer
 import no.nav.tilbakekreving.config.AuthenticationConfigName
-import no.nav.tilbakekreving.infrastructure.auth.NavUserPrincipal
 import no.nav.tilbakekreving.infrastructure.client.AccessTokenVerifier
 import org.slf4j.LoggerFactory
 
-fun Application.configureAuthentication(
+fun <VerifiedToken> Application.configureAuthentication(
     authenticationConfigName: AuthenticationConfigName,
-    accessTokenVerifier: AccessTokenVerifier<NavUserPrincipal>,
+    accessTokenVerifier: AccessTokenVerifier<VerifiedToken>,
 ) {
     install(Authentication) {
         val logger = LoggerFactory.getLogger("Authentication")
@@ -23,12 +22,12 @@ fun Application.configureAuthentication(
                     .getOrElse { error ->
                         when (error) {
                             is AccessTokenVerifier.VerificationError.FailedToVerifyToken -> {
-                                logger.error("Token verification failed: $error")
+                                logger.warn("Token verification failed: $error")
                                 null
                             }
 
                             is AccessTokenVerifier.VerificationError.InvalidToken -> {
-                                logger.error("Token is invalid: $error")
+                                logger.warn("Token is invalid: $error")
                                 null
                             }
                         }
