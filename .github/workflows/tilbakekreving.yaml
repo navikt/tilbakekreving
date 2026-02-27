@@ -58,5 +58,5 @@ jobs:
       image: ${{ needs.build.outputs.image }}
       cluster: ${{ matrix.env.cluster }}
       gh_environment: ${{ matrix.env.gh_environment }}
-      nais_resource_file: ".nais/nais.yaml"
+      nais_resource_file: ".nais/nais.yaml,.nais/unleash-apitoken.yaml,.nais/alerts.yaml"
       nais_vars_file: ".nais/vars/${{ matrix.env.nais_vars_file }}.yaml"
