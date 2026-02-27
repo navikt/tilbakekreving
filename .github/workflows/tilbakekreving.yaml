@@ -29,7 +29,7 @@ jobs:
         id: changed-files
         uses: "nais/what-changed@main"
         with:
-          files: .nais/nais.yaml, .nais/unleash-apitoken.yaml, .nais/vars/dev.yaml, .nais/vars/prod.yaml
+          files: .nais/nais.yaml,.nais/unleash-apitoken.yaml,.nais/alerts.yaml,.nais/vars/dev.yaml,.nais/vars/prod.yaml
 
   build:
     needs: check-changes
