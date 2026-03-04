@@ -92,7 +92,7 @@ suspend fun Application.module() {
             provide<LesKravAccessPolicy> {
                 context(resolve<FeatureToggles>()) {
                     val config = resolve<TilbakekrevingConfig>()
-                    lesKravAccessPolicy(config.kravTilgangsgruppe, config.kravAcl)
+                    lesKravAccessPolicy(config.kravTilgangsgruppe, config.kravtypeAcl)
                 }
             }
         }

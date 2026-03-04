@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory
 context(featureToggles: FeatureToggles)
 fun lesKravAccessPolicy(
     lesKravAccessGroup: GroupId,
-    enhetAccess: Map<Kravtype, Set<GroupId>> = emptyMap(),
+    enhetAccess: Map<GroupId, Set<Kravtype>> = emptyMap(),
 ): LesKravAccessPolicy {
     val logger = LoggerFactory.getLogger("KravAccessPolicy")
     logger.info("KravAccessPolicy initialized with enhetAccess: $enhetAccess")
@@ -33,7 +33,7 @@ fun lesKravAccessPolicy(
 
         require {
             if (featureToggles.isEnabled(Toggle.KRAVTYPE_ENHET_TILGANGSKONTROLL)) {
-                enhetAccess[resource.kravtype]?.any { it in subject.groupIds } ?: false
+                subject.groupIds.any { enhetAccess[it]?.contains(resource.kravtype) == true }
             } else {
                 true
             }

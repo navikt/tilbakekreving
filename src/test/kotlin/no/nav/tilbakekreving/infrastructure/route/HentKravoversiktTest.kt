@@ -48,7 +48,7 @@ class HentKravoversiktTest :
             context(StubFeatureToggles(default = true)) {
                 lesKravAccessPolicy(
                     GroupId("tilgang_til_krav"),
-                    mapOf(Kravtype("Kravtype") to setOf(GroupId("enhet_1"))),
+                    mapOf(GroupId("enhet_1") to setOf(Kravtype("Kravtype"))),
                 )
             }
         val client =

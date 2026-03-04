@@ -39,7 +39,7 @@ class AuthenticationTest :
             context(StubFeatureToggles()) {
                 lesKravAccessPolicy(
                     GroupId("tilgang_til_krav"),
-                    mapOf(Kravtype("TYPE_A") to setOf(GroupId("group1"))),
+                    mapOf(GroupId("group1") to setOf(Kravtype("TYPE_A"))),
                 )
             }
         val client =

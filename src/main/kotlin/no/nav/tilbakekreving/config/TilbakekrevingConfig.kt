@@ -8,7 +8,7 @@ data class TilbakekrevingConfig(
     val nais: NaisConfig,
     val skatteetaten: SkatteetatenConfig,
     val unleash: UnleashConfig,
-    val kravAcl: Map<Kravtype, Set<GroupId>>,
+    val kravtypeAcl: Map<GroupId, Set<Kravtype>>,
     val kravTilgangsgruppe: GroupId,
     val auditlog: AuditLog.Config,
 )

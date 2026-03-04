@@ -17,8 +17,8 @@ class KravAccessPolicyTest :
         val kravAccessGroup = GroupId("tilgang_til_krav")
         val enhetAccess =
             mapOf(
-                Kravtype("TYPE_A") to setOf(GroupId("enhet_a")),
-                Kravtype("TYPE_B") to setOf(GroupId("enhet_b")),
+                GroupId("enhet_a") to setOf(Kravtype("TYPE_A")),
+                GroupId("enhet_b") to setOf(Kravtype("TYPE_B")),
             )
 
         fun krav(kravtype: String) =
