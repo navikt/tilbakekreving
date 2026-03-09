@@ -81,7 +81,7 @@ dependencies {
 
     implementation("io.getunleash:unleash-client-java:12.2.0")
 
-    val arrowVersion = "2.2.1.1"
+    val arrowVersion = "2.2.2"
     implementation("io.arrow-kt:arrow-core:$arrowVersion")
     implementation("io.arrow-kt:arrow-fx-coroutines:$arrowVersion")
 
