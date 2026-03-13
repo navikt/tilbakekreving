@@ -15,7 +15,6 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import io.ktor.http.withCharset
 import io.ktor.server.auth.authenticate
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
@@ -130,7 +129,7 @@ class HentKravdetaljerTest :
                         )
                         bearerAuth("valid-token")
                     }.shouldBeOK()
-                    .shouldHaveContentType(ContentType.Application.Json.withCharset(Charsets.UTF_8))
+                    .shouldHaveContentType(ContentType.Application.Json)
                     .bodyAsText()
                     .shouldEqualJson(
                         // language=json
