@@ -75,11 +75,27 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
     implementation("ch.qos.logback:logback-classic:1.5.32")
+    implementation("net.logstash.logback:logstash-logback-encoder:9.0")
+    constraints {
+        implementation("tools.jackson.core:jackson-core") {
+            version {
+                require("3.1.0")
+            }
+        }
+    }
     implementation("no.nav.common:audit-log:3.2026.03.04_12.35-b34c347c6239")
+    implementation("io.opentelemetry.instrumentation:opentelemetry-logback-mdc-1.0:2.25.0-alpha")
 
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1-0.6.x-compat")
 
     implementation("io.getunleash:unleash-client-java:12.2.0")
+    constraints {
+        implementation("com.squareup.okio:okio") {
+            version {
+                require("3.17.0")
+            }
+        }
+    }
 
     val arrowVersion = "2.2.2"
     implementation("io.arrow-kt:arrow-core:$arrowVersion")
