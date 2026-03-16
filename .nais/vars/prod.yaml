@@ -7,7 +7,7 @@ env:
 accessPolicy:
   outbound:
     external:
-      - host: api.skatteetaten.no # Skatteetaten
+      - host: innkrevingsoppdrag.innkreving.skatteetaten.no # Skatteetaten
       - host: utenlandsadresser-unleash-api.nav.cloud.nais.io # Unleash
 
 unleash:
