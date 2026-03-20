@@ -20,11 +20,6 @@ fun loadConfiguration(): TilbakekrevingConfig {
                 AppEnv.PROD -> null
             },
             "/application.conf",
-            when (appEnv) {
-                AppEnv.DEV -> "/enheter-acl-dev.conf"
-                AppEnv.LOCAL -> "/enheter-acl-local.conf"
-                AppEnv.PROD -> null
-            },
             "/enheter-acl.conf",
         )
     return ConfigLoaderBuilder

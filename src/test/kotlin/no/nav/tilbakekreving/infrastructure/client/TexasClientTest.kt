@@ -69,6 +69,7 @@ class TexasClientTest :
                             "group2",
                             "group3",
                         ).map(::GroupId).toSet(),
+                        emptySet(),
                     ),
                 )
             }

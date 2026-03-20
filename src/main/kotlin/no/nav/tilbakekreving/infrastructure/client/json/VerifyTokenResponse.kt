@@ -31,6 +31,7 @@ sealed class VerifyTokenResponse {
             NavUserPrincipal(
                 navIdent = NAVident,
                 groupIds = groups.map(::GroupId).toSet(),
+                enheter = emptySet(),
             )
     }
 

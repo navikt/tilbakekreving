@@ -31,6 +31,7 @@ import no.nav.tilbakekreving.setup.configureRouting
 import no.nav.tilbakekreving.setup.configureSerialization
 import no.nav.tilbakekreving.setup.createHttpClient
 import no.nav.tilbakekreving.setup.loadConfiguration
+import org.slf4j.LoggerFactory
 import kotlin.time.Duration.Companion.seconds
 
 fun main() {
@@ -90,7 +91,7 @@ suspend fun Application.module() {
             }
 
             provide<LesKravAccessPolicy> {
-                context(resolve<FeatureToggles>()) {
+                context(resolve<FeatureToggles>(), LoggerFactory.getLogger(LesKravAccessPolicy::class.java)) {
                     val config = resolve<TilbakekrevingConfig>()
                     lesKravAccessPolicy(config.kravTilgangsgruppe, config.kravtypeAcl)
                 }

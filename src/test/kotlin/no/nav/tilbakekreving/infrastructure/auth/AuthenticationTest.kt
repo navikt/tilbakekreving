@@ -20,13 +20,14 @@ import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.Kravbeskrivelse
 import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravtype
-import no.nav.tilbakekreving.infrastructure.auth.abac.policy.KravAccessSubject
+import no.nav.tilbakekreving.infrastructure.auth.abac.policy.NavSaksbehandler
 import no.nav.tilbakekreving.infrastructure.auth.abac.policy.lesKravAccessPolicy
 import no.nav.tilbakekreving.infrastructure.client.AccessTokenVerifier
 import no.nav.tilbakekreving.infrastructure.route.util.navUserPrincipal
 import no.nav.tilbakekreving.infrastructure.unleash.StubFeatureToggles
 import no.nav.tilbakekreving.setup.configureAuthentication
 import no.nav.tilbakekreving.util.specWideTestApplication
+import org.slf4j.LoggerFactory
 import java.util.Locale
 
 class AuthenticationTest :
@@ -36,10 +37,10 @@ class AuthenticationTest :
         val groupIds = listOf("group1", "group2", "tilgang_til_krav").map(::GroupId).toSet()
         val authenticationConfigName = AuthenticationConfigName.ENTRA_ID
         val kravAccessPolicy =
-            context(StubFeatureToggles()) {
+            context(StubFeatureToggles(), LoggerFactory.getLogger(this::class.java)) {
                 lesKravAccessPolicy(
                     GroupId("tilgang_til_krav"),
-                    mapOf(GroupId("group1") to setOf(Kravtype("TYPE_A"))),
+                    mapOf(Enhetsnummer("1111") to setOf(Kravtype("TYPE_A"))),
                 )
             }
         val client =
@@ -67,7 +68,10 @@ class AuthenticationTest :
                                 val allowed =
                                     kravAccessPolicy
                                         .filter(
-                                            KravAccessSubject(principal?.groupIds ?: emptySet()),
+                                            NavSaksbehandler(
+                                                principal?.groupIds ?: emptySet(),
+                                                principal?.enheter ?: emptySet(),
+                                            ),
                                             listOf(krav),
                                         ).isNotEmpty()
                                 if (allowed) {
@@ -90,7 +94,7 @@ class AuthenticationTest :
 
                 coEvery {
                     accessTokenVerifier.verifyToken("valid-token")
-                } returns NavUserPrincipal(navIdent, groupIds).right()
+                } returns NavUserPrincipal(navIdent, groupIds, emptySet()).right()
 
                 // Public route should be accessible without a token
                 client.get("/public").shouldBeOK()
@@ -135,7 +139,7 @@ class AuthenticationTest :
             "authorize access using krav access policy and user groups" {
                 coEvery {
                     accessTokenVerifier.verifyToken("valid-token")
-                } returns NavUserPrincipal(navIdent, groupIds).right()
+                } returns NavUserPrincipal(navIdent, groupIds, emptySet()).right()
 
                 client
                     .get("/protected-krav") {

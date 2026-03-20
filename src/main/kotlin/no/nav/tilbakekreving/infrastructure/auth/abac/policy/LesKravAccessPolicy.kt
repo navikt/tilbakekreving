@@ -4,10 +4,11 @@ import no.nav.tilbakekreving.app.FeatureToggles
 import no.nav.tilbakekreving.app.Toggle
 import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.Kravtype
+import no.nav.tilbakekreving.infrastructure.auth.Enhetsnummer
 import no.nav.tilbakekreving.infrastructure.auth.GroupId
 import no.nav.tilbakekreving.infrastructure.auth.abac.AccessPolicy
 import no.nav.tilbakekreving.infrastructure.auth.abac.accessPolicy
-import org.slf4j.LoggerFactory
+import org.slf4j.Logger
 
 /**
  * Tilgangskontroll for krav.
@@ -20,20 +21,19 @@ import org.slf4j.LoggerFactory
  *
  * Når toggle er deaktivert, ser brukeren alle krav så lenge de har [lesKravAccessGroup].
  */
-context(featureToggles: FeatureToggles)
+context(featureToggles: FeatureToggles, logger: Logger?)
 fun lesKravAccessPolicy(
     lesKravAccessGroup: GroupId,
-    enhetAccess: Map<GroupId, Set<Kravtype>> = emptyMap(),
+    enhetAccess: Map<Enhetsnummer, Set<Kravtype>>,
 ): LesKravAccessPolicy {
-    val logger = LoggerFactory.getLogger("KravAccessPolicy")
-    logger.info("KravAccessPolicy initialized with enhetAccess: $enhetAccess")
+    logger?.info("KravAccessPolicy initialized with enhetAccess: $enhetAccess")
 
     return accessPolicy {
         require { lesKravAccessGroup in subject.groupIds }
 
         require {
             if (featureToggles.isEnabled(Toggle.KRAVTYPE_ENHET_TILGANGSKONTROLL)) {
-                subject.groupIds.any { enhetAccess[it]?.contains(resource.kravtype) == true }
+                subject.enheter.any { enhetAccess[it]?.contains(resource.kravtype) == true }
             } else {
                 true
             }
@@ -41,8 +41,9 @@ fun lesKravAccessPolicy(
     }
 }
 
-typealias LesKravAccessPolicy = AccessPolicy<KravAccessSubject, Krav>
+typealias LesKravAccessPolicy = AccessPolicy<NavSaksbehandler, Krav>
 
-data class KravAccessSubject(
+data class NavSaksbehandler(
     val groupIds: Set<GroupId>,
+    val enheter: Set<Enhetsnummer>,
 )

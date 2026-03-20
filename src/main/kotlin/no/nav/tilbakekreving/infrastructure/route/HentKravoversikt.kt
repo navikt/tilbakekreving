@@ -6,8 +6,8 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import no.nav.tilbakekreving.app.SøkEtterInnkrevingskrav
-import no.nav.tilbakekreving.infrastructure.auth.abac.policy.KravAccessSubject
 import no.nav.tilbakekreving.infrastructure.auth.abac.policy.LesKravAccessPolicy
+import no.nav.tilbakekreving.infrastructure.auth.abac.policy.NavSaksbehandler
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravoversiktJsonRequest
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravoversiktJsonResponse
 import no.nav.tilbakekreving.infrastructure.route.util.authenticatedPost
@@ -29,7 +29,8 @@ fun Route.hentKravoversikt(søkEtterInnkrevingskrav: SøkEtterInnkrevingskrav) {
                 return@authenticatedPost
             }
 
-        val filteredKrav = kravAccessPolicy.filter(KravAccessSubject(principal.groupIds), kravoversikt.krav)
+        val filteredKrav =
+            kravAccessPolicy.filter(NavSaksbehandler(principal.groupIds, principal.enheter), kravoversikt.krav)
         val filteredKravoversikt = kravoversikt.copy(krav = filteredKrav)
 
         call.respond(HttpStatusCode.OK, HentKravoversiktJsonResponse.fromDomain(filteredKravoversikt))

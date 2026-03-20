@@ -32,22 +32,24 @@ import no.nav.tilbakekreving.domain.Kravoversikt
 import no.nav.tilbakekreving.domain.KravoversiktSkyldner
 import no.nav.tilbakekreving.domain.Kravtype
 import no.nav.tilbakekreving.domain.Oppdragsgiver
+import no.nav.tilbakekreving.infrastructure.auth.Enhetsnummer
 import no.nav.tilbakekreving.infrastructure.auth.GroupId
 import no.nav.tilbakekreving.infrastructure.auth.NavUserPrincipal
 import no.nav.tilbakekreving.infrastructure.auth.abac.policy.lesKravAccessPolicy
 import no.nav.tilbakekreving.infrastructure.unleash.StubFeatureToggles
 import no.nav.tilbakekreving.setup.configureSerialization
 import no.nav.tilbakekreving.util.specWideTestApplication
+import org.slf4j.LoggerFactory
 import java.util.Locale
 
 class HentKravoversiktTest :
     WordSpec({
         val søkEtterInnkrevingskrav = mockk<SøkEtterInnkrevingskrav>()
         val kravAccessPolicy =
-            context(StubFeatureToggles(default = true)) {
+            context(StubFeatureToggles(default = true), LoggerFactory.getLogger(this::class.java)) {
                 lesKravAccessPolicy(
                     GroupId("tilgang_til_krav"),
-                    mapOf(GroupId("enhet_1") to setOf(Kravtype("Kravtype"))),
+                    mapOf(Enhetsnummer("1111") to setOf(Kravtype("Kravtype"))),
                 )
             }
         val client =
@@ -57,7 +59,11 @@ class HentKravoversiktTest :
                     install(Authentication) {
                         bearer("entra-id") {
                             authenticate { _ ->
-                                NavUserPrincipal("Z123456", setOf(GroupId("tilgang_til_krav"), GroupId("enhet_1")))
+                                NavUserPrincipal(
+                                    "Z123456",
+                                    setOf(GroupId("tilgang_til_krav")),
+                                    setOf(Enhetsnummer("1111")),
+                                )
                             }
                         }
                     }

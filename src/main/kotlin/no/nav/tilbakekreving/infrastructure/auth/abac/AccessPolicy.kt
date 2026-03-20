@@ -8,13 +8,13 @@ package no.nav.tilbakekreving.infrastructure.auth.abac
  * - `require` rules are checked next — all must pass, or access is denied.
  * - If no rules deny access, access is allowed.
  */
-class AccessPolicy<S, R>(
-    private val denyRules: List<AccessRuleContext<S, R>.() -> Boolean>,
-    private val requireRules: List<AccessRuleContext<S, R>.() -> Boolean>,
+class AccessPolicy<Subject, Resource>(
+    private val denyRules: List<AccessRuleContext<Subject, Resource>.() -> Boolean>,
+    private val requireRules: List<AccessRuleContext<Subject, Resource>.() -> Boolean>,
 ) {
     fun isAllowed(
-        subject: S,
-        resource: R,
+        subject: Subject,
+        resource: Resource,
     ): Boolean {
         val context = AccessRuleContext(subject, resource)
         if (denyRules.any { context.it() }) return false
@@ -22,7 +22,7 @@ class AccessPolicy<S, R>(
     }
 
     fun filter(
-        subject: S,
-        resources: List<R>,
-    ): List<R> = resources.filter { isAllowed(subject, it) }
+        subject: Subject,
+        resources: List<Resource>,
+    ): List<Resource> = resources.filter { isAllowed(subject, it) }
 }

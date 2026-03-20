@@ -1,11 +1,11 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
-val kotlinVersion = "2.3.20"
+val kotlinVersion = "2.3.10"
 
 plugins {
-    kotlin("jvm") version "2.3.20"
+    kotlin("jvm") version "2.3.10"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.3.10"
     id("io.ktor.plugin") version "3.4.1"
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.3.20"
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
     id("com.github.ben-manes.versions") version "0.53.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.7"
@@ -84,7 +84,7 @@ dependencies {
         }
     }
     implementation("no.nav.common:audit-log:3.2026.03.04_12.35-b34c347c6239")
-    implementation("io.opentelemetry.instrumentation:opentelemetry-logback-mdc-1.0:2.26.1-alpha")
+    implementation("io.opentelemetry.instrumentation:opentelemetry-logback-mdc-1.0:2.26.0-alpha")
 
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1-0.6.x-compat")
 
@@ -97,7 +97,7 @@ dependencies {
         }
     }
 
-    val arrowVersion = "2.2.2.1"
+    val arrowVersion = "2.2.2"
     implementation("io.arrow-kt:arrow-core:$arrowVersion")
     implementation("io.arrow-kt:arrow-fx-coroutines:$arrowVersion")
 

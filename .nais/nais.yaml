@@ -37,6 +37,9 @@ spec:
       rules:
         - application: brukerflate-innkreving
     outbound:
+      rules:
+        - application: entra-proxy
+          namespace: sikkerhetstjenesten
       external:
         {{#each accessPolicy.outbound.external}}
         - host: {{this.host}}
