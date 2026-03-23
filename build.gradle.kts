@@ -97,7 +97,7 @@ dependencies {
         }
     }
 
-    val arrowVersion = "2.2.2"
+    val arrowVersion = "2.2.2.1"
     implementation("io.arrow-kt:arrow-core:$arrowVersion")
     implementation("io.arrow-kt:arrow-fx-coroutines:$arrowVersion")
 
