@@ -1,4 +1,4 @@
-package no.nav.tilbakekreving.infrastructure.client.json
+package no.nav.tilbakekreving.infrastructure.client.texas.json
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
@@ -11,11 +11,11 @@ import kotlinx.serialization.json.JsonDecoder
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.jsonPrimitive
-import no.nav.tilbakekreving.infrastructure.auth.GroupId
-import no.nav.tilbakekreving.infrastructure.auth.NavUserPrincipal
+import no.nav.tilbakekreving.infrastructure.auth.model.GroupId
+import no.nav.tilbakekreving.infrastructure.auth.model.ValidatedEntraToken
 
-@Serializable(with = VerifyTokenResponseSerializer::class)
-sealed class VerifyTokenResponse {
+@Serializable(with = ValidateTokenResponseSerializer::class)
+sealed class ValidateTokenResponse {
     abstract val active: Boolean
 
     @Serializable
@@ -26,12 +26,11 @@ sealed class VerifyTokenResponse {
         val exp: Long,
         val iat: Long,
         val groups: List<String>,
-    ) : VerifyTokenResponse() {
-        fun toDomain(): NavUserPrincipal =
-            NavUserPrincipal(
+    ) : ValidateTokenResponse() {
+        fun toDomain(): ValidatedEntraToken =
+            ValidatedEntraToken(
                 navIdent = NAVident,
                 groupIds = groups.map(::GroupId).toSet(),
-                enheter = emptySet(),
             )
     }
 
@@ -40,18 +39,18 @@ sealed class VerifyTokenResponse {
     data class InvalidTokenResponse(
         override val active: Boolean,
         val error: String,
-    ) : VerifyTokenResponse()
+    ) : ValidateTokenResponse()
 }
 
-class VerifyTokenResponseSerializer : KSerializer<VerifyTokenResponse> {
-    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("VerifyTokenResponse")
+class ValidateTokenResponseSerializer : KSerializer<ValidateTokenResponse> {
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("ValidateTokenResponse")
 
     override fun serialize(
         encoder: Encoder,
-        value: VerifyTokenResponse,
-    ) = throw NotImplementedError("Serialization is not implemented for VerifyTokenResponse")
+        value: ValidateTokenResponse,
+    ) = throw NotImplementedError("Serialization is not implemented for ValidateTokenResponse")
 
-    override fun deserialize(decoder: Decoder): VerifyTokenResponse {
+    override fun deserialize(decoder: Decoder): ValidateTokenResponse {
         val jsonDecoder = decoder as? JsonDecoder ?: throw IllegalArgumentException("Expected JsonDecoder")
         val jsonObject =
             jsonDecoder.decodeJsonElement() as? JsonObject ?: throw IllegalArgumentException("Expected JsonObject")
@@ -59,9 +58,9 @@ class VerifyTokenResponseSerializer : KSerializer<VerifyTokenResponse> {
         val active = jsonObject["active"]?.jsonPrimitive?.boolean ?: false
 
         return if (active) {
-            jsonDecoder.json.decodeFromJsonElement(VerifyTokenResponse.ValidTokenResponse.serializer(), jsonObject)
+            jsonDecoder.json.decodeFromJsonElement(ValidateTokenResponse.ValidTokenResponse.serializer(), jsonObject)
         } else {
-            jsonDecoder.json.decodeFromJsonElement(VerifyTokenResponse.InvalidTokenResponse.serializer(), jsonObject)
+            jsonDecoder.json.decodeFromJsonElement(ValidateTokenResponse.InvalidTokenResponse.serializer(), jsonObject)
         }
     }
 }

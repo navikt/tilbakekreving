@@ -10,23 +10,25 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.di.dependencies
 import no.nav.tilbakekreving.app.FeatureToggles
 import no.nav.tilbakekreving.config.AuthenticationConfigName
+import no.nav.tilbakekreving.config.EntraProxyConfig
 import no.nav.tilbakekreving.config.NaisConfig
 import no.nav.tilbakekreving.config.SkatteetatenConfig
 import no.nav.tilbakekreving.config.TilbakekrevingConfig
 import no.nav.tilbakekreving.infrastructure.audit.AuditLog
 import no.nav.tilbakekreving.infrastructure.audit.NavAuditLog
-import no.nav.tilbakekreving.infrastructure.auth.NavUserPrincipal
+import no.nav.tilbakekreving.infrastructure.auth.AccessTokenValidator
 import no.nav.tilbakekreving.infrastructure.auth.abac.policy.LesKravAccessPolicy
 import no.nav.tilbakekreving.infrastructure.auth.abac.policy.lesKravAccessPolicy
-import no.nav.tilbakekreving.infrastructure.client.AccessTokenVerifier
-import no.nav.tilbakekreving.infrastructure.client.TexasClient
+import no.nav.tilbakekreving.infrastructure.auth.model.ValidatedEntraToken
+import no.nav.tilbakekreving.infrastructure.client.entra.proxy.EntraProxyClient
 import no.nav.tilbakekreving.infrastructure.client.maskinporten.TexasMaskinportenClient
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.SkatteetatenInnkrevingsoppdragHttpClient
+import no.nav.tilbakekreving.infrastructure.client.texas.TexasClient
 import no.nav.tilbakekreving.infrastructure.unleash.StubFeatureToggles
 import no.nav.tilbakekreving.infrastructure.unleash.UnleashFeatureToggles
 import no.nav.tilbakekreving.plugin.MaskinportenAuthHeaderPlugin
-import no.nav.tilbakekreving.setup.configureAuthentication
 import no.nav.tilbakekreving.setup.configureCallLogging
+import no.nav.tilbakekreving.setup.configureEntraAuthentication
 import no.nav.tilbakekreving.setup.configureRouting
 import no.nav.tilbakekreving.setup.configureSerialization
 import no.nav.tilbakekreving.setup.createHttpClient
@@ -54,6 +56,7 @@ suspend fun Application.module() {
             provide { resolve<TilbakekrevingConfig>().skatteetaten }
             provide { resolve<TilbakekrevingConfig>().unleash }
             provide { resolve<TilbakekrevingConfig>().auditlog }
+            provide { resolve<TilbakekrevingConfig>().entraProxy }
 
             provide<HttpClient> { createHttpClient(CIO.create()) }
 
@@ -66,8 +69,8 @@ suspend fun Application.module() {
 
             provide<AuditLog>(NavAuditLog::class)
 
-            provide<AccessTokenVerifier<NavUserPrincipal>> {
-                TexasClient(resolve(), resolve<NaisConfig>().naisTokenIntrospectionEndpoint)
+            provide<AccessTokenValidator<ValidatedEntraToken>> {
+                TexasClient(resolve(), resolve())
             }
 
             provide<SkatteetatenInnkrevingsoppdragHttpClient> {
@@ -90,6 +93,10 @@ suspend fun Application.module() {
                 SkatteetatenInnkrevingsoppdragHttpClient(skatteetatenConfig.baseUrl, skatteetatenClient)
             }
 
+            provide<EntraProxyClient> {
+                EntraProxyClient(resolve(), resolve<EntraProxyConfig>().baseUrl)
+            }
+
             provide<LesKravAccessPolicy> {
                 context(resolve<FeatureToggles>(), LoggerFactory.getLogger(LesKravAccessPolicy::class.java)) {
                     val config = resolve<TilbakekrevingConfig>()
@@ -100,9 +107,12 @@ suspend fun Application.module() {
 
         configureSerialization()
         configureCallLogging()
-        configureAuthentication(
+        configureEntraAuthentication(
             AuthenticationConfigName.ENTRA_ID,
-            dependencies.resolve<AccessTokenVerifier<NavUserPrincipal>>(),
+            dependencies.resolve<AccessTokenValidator<ValidatedEntraToken>>(),
+            dependencies.resolve(),
+            dependencies.resolve(),
+            dependencies.resolve<EntraProxyConfig>().apiTarget,
         )
         configureRouting()
     }

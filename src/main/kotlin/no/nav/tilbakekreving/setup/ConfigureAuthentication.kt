@@ -6,32 +6,56 @@ import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.bearer
 import no.nav.tilbakekreving.config.AuthenticationConfigName
-import no.nav.tilbakekreving.infrastructure.client.AccessTokenVerifier
+import no.nav.tilbakekreving.infrastructure.auth.AccessTokenValidator
+import no.nav.tilbakekreving.infrastructure.auth.model.NavUserPrincipal
+import no.nav.tilbakekreving.infrastructure.auth.model.ValidatedEntraToken
+import no.nav.tilbakekreving.infrastructure.client.entra.proxy.EntraProxyClient
+import no.nav.tilbakekreving.infrastructure.client.texas.TexasClient
 import org.slf4j.LoggerFactory
 
-fun <VerifiedToken> Application.configureAuthentication(
+fun Application.configureEntraAuthentication(
     authenticationConfigName: AuthenticationConfigName,
-    accessTokenVerifier: AccessTokenVerifier<VerifiedToken>,
+    accessTokenValidator: AccessTokenValidator<ValidatedEntraToken>,
+    texasClient: TexasClient,
+    entraProxyClient: EntraProxyClient,
+    oboApiTarget: String,
 ) {
     install(Authentication) {
-        val logger = LoggerFactory.getLogger("Authentication")
+        val logger = LoggerFactory.getLogger("ConfigureEntraAuthentication")
         bearer(authenticationConfigName.configName) {
             authenticate { credentials ->
-                accessTokenVerifier
-                    .verifyToken(credentials.token)
-                    .getOrElse { error ->
+                val validatedToken =
+                    accessTokenValidator.validateToken(credentials.token).getOrElse { error ->
                         when (error) {
-                            is AccessTokenVerifier.VerificationError.FailedToVerifyToken -> {
+                            is AccessTokenValidator.ValidationError.FailedToValidateToken -> {
                                 logger.warn("Token verification failed: $error")
-                                null
+                                return@authenticate null
                             }
 
-                            is AccessTokenVerifier.VerificationError.InvalidToken -> {
+                            is AccessTokenValidator.ValidationError.InvalidToken -> {
                                 logger.warn("Token is invalid: $error")
-                                null
+                                return@authenticate null
                             }
                         }
                     }
+
+                val oboToken =
+                    texasClient.exchangeToken(credentials.token, oboApiTarget).getOrElse { error ->
+                        logger.warn("Failed to exchange user token for OBO token: $error")
+                        return@authenticate null
+                    }
+
+                val enheter =
+                    entraProxyClient.hentEnheter(oboToken).getOrElse { error ->
+                        logger.warn("Failed to hent enheter for user: $error")
+                        return@authenticate null
+                    }
+
+                NavUserPrincipal(
+                    navIdent = validatedToken.navIdent,
+                    groupIds = validatedToken.groupIds,
+                    enheter = enheter,
+                )
             }
         }
     }

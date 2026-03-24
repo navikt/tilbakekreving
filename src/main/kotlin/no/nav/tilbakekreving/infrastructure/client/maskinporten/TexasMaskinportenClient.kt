@@ -10,10 +10,12 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
-import no.nav.tilbakekreving.infrastructure.client.AccessTokenProvider
+import no.nav.tilbakekreving.infrastructure.auth.AccessTokenProvider
+import no.nav.tilbakekreving.infrastructure.auth.model.Scope
 import no.nav.tilbakekreving.infrastructure.client.maskinporten.json.TexasTokenRequestJson
 import no.nav.tilbakekreving.infrastructure.client.maskinporten.json.TexasTokenResponseJson
 import org.slf4j.LoggerFactory
+import java.net.URL
 
 /**
  * Klient for å hente access token fra Maskinporten.
@@ -22,11 +24,11 @@ import org.slf4j.LoggerFactory
  */
 class TexasMaskinportenClient(
     private val httpClient: HttpClient,
-    private val baseUrl: String,
+    private val baseUrl: URL,
 ) : AccessTokenProvider {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override suspend fun getAccessToken(vararg scopes: String): Either<AccessTokenProvider.GetAccessTokenError, String> =
+    override suspend fun getAccessToken(scopes: Set<Scope>): Either<AccessTokenProvider.GetAccessTokenError, String> =
         either {
             val response =
                 httpClient.post(baseUrl) {
@@ -34,7 +36,7 @@ class TexasMaskinportenClient(
                     setBody(
                         TexasTokenRequestJson(
                             identityProvider = "maskinporten",
-                            target = scopes.joinToString(" "),
+                            target = scopes.joinToString(" ") { it.scope },
                         ),
                     )
                 }

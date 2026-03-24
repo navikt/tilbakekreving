@@ -10,6 +10,7 @@ import io.ktor.client.request.header
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.authenticate
+import io.ktor.server.auth.principal
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
@@ -22,17 +23,24 @@ import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravtype
 import no.nav.tilbakekreving.infrastructure.auth.abac.policy.NavSaksbehandler
 import no.nav.tilbakekreving.infrastructure.auth.abac.policy.lesKravAccessPolicy
-import no.nav.tilbakekreving.infrastructure.client.AccessTokenVerifier
-import no.nav.tilbakekreving.infrastructure.route.util.navUserPrincipal
+import no.nav.tilbakekreving.infrastructure.auth.model.Enhetsnummer
+import no.nav.tilbakekreving.infrastructure.auth.model.GroupId
+import no.nav.tilbakekreving.infrastructure.auth.model.NavUserPrincipal
+import no.nav.tilbakekreving.infrastructure.auth.model.OboToken
+import no.nav.tilbakekreving.infrastructure.auth.model.ValidatedEntraToken
+import no.nav.tilbakekreving.infrastructure.client.entra.proxy.EntraProxyClient
+import no.nav.tilbakekreving.infrastructure.client.entra.proxy.HentEnheterError
+import no.nav.tilbakekreving.infrastructure.client.texas.ExchangeTokenError
+import no.nav.tilbakekreving.infrastructure.client.texas.TexasClient
 import no.nav.tilbakekreving.infrastructure.unleash.StubFeatureToggles
-import no.nav.tilbakekreving.setup.configureAuthentication
+import no.nav.tilbakekreving.setup.configureEntraAuthentication
 import no.nav.tilbakekreving.util.specWideTestApplication
 import org.slf4j.LoggerFactory
 import java.util.Locale
 
 class AuthenticationTest :
     WordSpec({
-        val accessTokenVerifier = mockk<AccessTokenVerifier<NavUserPrincipal>>()
+        val accessTokenValidator = mockk<AccessTokenValidator<ValidatedEntraToken>>()
         val navIdent = "Z123456"
         val groupIds = listOf("group1", "group2", "tilgang_til_krav").map(::GroupId).toSet()
         val authenticationConfigName = AuthenticationConfigName.ENTRA_ID
@@ -43,10 +51,19 @@ class AuthenticationTest :
                     mapOf(Enhetsnummer("1111") to setOf(Kravtype("TYPE_A"))),
                 )
             }
+
+        val texasClient = mockk<TexasClient>()
+        val entraProxyClient = mockk<EntraProxyClient>()
         val client =
             specWideTestApplication {
                 application {
-                    configureAuthentication(authenticationConfigName, accessTokenVerifier)
+                    configureEntraAuthentication(
+                        authenticationConfigName,
+                        accessTokenValidator,
+                        texasClient,
+                        entraProxyClient,
+                        "target",
+                    )
 
                     routing {
                         authenticate(authenticationConfigName.configName) {
@@ -55,7 +72,7 @@ class AuthenticationTest :
                             }
 
                             get("/protected-krav") {
-                                val principal = navUserPrincipal()
+                                val principal = call.principal<NavUserPrincipal>()
                                 val krav =
                                     Krav(
                                         skeKravidentifikator = Kravidentifikator.Skatteetaten("skatte-123"),
@@ -93,8 +110,14 @@ class AuthenticationTest :
             "allow access to protected routes with valid token" {
 
                 coEvery {
-                    accessTokenVerifier.verifyToken("valid-token")
-                } returns NavUserPrincipal(navIdent, groupIds, emptySet()).right()
+                    accessTokenValidator.validateToken("valid-token")
+                } returns ValidatedEntraToken(navIdent, groupIds).right()
+                coEvery {
+                    texasClient.exchangeToken("valid-token", any())
+                } returns OboToken("obo-token").right()
+                coEvery {
+                    entraProxyClient.hentEnheter(OboToken("obo-token"))
+                } returns emptySet<Enhetsnummer>().right()
 
                 // Public route should be accessible without a token
                 client.get("/public").shouldBeOK()
@@ -108,8 +131,8 @@ class AuthenticationTest :
 
             "deny access to protected routes with invalid token" {
                 coEvery {
-                    accessTokenVerifier.verifyToken("invalid-token")
-                } returns AccessTokenVerifier.VerificationError.InvalidToken.left()
+                    accessTokenValidator.validateToken("invalid-token")
+                } returns AccessTokenValidator.ValidationError.InvalidToken.left()
 
                 // Protected route should be inaccessible with invalid token
                 client
@@ -125,12 +148,43 @@ class AuthenticationTest :
 
             "deny access to protected routes when token verifier fails" {
                 coEvery {
-                    accessTokenVerifier.verifyToken("failing-token")
-                } returns AccessTokenVerifier.VerificationError.FailedToVerifyToken.left()
+                    accessTokenValidator.validateToken("failing-token")
+                } returns AccessTokenValidator.ValidationError.FailedToValidateToken.left()
 
                 client
                     .get("/protected") {
                         header(HttpHeaders.Authorization, "Bearer failing-token")
+                    }.shouldHaveStatus(HttpStatusCode.Unauthorized)
+            }
+
+            "deny access when OBO token exchange fails" {
+                coEvery {
+                    accessTokenValidator.validateToken("valid-token")
+                } returns ValidatedEntraToken(navIdent, groupIds).right()
+                coEvery {
+                    texasClient.exchangeToken("valid-token", any())
+                } returns ExchangeTokenError.FailedToExchangeToken.left()
+
+                client
+                    .get("/protected") {
+                        header(HttpHeaders.Authorization, "Bearer valid-token")
+                    }.shouldHaveStatus(HttpStatusCode.Unauthorized)
+            }
+
+            "deny access when enheter fetch fails" {
+                coEvery {
+                    accessTokenValidator.validateToken("valid-token")
+                } returns ValidatedEntraToken(navIdent, groupIds).right()
+                coEvery {
+                    texasClient.exchangeToken("valid-token", any())
+                } returns OboToken("obo-token").right()
+                coEvery {
+                    entraProxyClient.hentEnheter(OboToken("obo-token"))
+                } returns HentEnheterError.FailedToFetchEnheter.left()
+
+                client
+                    .get("/protected") {
+                        header(HttpHeaders.Authorization, "Bearer valid-token")
                     }.shouldHaveStatus(HttpStatusCode.Unauthorized)
             }
         }
@@ -138,8 +192,14 @@ class AuthenticationTest :
         "routes using krav access control" should {
             "authorize access using krav access policy and user groups" {
                 coEvery {
-                    accessTokenVerifier.verifyToken("valid-token")
-                } returns NavUserPrincipal(navIdent, groupIds, emptySet()).right()
+                    accessTokenValidator.validateToken("valid-token")
+                } returns ValidatedEntraToken(navIdent, groupIds).right()
+                coEvery {
+                    texasClient.exchangeToken("valid-token", any())
+                } returns OboToken("obo-token").right()
+                coEvery {
+                    entraProxyClient.hentEnheter(OboToken("obo-token"))
+                } returns emptySet<Enhetsnummer>().right()
 
                 client
                     .get("/protected-krav") {

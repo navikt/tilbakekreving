@@ -4,7 +4,7 @@ import io.ktor.server.auth.principal
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.RoutingContext
 import io.ktor.server.routing.post
-import no.nav.tilbakekreving.infrastructure.auth.NavUserPrincipal
+import no.nav.tilbakekreving.infrastructure.auth.model.NavUserPrincipal
 
 fun Route.authenticatedPost(body: suspend RoutingContext.(NavUserPrincipal) -> Unit) {
     post {

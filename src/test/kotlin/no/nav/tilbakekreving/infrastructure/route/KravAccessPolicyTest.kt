@@ -6,10 +6,10 @@ import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.Kravbeskrivelse
 import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravtype
-import no.nav.tilbakekreving.infrastructure.auth.Enhetsnummer
-import no.nav.tilbakekreving.infrastructure.auth.GroupId
 import no.nav.tilbakekreving.infrastructure.auth.abac.policy.NavSaksbehandler
 import no.nav.tilbakekreving.infrastructure.auth.abac.policy.lesKravAccessPolicy
+import no.nav.tilbakekreving.infrastructure.auth.model.Enhetsnummer
+import no.nav.tilbakekreving.infrastructure.auth.model.GroupId
 import no.nav.tilbakekreving.infrastructure.unleash.StubFeatureToggles
 import org.slf4j.LoggerFactory
 import java.util.Locale

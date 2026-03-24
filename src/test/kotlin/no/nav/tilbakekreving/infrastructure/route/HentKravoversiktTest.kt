@@ -32,10 +32,10 @@ import no.nav.tilbakekreving.domain.Kravoversikt
 import no.nav.tilbakekreving.domain.KravoversiktSkyldner
 import no.nav.tilbakekreving.domain.Kravtype
 import no.nav.tilbakekreving.domain.Oppdragsgiver
-import no.nav.tilbakekreving.infrastructure.auth.Enhetsnummer
-import no.nav.tilbakekreving.infrastructure.auth.GroupId
-import no.nav.tilbakekreving.infrastructure.auth.NavUserPrincipal
 import no.nav.tilbakekreving.infrastructure.auth.abac.policy.lesKravAccessPolicy
+import no.nav.tilbakekreving.infrastructure.auth.model.Enhetsnummer
+import no.nav.tilbakekreving.infrastructure.auth.model.GroupId
+import no.nav.tilbakekreving.infrastructure.auth.model.NavUserPrincipal
 import no.nav.tilbakekreving.infrastructure.unleash.StubFeatureToggles
 import no.nav.tilbakekreving.setup.configureSerialization
 import no.nav.tilbakekreving.util.specWideTestApplication

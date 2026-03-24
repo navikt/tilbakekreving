@@ -1,10 +1,10 @@
-package no.nav.tilbakekreving.infrastructure.client.json
+package no.nav.tilbakekreving.infrastructure.client.texas.json
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class VerifyTokenRequest(
+data class ValidateTokenRequest(
     @SerialName("identity_provider") val identityProvider: String,
     val token: String,
 )

@@ -12,7 +12,9 @@ import io.ktor.client.engine.mock.respond
 import io.ktor.http.content.TextContent
 import io.ktor.http.headersOf
 import no.nav.tilbakekreving.AppEnv
+import no.nav.tilbakekreving.infrastructure.auth.model.Scope
 import no.nav.tilbakekreving.setup.createHttpClient
+import java.net.URI
 
 class TexasMaskinportenClientTest :
     WordSpec({
@@ -50,9 +52,15 @@ class TexasMaskinportenClientTest :
                     }
 
                 val httpClient = with(AppEnv.DEV) { createHttpClient(mockEngine) }
-                val texasClient = TexasMaskinportenClient(httpClient, "http://localhost")
+                val texasClient = TexasMaskinportenClient(httpClient, URI("http://localhost").toURL())
 
-                val result = texasClient.getAccessToken("scope1", "scope2")
+                val result =
+                    texasClient.getAccessToken(
+                        setOf(
+                            Scope("scope1"),
+                            Scope("scope2"),
+                        ),
+                    )
 
                 result.shouldBeRight("token")
             }

@@ -35,12 +35,15 @@ import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravlinje
 import no.nav.tilbakekreving.domain.Oppdragsgiver
 import no.nav.tilbakekreving.infrastructure.audit.AuditLog
-import no.nav.tilbakekreving.infrastructure.auth.GroupId
-import no.nav.tilbakekreving.infrastructure.auth.NavUserPrincipal
-import no.nav.tilbakekreving.infrastructure.client.AccessTokenVerifier
+import no.nav.tilbakekreving.infrastructure.auth.AccessTokenValidator
+import no.nav.tilbakekreving.infrastructure.auth.model.GroupId
+import no.nav.tilbakekreving.infrastructure.auth.model.OboToken
+import no.nav.tilbakekreving.infrastructure.auth.model.ValidatedEntraToken
+import no.nav.tilbakekreving.infrastructure.client.entra.proxy.EntraProxyClient
+import no.nav.tilbakekreving.infrastructure.client.texas.TexasClient
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravdetaljerJsonRequest
 import no.nav.tilbakekreving.infrastructure.route.json.KravidentifikatorType
-import no.nav.tilbakekreving.setup.configureAuthentication
+import no.nav.tilbakekreving.setup.configureEntraAuthentication
 import no.nav.tilbakekreving.setup.configureSerialization
 import no.nav.tilbakekreving.util.specWideTestApplication
 
@@ -50,15 +53,21 @@ class HentKravdetaljerTest :
         val hentKravdetaljer = mockk<HentKravdetaljer>()
         val auditLog = mockk<AuditLog>(relaxed = true)
 
-        val accessTokenVerifier = mockk<AccessTokenVerifier<NavUserPrincipal>>()
-        coEvery { accessTokenVerifier.verifyToken(any()) } returns
-            AccessTokenVerifier.VerificationError.InvalidToken.left()
-        coEvery { accessTokenVerifier.verifyToken("valid-token") } returns
-            NavUserPrincipal(
+        val accessTokenValidator = mockk<AccessTokenValidator<ValidatedEntraToken>>()
+        coEvery { accessTokenValidator.validateToken(any()) } returns
+            AccessTokenValidator.ValidationError.InvalidToken.left()
+        coEvery { accessTokenValidator.validateToken("valid-token") } returns
+            ValidatedEntraToken(
                 navIdent = "Z123456",
                 groupIds = setOf(GroupId("les-krav")),
-                enheter = emptySet(),
             ).right()
+
+        val texasClient = mockk<TexasClient>()
+        coEvery { texasClient.exchangeToken("valid-token", any()) } returns OboToken("obo-token").right()
+
+        val entraProxyClient = mockk<EntraProxyClient>()
+        coEvery { entraProxyClient.hentEnheter(OboToken("obo-token")) } returns
+            emptySet<no.nav.tilbakekreving.infrastructure.auth.model.Enhetsnummer>().right()
 
         // Reset audit mocks for å kunne telle kall per test
         afterTest { clearMocks(auditLog) }
@@ -67,7 +76,13 @@ class HentKravdetaljerTest :
             specWideTestApplication {
                 application {
                     configureSerialization()
-                    configureAuthentication(authenticationConfigName, accessTokenVerifier)
+                    configureEntraAuthentication(
+                        authenticationConfigName,
+                        accessTokenValidator,
+                        texasClient,
+                        entraProxyClient,
+                        "target",
+                    )
                     routing {
                         authenticate(authenticationConfigName.configName) {
                             route("/kravdetaljer") {

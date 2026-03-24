@@ -3,7 +3,8 @@ package no.nav.tilbakekreving.plugin
 import arrow.core.getOrElse
 import io.ktor.client.plugins.api.createClientPlugin
 import io.ktor.client.request.bearerAuth
-import no.nav.tilbakekreving.infrastructure.client.AccessTokenProvider
+import no.nav.tilbakekreving.infrastructure.auth.AccessTokenProvider
+import no.nav.tilbakekreving.infrastructure.auth.model.Scope
 
 data class MaskinportenAuthHeaderPluginConfig(
     var accessTokenProvider: AccessTokenProvider? = null,
@@ -18,7 +19,7 @@ val MaskinportenAuthHeaderPlugin =
 
         onRequest { request, _ ->
             val accessToken =
-                accessTokenProvider.getAccessToken(*scopes.toTypedArray()).getOrElse {
+                accessTokenProvider.getAccessToken(scopes.map { Scope(it) }.toSet()).getOrElse {
                     throw IllegalStateException("Failed to get access token: $it")
                 }
 

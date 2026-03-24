@@ -1,5 +1,6 @@
 package no.nav.tilbakekreving.plugin
 
+import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
 import io.kotest.assertions.throwables.shouldThrow
@@ -11,8 +12,9 @@ import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.request.get
 import io.ktor.http.headersOf
-import no.nav.tilbakekreving.infrastructure.client.AccessTokenProvider
-import no.nav.tilbakekreving.infrastructure.client.AccessTokenProvider.GetAccessTokenError
+import no.nav.tilbakekreving.infrastructure.auth.AccessTokenProvider
+import no.nav.tilbakekreving.infrastructure.auth.AccessTokenProvider.GetAccessTokenError
+import no.nav.tilbakekreving.infrastructure.auth.model.Scope
 
 class MaskinportenAuthHeaderPluginTest :
     WordSpec({
@@ -51,9 +53,9 @@ class MaskinportenAuthHeaderPluginTest :
         }
     })
 
-private fun fakeTokenProvider(result: arrow.core.Either<GetAccessTokenError, String>) =
+private fun fakeTokenProvider(result: Either<GetAccessTokenError, String>) =
     object : AccessTokenProvider {
-        override suspend fun getAccessToken(vararg scopes: String) = result
+        override suspend fun getAccessToken(scopes: Set<Scope>): Either<GetAccessTokenError, String> = result
     }
 
 private fun createClientWithPlugin(

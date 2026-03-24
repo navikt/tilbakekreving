@@ -4,10 +4,10 @@ import no.nav.tilbakekreving.app.FeatureToggles
 import no.nav.tilbakekreving.app.Toggle
 import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.Kravtype
-import no.nav.tilbakekreving.infrastructure.auth.Enhetsnummer
-import no.nav.tilbakekreving.infrastructure.auth.GroupId
 import no.nav.tilbakekreving.infrastructure.auth.abac.AccessPolicy
 import no.nav.tilbakekreving.infrastructure.auth.abac.accessPolicy
+import no.nav.tilbakekreving.infrastructure.auth.model.Enhetsnummer
+import no.nav.tilbakekreving.infrastructure.auth.model.GroupId
 import org.slf4j.Logger
 
 /**
