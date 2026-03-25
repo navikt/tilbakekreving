@@ -26,6 +26,7 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.datetime.LocalDate
+import no.nav.tilbakekreving.AppEnv
 import no.nav.tilbakekreving.app.HentKravdetaljer
 import no.nav.tilbakekreving.config.AuthenticationConfigName
 import no.nav.tilbakekreving.config.EntraProxyConfig
@@ -84,6 +85,7 @@ class HentKravdetaljerTest :
             specWideTestApplication {
                 application {
                     dependencies {
+                        provide<AppEnv> { AppEnv.LOCAL }
                         provide<AccessTokenValidator<ValidatedEntraToken>> { accessTokenValidator }
                         provide<EntraOboTokenExchanger> { entraOboTokenExchanger }
                         provide<EntraProxyClient> { entraProxyClient }

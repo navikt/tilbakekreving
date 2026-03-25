@@ -59,6 +59,7 @@ suspend fun Application.module() {
             provide { resolve<TilbakekrevingConfig>().unleash }
             provide { resolve<TilbakekrevingConfig>().auditlog }
             provide { resolve<TilbakekrevingConfig>().entraProxy }
+            provide { appEnv }
 
             provide<HttpClient> { createHttpClient(CIO.create()) }
 

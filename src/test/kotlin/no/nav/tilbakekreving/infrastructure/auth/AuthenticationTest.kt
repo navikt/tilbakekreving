@@ -17,6 +17,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import io.mockk.coEvery
 import io.mockk.mockk
+import no.nav.tilbakekreving.AppEnv
 import no.nav.tilbakekreving.config.AuthenticationConfigName
 import no.nav.tilbakekreving.config.EntraProxyConfig
 import no.nav.tilbakekreving.domain.Krav
@@ -63,6 +64,7 @@ class AuthenticationTest :
             specWideTestApplication {
                 application {
                     dependencies {
+                        provide<AppEnv> { AppEnv.LOCAL }
                         provide<AccessTokenValidator<ValidatedEntraToken>> { accessTokenValidator }
                         provide<EntraOboTokenExchanger> { entraOboTokenExchanger }
                         provide<EntraProxyClient> { entraProxyClient }

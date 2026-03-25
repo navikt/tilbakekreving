@@ -6,6 +6,7 @@ import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.bearer
 import io.ktor.server.plugins.di.dependencies
+import no.nav.tilbakekreving.AppEnv
 import no.nav.tilbakekreving.config.AuthenticationConfigName
 import no.nav.tilbakekreving.config.EntraProxyConfig
 import no.nav.tilbakekreving.infrastructure.auth.AccessTokenValidator
@@ -21,6 +22,7 @@ fun Application.configureEntraAuthentication() {
     val entraOboTokenExchanger: EntraOboTokenExchanger by dependencies
     val entraProxyClient: EntraProxyClient by dependencies
     val entraProxyConfig: EntraProxyConfig by dependencies
+    val appEnv: AppEnv by dependencies
 
     install(Authentication) {
         val logger = LoggerFactory.getLogger("ConfigureEntraAuthentication")
@@ -57,7 +59,17 @@ fun Application.configureEntraAuthentication() {
                     navIdent = validatedToken.navIdent,
                     groupIds = validatedToken.groupIds,
                     enheter = enheter,
-                )
+                ).also {
+                    when (appEnv) {
+                        AppEnv.LOCAL,
+                        AppEnv.DEV,
+                        -> {
+                            logger.info("Nav user principal: {}", it)
+                        }
+
+                        AppEnv.PROD -> {}
+                    }
+                }
             }
         }
     }
