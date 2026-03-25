@@ -5,7 +5,9 @@ import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.bearer
+import io.ktor.server.plugins.di.dependencies
 import no.nav.tilbakekreving.config.AuthenticationConfigName
+import no.nav.tilbakekreving.config.EntraProxyConfig
 import no.nav.tilbakekreving.infrastructure.auth.AccessTokenValidator
 import no.nav.tilbakekreving.infrastructure.auth.model.NavUserPrincipal
 import no.nav.tilbakekreving.infrastructure.auth.model.ValidatedEntraToken
@@ -13,13 +15,13 @@ import no.nav.tilbakekreving.infrastructure.client.entra.proxy.EntraProxyClient
 import no.nav.tilbakekreving.infrastructure.client.texas.TexasClient
 import org.slf4j.LoggerFactory
 
-fun Application.configureEntraAuthentication(
-    authenticationConfigName: AuthenticationConfigName,
-    accessTokenValidator: AccessTokenValidator<ValidatedEntraToken>,
-    texasClient: TexasClient,
-    entraProxyClient: EntraProxyClient,
-    oboApiTarget: String,
-) {
+fun Application.configureEntraAuthentication() {
+    val authenticationConfigName = AuthenticationConfigName.ENTRA_ID
+    val accessTokenValidator: AccessTokenValidator<ValidatedEntraToken> by dependencies
+    val texasClient: TexasClient by dependencies
+    val entraProxyClient: EntraProxyClient by dependencies
+    val entraProxyConfig: EntraProxyConfig by dependencies
+
     install(Authentication) {
         val logger = LoggerFactory.getLogger("ConfigureEntraAuthentication")
         bearer(authenticationConfigName.configName) {
@@ -40,7 +42,7 @@ fun Application.configureEntraAuthentication(
                     }
 
                 val oboToken =
-                    texasClient.exchangeToken(credentials.token, oboApiTarget).getOrElse { error ->
+                    texasClient.exchangeToken(credentials.token, entraProxyConfig.apiTarget).getOrElse { error ->
                         logger.warn("Failed to exchange user token for OBO token: $error")
                         return@authenticate null
                     }

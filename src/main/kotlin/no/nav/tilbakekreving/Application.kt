@@ -9,7 +9,6 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.di.dependencies
 import no.nav.tilbakekreving.app.FeatureToggle
-import no.nav.tilbakekreving.config.AuthenticationConfigName
 import no.nav.tilbakekreving.config.EntraProxyConfig
 import no.nav.tilbakekreving.config.NaisConfig
 import no.nav.tilbakekreving.config.SkatteetatenConfig
@@ -107,13 +106,7 @@ suspend fun Application.module() {
 
         configureSerialization()
         configureCallLogging()
-        configureEntraAuthentication(
-            AuthenticationConfigName.ENTRA_ID,
-            dependencies.resolve<AccessTokenValidator<ValidatedEntraToken>>(),
-            dependencies.resolve(),
-            dependencies.resolve(),
-            dependencies.resolve<EntraProxyConfig>().apiTarget,
-        )
+        configureEntraAuthentication()
         configureRouting()
     }
 }

@@ -57,13 +57,7 @@ class AuthenticationTest :
         val client =
             specWideTestApplication {
                 application {
-                    configureEntraAuthentication(
-                        authenticationConfigName,
-                        accessTokenValidator,
-                        texasClient,
-                        entraProxyClient,
-                        "target",
-                    )
+                    configureEntraAuthentication()
 
                     routing {
                         authenticate(authenticationConfigName.configName) {
