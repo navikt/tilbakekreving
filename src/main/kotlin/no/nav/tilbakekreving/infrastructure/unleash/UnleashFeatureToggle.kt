@@ -1,14 +1,14 @@
 package no.nav.tilbakekreving.infrastructure.unleash
 
 import io.getunleash.DefaultUnleash
-import no.nav.tilbakekreving.app.FeatureToggles
+import no.nav.tilbakekreving.app.FeatureToggle
 import no.nav.tilbakekreving.app.Toggle
 import no.nav.tilbakekreving.config.UnleashConfig
 import io.getunleash.util.UnleashConfig as SdkUnleashConfig
 
-class UnleashFeatureToggles(
+class UnleashFeatureToggle(
     config: UnleashConfig,
-) : FeatureToggles {
+) : FeatureToggle {
     private val unleash =
         DefaultUnleash(
             SdkUnleashConfig

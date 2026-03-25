@@ -6,6 +6,6 @@ enum class Toggle(
     KRAVTYPE_ENHET_TILGANGSKONTROLL("tilbakekreving.kravtype-enhet-tilgangskontroll"),
 }
 
-interface FeatureToggles {
+interface FeatureToggle {
     fun isEnabled(toggle: Toggle): Boolean
 }

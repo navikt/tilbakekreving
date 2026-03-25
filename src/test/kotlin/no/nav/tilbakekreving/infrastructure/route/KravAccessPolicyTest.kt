@@ -10,7 +10,7 @@ import no.nav.tilbakekreving.infrastructure.auth.abac.policy.NavSaksbehandler
 import no.nav.tilbakekreving.infrastructure.auth.abac.policy.lesKravAccessPolicy
 import no.nav.tilbakekreving.infrastructure.auth.model.Enhetsnummer
 import no.nav.tilbakekreving.infrastructure.auth.model.GroupId
-import no.nav.tilbakekreving.infrastructure.unleash.StubFeatureToggles
+import no.nav.tilbakekreving.infrastructure.unleash.StubFeatureToggle
 import org.slf4j.LoggerFactory
 import java.util.Locale
 
@@ -43,7 +43,7 @@ class KravAccessPolicyTest :
         val logger = LoggerFactory.getLogger(this::class.java)
 
         "les krav access policy with feature toggle disabled" should {
-            val disabledFeatureToggle = StubFeatureToggles(default = false)
+            val disabledFeatureToggle = StubFeatureToggle(default = false)
             "allow access when user has the krav access group" {
                 val policy =
                     context(disabledFeatureToggle, logger) {
@@ -84,7 +84,7 @@ class KravAccessPolicyTest :
         }
 
         "les krav access policy with feature toggle enabled" should {
-            val enabledFeatureToggle = StubFeatureToggles(default = true)
+            val enabledFeatureToggle = StubFeatureToggle(default = true)
             "filter krav based on access policy" {
                 val policy =
                     context(enabledFeatureToggle, logger) {

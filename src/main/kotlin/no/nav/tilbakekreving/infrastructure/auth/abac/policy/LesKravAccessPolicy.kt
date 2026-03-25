@@ -1,6 +1,6 @@
 package no.nav.tilbakekreving.infrastructure.auth.abac.policy
 
-import no.nav.tilbakekreving.app.FeatureToggles
+import no.nav.tilbakekreving.app.FeatureToggle
 import no.nav.tilbakekreving.app.Toggle
 import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.Kravtype
@@ -21,7 +21,7 @@ import org.slf4j.Logger
  *
  * Når toggle er deaktivert, ser brukeren alle krav så lenge de har [lesKravAccessGroup].
  */
-context(featureToggles: FeatureToggles, logger: Logger?)
+context(featureToggle: FeatureToggle, logger: Logger?)
 fun lesKravAccessPolicy(
     lesKravAccessGroup: GroupId,
     enhetAccess: Map<Enhetsnummer, Set<Kravtype>>,
@@ -32,7 +32,7 @@ fun lesKravAccessPolicy(
         require { lesKravAccessGroup in subject.groupIds }
 
         require {
-            if (featureToggles.isEnabled(Toggle.KRAVTYPE_ENHET_TILGANGSKONTROLL)) {
+            if (featureToggle.isEnabled(Toggle.KRAVTYPE_ENHET_TILGANGSKONTROLL)) {
                 subject.enheter.any { enhetAccess[it]?.contains(resource.kravtype) == true }
             } else {
                 true

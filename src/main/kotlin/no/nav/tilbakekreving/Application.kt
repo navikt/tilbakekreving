@@ -8,7 +8,7 @@ import io.ktor.server.application.log
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.di.dependencies
-import no.nav.tilbakekreving.app.FeatureToggles
+import no.nav.tilbakekreving.app.FeatureToggle
 import no.nav.tilbakekreving.config.AuthenticationConfigName
 import no.nav.tilbakekreving.config.EntraProxyConfig
 import no.nav.tilbakekreving.config.NaisConfig
@@ -24,8 +24,8 @@ import no.nav.tilbakekreving.infrastructure.client.entra.proxy.EntraProxyClient
 import no.nav.tilbakekreving.infrastructure.client.maskinporten.TexasMaskinportenClient
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.SkatteetatenInnkrevingsoppdragHttpClient
 import no.nav.tilbakekreving.infrastructure.client.texas.TexasClient
-import no.nav.tilbakekreving.infrastructure.unleash.StubFeatureToggles
-import no.nav.tilbakekreving.infrastructure.unleash.UnleashFeatureToggles
+import no.nav.tilbakekreving.infrastructure.unleash.StubFeatureToggle
+import no.nav.tilbakekreving.infrastructure.unleash.UnleashFeatureToggle
 import no.nav.tilbakekreving.plugin.MaskinportenAuthHeaderPlugin
 import no.nav.tilbakekreving.setup.configureCallLogging
 import no.nav.tilbakekreving.setup.configureEntraAuthentication
@@ -60,10 +60,10 @@ suspend fun Application.module() {
 
             provide<HttpClient> { createHttpClient(CIO.create()) }
 
-            provide<FeatureToggles> {
+            provide<FeatureToggle> {
                 when (appEnv) {
-                    AppEnv.LOCAL -> StubFeatureToggles()
-                    AppEnv.DEV, AppEnv.PROD -> UnleashFeatureToggles(config = resolve())
+                    AppEnv.LOCAL -> StubFeatureToggle()
+                    AppEnv.DEV, AppEnv.PROD -> UnleashFeatureToggle(config = resolve())
                 }
             }
 
@@ -98,7 +98,7 @@ suspend fun Application.module() {
             }
 
             provide<LesKravAccessPolicy> {
-                context(resolve<FeatureToggles>(), LoggerFactory.getLogger(LesKravAccessPolicy::class.java)) {
+                context(resolve<FeatureToggle>(), LoggerFactory.getLogger(LesKravAccessPolicy::class.java)) {
                     val config = resolve<TilbakekrevingConfig>()
                     lesKravAccessPolicy(config.kravTilgangsgruppe, config.kravtypeAcl)
                 }

@@ -36,7 +36,7 @@ import no.nav.tilbakekreving.infrastructure.auth.abac.policy.lesKravAccessPolicy
 import no.nav.tilbakekreving.infrastructure.auth.model.Enhetsnummer
 import no.nav.tilbakekreving.infrastructure.auth.model.GroupId
 import no.nav.tilbakekreving.infrastructure.auth.model.NavUserPrincipal
-import no.nav.tilbakekreving.infrastructure.unleash.StubFeatureToggles
+import no.nav.tilbakekreving.infrastructure.unleash.StubFeatureToggle
 import no.nav.tilbakekreving.setup.configureSerialization
 import no.nav.tilbakekreving.util.specWideTestApplication
 import org.slf4j.LoggerFactory
@@ -46,7 +46,7 @@ class HentKravoversiktTest :
     WordSpec({
         val søkEtterInnkrevingskrav = mockk<SøkEtterInnkrevingskrav>()
         val kravAccessPolicy =
-            context(StubFeatureToggles(default = true), LoggerFactory.getLogger(this::class.java)) {
+            context(StubFeatureToggle(default = true), LoggerFactory.getLogger(this::class.java)) {
                 lesKravAccessPolicy(
                     GroupId("tilgang_til_krav"),
                     mapOf(Enhetsnummer("1111") to setOf(Kravtype("Kravtype"))),

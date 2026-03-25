@@ -1,10 +1,10 @@
 package no.nav.tilbakekreving.infrastructure.unleash
 
-import no.nav.tilbakekreving.app.FeatureToggles
+import no.nav.tilbakekreving.app.FeatureToggle
 import no.nav.tilbakekreving.app.Toggle
 
-class StubFeatureToggles(
+class StubFeatureToggle(
     private val default: Boolean = false,
-) : FeatureToggles {
+) : FeatureToggle {
     override fun isEnabled(toggle: Toggle): Boolean = default
 }

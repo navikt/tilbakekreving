@@ -46,7 +46,7 @@ data class KravResponseJson(
     val navReferanse: String?,
     val kravtype: String,
     val kravbeskrivelse: Array<KravbeskrivelseJson>,
-    val `gjenståendeBeløp`: Double,
+    val gjenståendeBeløp: Double,
 ) {
     companion object {
         fun from(krav: Krav): KravResponseJson =
@@ -56,7 +56,7 @@ data class KravResponseJson(
                 navReferanse = krav.navReferanse,
                 kravtype = krav.kravtype.value,
                 kravbeskrivelse = krav.kravbeskrivelse.map(KravbeskrivelseJson::fromDomain).toTypedArray(),
-                `gjenståendeBeløp` = krav.gjenståendeBeløp,
+                gjenståendeBeløp = krav.gjenståendeBeløp,
             )
     }
 
@@ -66,7 +66,7 @@ data class KravResponseJson(
 
         other as KravResponseJson
 
-        if (`gjenståendeBeløp` != other.`gjenståendeBeløp`) return false
+        if (gjenståendeBeløp != other.gjenståendeBeløp) return false
         if (skeKravidentifikator != other.skeKravidentifikator) return false
         if (navKravidentifikator != other.navKravidentifikator) return false
         if (navReferanse != other.navReferanse) return false
@@ -77,7 +77,7 @@ data class KravResponseJson(
     }
 
     override fun hashCode(): Int {
-        var result = `gjenståendeBeløp`.hashCode()
+        var result = gjenståendeBeløp.hashCode()
         result = 31 * result + (skeKravidentifikator?.hashCode() ?: 0)
         result = 31 * result + navKravidentifikator.hashCode()
         result = 31 * result + (navReferanse?.hashCode() ?: 0)

@@ -32,7 +32,7 @@ import no.nav.tilbakekreving.infrastructure.client.entra.proxy.EntraProxyClient
 import no.nav.tilbakekreving.infrastructure.client.entra.proxy.HentEnheterError
 import no.nav.tilbakekreving.infrastructure.client.texas.ExchangeTokenError
 import no.nav.tilbakekreving.infrastructure.client.texas.TexasClient
-import no.nav.tilbakekreving.infrastructure.unleash.StubFeatureToggles
+import no.nav.tilbakekreving.infrastructure.unleash.StubFeatureToggle
 import no.nav.tilbakekreving.setup.configureEntraAuthentication
 import no.nav.tilbakekreving.util.specWideTestApplication
 import org.slf4j.LoggerFactory
@@ -45,7 +45,7 @@ class AuthenticationTest :
         val groupIds = listOf("group1", "group2", "tilgang_til_krav").map(::GroupId).toSet()
         val authenticationConfigName = AuthenticationConfigName.ENTRA_ID
         val kravAccessPolicy =
-            context(StubFeatureToggles(), LoggerFactory.getLogger(this::class.java)) {
+            context(StubFeatureToggle(), LoggerFactory.getLogger(this::class.java)) {
                 lesKravAccessPolicy(
                     GroupId("tilgang_til_krav"),
                     mapOf(Enhetsnummer("1111") to setOf(Kravtype("TYPE_A"))),
