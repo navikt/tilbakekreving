@@ -1,0 +1,124 @@
+shape: sequence_diagram
+title: Tilbakekreving – Request Flow {
+  near: top-center
+  shape: text
+  style.font-size: 28
+  style.bold: true
+}
+
+# Actors / participants
+client: "NAV Saksbehandler\n(Client)" {
+  shape: person
+}
+app: "Tilbakekreving" {
+  shape: rectangle
+}
+texas: "Texas\n(NAIS Token Service)" {
+  shape: rectangle
+}
+entra_proxy: "Entra Proxy" {
+  shape: rectangle
+}
+ske_api: "Skatteetaten\nInnkrevingsoppdrag API" {
+  shape: rectangle
+}
+
+# ==========================================
+# Autentiseringsflyt (felles for alle ruter)
+# ==========================================
+
+Autentiseringsflyt: {
+  app -> texas: "Valider brukerens Entra ID-token" {
+    style.stroke: "#8E44AD"
+  }
+  texas -> app: "NAV-ident og AD-grupper" {
+    style.stroke: "#8E44AD"
+    style.stroke-dash: 3
+  }
+  app -> texas: "Veksle brukertoken til OBO-token" {
+    style.stroke: "#8E44AD"
+  }
+  texas -> app: "OBO-token" {
+    style.stroke: "#8E44AD"
+    style.stroke-dash: 3
+  }
+  app -> entra_proxy: "Hent brukerens enheter" {
+    style.stroke: "#8E44AD"
+  }
+  entra_proxy -> app: "Enheter brukeren tilhører" {
+    style.stroke: "#8E44AD"
+    style.stroke-dash: 3
+  }
+}
+
+# ==========================================
+# Flow 1: POST /internal/kravdetaljer
+# ==========================================
+
+client -> app: "Hent kravdetaljer for et innkrevingskrav" {
+  style.stroke: "#2E86C1"
+}
+
+"Autentiseringsflyt (se over)": {
+  app -> app: " " {
+    style.stroke: "#8E44AD"
+  }
+}
+
+app -> texas: "Hent Maskinporten-token" {
+  style.stroke: "#E67E22"
+}
+texas -> app: "Maskinporten-token" {
+  style.stroke: "#E67E22"
+  style.stroke-dash: 3
+}
+app -> ske_api: "Hent kravdetaljer fra Skatteetaten" {
+  style.stroke: "#2E86C1"
+}
+ske_api -> app: "Kravdetaljer" {
+  style.stroke: "#2E86C1"
+  style.stroke-dash: 3
+}
+app -> app: "Logg tilgang i auditlogg" {
+  style.stroke: "#27AE60"
+}
+app -> client: "Kravdetaljer" {
+  style.stroke: "#2E86C1"
+  style.stroke-dash: 3
+}
+
+# ==========================================
+# Flow 2: POST /internal/kravoversikt
+# ==========================================
+
+client -> app: "Søk etter innkrevingskrav for en skyldner" {
+  style.stroke: "#C0392B"
+}
+
+"Autentiseringsflyt (se over) ": {
+  app -> app: " " {
+    style.stroke: "#8E44AD"
+  }
+}
+
+app -> texas: "Hent Maskinporten-token" {
+  style.stroke: "#E67E22"
+}
+texas -> app: "Maskinporten-token" {
+  style.stroke: "#E67E22"
+  style.stroke-dash: 3
+}
+app -> ske_api: "Søk etter kravoversikt fra Skatteetaten" {
+  style.stroke: "#C0392B"
+}
+ske_api -> app: "Kravoversikt" {
+  style.stroke: "#C0392B"
+  style.stroke-dash: 3
+}
+app -> app: "Filtrer krav basert på\nbrukerens grupper og enheter" {
+  style.stroke: "#F39C12"
+}
+app -> client: "Filtrert kravoversikt" {
+  style.stroke: "#C0392B"
+  style.stroke-dash: 3
+}
