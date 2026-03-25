@@ -4,10 +4,11 @@ import arrow.core.getOrElse
 import io.ktor.client.plugins.api.createClientPlugin
 import io.ktor.client.request.bearerAuth
 import no.nav.tilbakekreving.infrastructure.auth.AccessTokenProvider
+import no.nav.tilbakekreving.infrastructure.auth.model.MaskinportenToken
 import no.nav.tilbakekreving.infrastructure.auth.model.Scope
 
 data class MaskinportenAuthHeaderPluginConfig(
-    var accessTokenProvider: AccessTokenProvider? = null,
+    var accessTokenProvider: AccessTokenProvider<MaskinportenToken>? = null,
     var scopes: List<String> = emptyList(),
 )
 
@@ -18,11 +19,11 @@ val MaskinportenAuthHeaderPlugin =
         val scopes = pluginConfig.scopes
 
         onRequest { request, _ ->
-            val accessToken =
+            val maskinportenToken =
                 accessTokenProvider.getAccessToken(scopes.map { Scope(it) }.toSet()).getOrElse {
                     throw IllegalStateException("Failed to get access token: $it")
                 }
 
-            request.bearerAuth(accessToken)
+            request.bearerAuth(maskinportenToken.token)
         }
     }

@@ -10,17 +10,20 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.di.dependencies
 import no.nav.tilbakekreving.app.FeatureToggle
 import no.nav.tilbakekreving.config.EntraProxyConfig
-import no.nav.tilbakekreving.config.NaisConfig
 import no.nav.tilbakekreving.config.SkatteetatenConfig
 import no.nav.tilbakekreving.config.TilbakekrevingConfig
 import no.nav.tilbakekreving.infrastructure.audit.AuditLog
 import no.nav.tilbakekreving.infrastructure.audit.NavAuditLog
+import no.nav.tilbakekreving.infrastructure.auth.AccessTokenProvider
 import no.nav.tilbakekreving.infrastructure.auth.AccessTokenValidator
+import no.nav.tilbakekreving.infrastructure.auth.EntraOboTokenExchanger
+import no.nav.tilbakekreving.infrastructure.auth.EntraTokenValidator
+import no.nav.tilbakekreving.infrastructure.auth.MaskinportenTokenProvider
 import no.nav.tilbakekreving.infrastructure.auth.abac.policy.LesKravAccessPolicy
 import no.nav.tilbakekreving.infrastructure.auth.abac.policy.lesKravAccessPolicy
+import no.nav.tilbakekreving.infrastructure.auth.model.MaskinportenToken
 import no.nav.tilbakekreving.infrastructure.auth.model.ValidatedEntraToken
 import no.nav.tilbakekreving.infrastructure.client.entra.proxy.EntraProxyClient
-import no.nav.tilbakekreving.infrastructure.client.maskinporten.TexasMaskinportenClient
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.SkatteetatenInnkrevingsoppdragHttpClient
 import no.nav.tilbakekreving.infrastructure.client.texas.TexasClient
 import no.nav.tilbakekreving.infrastructure.unleash.StubFeatureToggle
@@ -68,21 +71,29 @@ suspend fun Application.module() {
 
             provide<AuditLog>(NavAuditLog::class)
 
-            provide<AccessTokenValidator<ValidatedEntraToken>> {
+            provide<TexasClient> {
                 TexasClient(resolve(), resolve())
+            }
+
+            provide<AccessTokenValidator<ValidatedEntraToken>> {
+                EntraTokenValidator(resolve())
+            }
+
+            provide<EntraOboTokenExchanger> {
+                EntraOboTokenExchanger(resolve())
+            }
+
+            provide<AccessTokenProvider<MaskinportenToken>> {
+                MaskinportenTokenProvider(resolve())
             }
 
             provide<SkatteetatenInnkrevingsoppdragHttpClient> {
                 val skatteetatenConfig = resolve<SkatteetatenConfig>()
-                val maskinportenClient =
-                    TexasMaskinportenClient(
-                        resolve(),
-                        resolve<NaisConfig>().naisTokenEndpoint,
-                    )
+                val maskinportenTokenProvider = resolve<AccessTokenProvider<MaskinportenToken>>()
                 val skatteetatenClient =
                     resolve<HttpClient>().config {
                         install(MaskinportenAuthHeaderPlugin) {
-                            accessTokenProvider = maskinportenClient
+                            accessTokenProvider = maskinportenTokenProvider
                             scopes = skatteetatenConfig.scopes
                         }
                         install(HttpTimeout) {

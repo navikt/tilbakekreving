@@ -11,8 +11,6 @@ import kotlinx.serialization.json.JsonDecoder
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.jsonPrimitive
-import no.nav.tilbakekreving.infrastructure.auth.model.GroupId
-import no.nav.tilbakekreving.infrastructure.auth.model.ValidatedEntraToken
 
 @Serializable(with = ValidateTokenResponseSerializer::class)
 sealed class ValidateTokenResponse {
@@ -26,13 +24,7 @@ sealed class ValidateTokenResponse {
         val exp: Long,
         val iat: Long,
         val groups: List<String>,
-    ) : ValidateTokenResponse() {
-        fun toDomain(): ValidatedEntraToken =
-            ValidatedEntraToken(
-                navIdent = NAVident,
-                groupIds = groups.map(::GroupId).toSet(),
-            )
-    }
+    ) : ValidateTokenResponse()
 
     @Serializable
     @SerialName("invalid")

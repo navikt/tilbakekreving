@@ -14,6 +14,7 @@ import io.ktor.client.request.get
 import io.ktor.http.headersOf
 import no.nav.tilbakekreving.infrastructure.auth.AccessTokenProvider
 import no.nav.tilbakekreving.infrastructure.auth.AccessTokenProvider.GetAccessTokenError
+import no.nav.tilbakekreving.infrastructure.auth.model.MaskinportenToken
 import no.nav.tilbakekreving.infrastructure.auth.model.Scope
 
 class MaskinportenAuthHeaderPluginTest :
@@ -22,7 +23,7 @@ class MaskinportenAuthHeaderPluginTest :
             "add Bearer auth header to requests" {
                 val client =
                     createClientWithPlugin(
-                        accessTokenProvider = fakeTokenProvider("my-token".right()),
+                        accessTokenProvider = fakeTokenProvider(MaskinportenToken("my-token").right()),
                         scopes = listOf("scope1", "scope2"),
                     )
 
@@ -53,13 +54,13 @@ class MaskinportenAuthHeaderPluginTest :
         }
     })
 
-private fun fakeTokenProvider(result: Either<GetAccessTokenError, String>) =
-    object : AccessTokenProvider {
-        override suspend fun getAccessToken(scopes: Set<Scope>): Either<GetAccessTokenError, String> = result
+private fun fakeTokenProvider(result: Either<GetAccessTokenError, MaskinportenToken>) =
+    object : AccessTokenProvider<MaskinportenToken> {
+        override suspend fun getAccessToken(scopes: Set<Scope>): Either<GetAccessTokenError, MaskinportenToken> = result
     }
 
 private fun createClientWithPlugin(
-    accessTokenProvider: AccessTokenProvider,
+    accessTokenProvider: AccessTokenProvider<MaskinportenToken>,
     scopes: List<String>,
 ) = HttpClient(
     MockEngine { request ->

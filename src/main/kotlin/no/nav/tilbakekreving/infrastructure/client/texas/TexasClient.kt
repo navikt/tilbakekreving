@@ -8,16 +8,13 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
-import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import no.nav.tilbakekreving.config.NaisConfig
-import no.nav.tilbakekreving.infrastructure.auth.AccessTokenValidator
-import no.nav.tilbakekreving.infrastructure.auth.model.OboToken
-import no.nav.tilbakekreving.infrastructure.auth.model.ValidatedEntraToken
 import no.nav.tilbakekreving.infrastructure.client.texas.json.ExchangeTokenRequestJson
-import no.nav.tilbakekreving.infrastructure.client.texas.json.ExchangeTokenResponseJson
+import no.nav.tilbakekreving.infrastructure.client.texas.json.GetTokenRequest
 import no.nav.tilbakekreving.infrastructure.client.texas.json.IdentityProviderJson
+import no.nav.tilbakekreving.infrastructure.client.texas.json.TexasTokenResponse
 import no.nav.tilbakekreving.infrastructure.client.texas.json.ValidateTokenRequest
 import no.nav.tilbakekreving.infrastructure.client.texas.json.ValidateTokenResponse
 import org.slf4j.LoggerFactory
@@ -25,70 +22,86 @@ import org.slf4j.LoggerFactory
 class TexasClient(
     private val httpClient: HttpClient,
     private val naisConfig: NaisConfig,
-) : AccessTokenValidator<ValidatedEntraToken> {
+) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    suspend fun exchangeToken(
-        userToken: String,
+    suspend fun getToken(
+        identityProvider: String,
         target: String,
-    ): Either<ExchangeTokenError, OboToken> =
+    ): Either<TexasError, TexasTokenResponse> =
+        either {
+            val response =
+                httpClient.post(naisConfig.naisTokenEndpoint) {
+                    contentType(ContentType.Application.Json)
+                    setBody(
+                        GetTokenRequest(
+                            identityProvider = identityProvider,
+                            target = target,
+                        ),
+                    )
+                }
+
+            if (!response.status.isSuccess()) {
+                logger.error("Failed to get token from Texas: {} - {}", response.status, response.bodyAsText())
+                raise(TexasError.RequestFailed)
+            }
+
+            response.body<TexasTokenResponse>()
+        }
+
+    suspend fun exchangeToken(
+        identityProvider: IdentityProviderJson,
+        target: String,
+        userToken: String,
+        skipCache: Boolean = false,
+    ): Either<TexasError, TexasTokenResponse> =
         either {
             val response =
                 httpClient.post(naisConfig.naisTokenExchangeEndpoint) {
                     contentType(ContentType.Application.Json)
                     setBody(
                         ExchangeTokenRequestJson(
-                            identityProvider = IdentityProviderJson.ENTRA_ID,
-                            skipCache = false,
+                            identityProvider = identityProvider,
+                            skipCache = skipCache,
                             target = target,
                             userToken = userToken,
                         ),
                     )
                 }
 
-            when (response.status) {
-                HttpStatusCode.OK -> {
-                    OboToken(response.body<ExchangeTokenResponseJson>().accessToken)
-                }
-
-                else -> {
-                    logger.error("Failed to exchange token: {} - {}", response.status, response.bodyAsText())
-                    raise(ExchangeTokenError.FailedToExchangeToken)
-                }
+            if (!response.status.isSuccess()) {
+                logger.error("Failed to exchange token: {} - {}", response.status, response.bodyAsText())
+                raise(TexasError.RequestFailed)
             }
+
+            response.body<TexasTokenResponse>()
         }
 
-    override suspend fun validateToken(token: String) =
+    suspend fun introspectToken(
+        identityProvider: String,
+        token: String,
+    ): Either<TexasError, ValidateTokenResponse> =
         either {
             val response =
                 httpClient.post(naisConfig.naisTokenIntrospectionEndpoint) {
                     contentType(ContentType.Application.Json)
                     setBody(
                         ValidateTokenRequest(
-                            identityProvider = "azuread",
+                            identityProvider = identityProvider,
                             token = token,
                         ),
                     )
                 }
 
             if (!response.status.isSuccess()) {
-                logger.error("Failed to validate token: {} - {}", response.status, response.bodyAsText())
-                raise(AccessTokenValidator.ValidationError.FailedToValidateToken)
-            } else {
-                when (val validateTokenResponse = response.body<ValidateTokenResponse>()) {
-                    is ValidateTokenResponse.ValidTokenResponse -> {
-                        validateTokenResponse.toDomain()
-                    }
-
-                    is ValidateTokenResponse.InvalidTokenResponse -> {
-                        logger.info("Token is invalid: ${validateTokenResponse.error}")
-                        raise(AccessTokenValidator.ValidationError.InvalidToken)
-                    }
-                }
+                logger.error("Failed to introspect token: {} - {}", response.status, response.bodyAsText())
+                raise(TexasError.RequestFailed)
             }
+
+            response.body<ValidateTokenResponse>()
         }
 }
 
-sealed class ExchangeTokenError {
-    data object FailedToExchangeToken : ExchangeTokenError()
+sealed class TexasError {
+    data object RequestFailed : TexasError()
 }

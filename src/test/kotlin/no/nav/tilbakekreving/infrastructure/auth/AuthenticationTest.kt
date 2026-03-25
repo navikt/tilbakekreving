@@ -11,12 +11,14 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.principal
+import io.ktor.server.plugins.di.dependencies
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import io.mockk.coEvery
 import io.mockk.mockk
 import no.nav.tilbakekreving.config.AuthenticationConfigName
+import no.nav.tilbakekreving.config.EntraProxyConfig
 import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.Kravbeskrivelse
 import no.nav.tilbakekreving.domain.Kravidentifikator
@@ -30,8 +32,6 @@ import no.nav.tilbakekreving.infrastructure.auth.model.OboToken
 import no.nav.tilbakekreving.infrastructure.auth.model.ValidatedEntraToken
 import no.nav.tilbakekreving.infrastructure.client.entra.proxy.EntraProxyClient
 import no.nav.tilbakekreving.infrastructure.client.entra.proxy.HentEnheterError
-import no.nav.tilbakekreving.infrastructure.client.texas.ExchangeTokenError
-import no.nav.tilbakekreving.infrastructure.client.texas.TexasClient
 import no.nav.tilbakekreving.infrastructure.unleash.StubFeatureToggle
 import no.nav.tilbakekreving.setup.configureEntraAuthentication
 import no.nav.tilbakekreving.util.specWideTestApplication
@@ -52,11 +52,22 @@ class AuthenticationTest :
                 )
             }
 
-        val texasClient = mockk<TexasClient>()
+        val entraOboTokenExchanger = mockk<EntraOboTokenExchanger>()
         val entraProxyClient = mockk<EntraProxyClient>()
+        val entraProxyConfig =
+            EntraProxyConfig(
+                baseUrl = java.net.URI("http://localhost").toURL(),
+                apiTarget = "api://test/.default",
+        )
         val client =
             specWideTestApplication {
                 application {
+                    dependencies {
+                        provide<AccessTokenValidator<ValidatedEntraToken>> { accessTokenValidator }
+                        provide<EntraOboTokenExchanger> { entraOboTokenExchanger }
+                        provide<EntraProxyClient> { entraProxyClient }
+                        provide<EntraProxyConfig> { entraProxyConfig }
+                    }
                     configureEntraAuthentication()
 
                     routing {
@@ -107,7 +118,7 @@ class AuthenticationTest :
                     accessTokenValidator.validateToken("valid-token")
                 } returns ValidatedEntraToken(navIdent, groupIds).right()
                 coEvery {
-                    texasClient.exchangeToken("valid-token", any())
+                    entraOboTokenExchanger.exchange("valid-token", any())
                 } returns OboToken("obo-token").right()
                 coEvery {
                     entraProxyClient.hentEnheter(OboToken("obo-token"))
@@ -156,8 +167,8 @@ class AuthenticationTest :
                     accessTokenValidator.validateToken("valid-token")
                 } returns ValidatedEntraToken(navIdent, groupIds).right()
                 coEvery {
-                    texasClient.exchangeToken("valid-token", any())
-                } returns ExchangeTokenError.FailedToExchangeToken.left()
+                    entraOboTokenExchanger.exchange("valid-token", any())
+                } returns OboTokenError.FailedToExchange.left()
 
                 client
                     .get("/protected") {
@@ -170,7 +181,7 @@ class AuthenticationTest :
                     accessTokenValidator.validateToken("valid-token")
                 } returns ValidatedEntraToken(navIdent, groupIds).right()
                 coEvery {
-                    texasClient.exchangeToken("valid-token", any())
+                    entraOboTokenExchanger.exchange("valid-token", any())
                 } returns OboToken("obo-token").right()
                 coEvery {
                     entraProxyClient.hentEnheter(OboToken("obo-token"))
@@ -189,7 +200,7 @@ class AuthenticationTest :
                     accessTokenValidator.validateToken("valid-token")
                 } returns ValidatedEntraToken(navIdent, groupIds).right()
                 coEvery {
-                    texasClient.exchangeToken("valid-token", any())
+                    entraOboTokenExchanger.exchange("valid-token", any())
                 } returns OboToken("obo-token").right()
                 coEvery {
                     entraProxyClient.hentEnheter(OboToken("obo-token"))

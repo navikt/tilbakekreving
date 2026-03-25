@@ -9,16 +9,16 @@ import io.ktor.server.plugins.di.dependencies
 import no.nav.tilbakekreving.config.AuthenticationConfigName
 import no.nav.tilbakekreving.config.EntraProxyConfig
 import no.nav.tilbakekreving.infrastructure.auth.AccessTokenValidator
+import no.nav.tilbakekreving.infrastructure.auth.EntraOboTokenExchanger
 import no.nav.tilbakekreving.infrastructure.auth.model.NavUserPrincipal
 import no.nav.tilbakekreving.infrastructure.auth.model.ValidatedEntraToken
 import no.nav.tilbakekreving.infrastructure.client.entra.proxy.EntraProxyClient
-import no.nav.tilbakekreving.infrastructure.client.texas.TexasClient
 import org.slf4j.LoggerFactory
 
 fun Application.configureEntraAuthentication() {
     val authenticationConfigName = AuthenticationConfigName.ENTRA_ID
     val accessTokenValidator: AccessTokenValidator<ValidatedEntraToken> by dependencies
-    val texasClient: TexasClient by dependencies
+    val entraOboTokenExchanger: EntraOboTokenExchanger by dependencies
     val entraProxyClient: EntraProxyClient by dependencies
     val entraProxyConfig: EntraProxyConfig by dependencies
 
@@ -42,7 +42,7 @@ fun Application.configureEntraAuthentication() {
                     }
 
                 val oboToken =
-                    texasClient.exchangeToken(credentials.token, entraProxyConfig.apiTarget).getOrElse { error ->
+                    entraOboTokenExchanger.exchange(credentials.token, entraProxyConfig.apiTarget).getOrElse { error ->
                         logger.warn("Failed to exchange user token for OBO token: $error")
                         return@authenticate null
                     }

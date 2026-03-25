@@ -16,12 +16,10 @@ import io.ktor.http.content.TextContent
 import io.ktor.http.headersOf
 import no.nav.tilbakekreving.AppEnv
 import no.nav.tilbakekreving.config.NaisConfig
-import no.nav.tilbakekreving.infrastructure.auth.AccessTokenValidator
-import no.nav.tilbakekreving.infrastructure.auth.model.GroupId
-import no.nav.tilbakekreving.infrastructure.auth.model.OboToken
-import no.nav.tilbakekreving.infrastructure.auth.model.ValidatedEntraToken
-import no.nav.tilbakekreving.infrastructure.client.texas.ExchangeTokenError
 import no.nav.tilbakekreving.infrastructure.client.texas.TexasClient
+import no.nav.tilbakekreving.infrastructure.client.texas.TexasError
+import no.nav.tilbakekreving.infrastructure.client.texas.json.IdentityProviderJson
+import no.nav.tilbakekreving.infrastructure.client.texas.json.ValidateTokenResponse
 import no.nav.tilbakekreving.setup.createHttpClient
 import java.net.URI
 
@@ -33,8 +31,9 @@ class TexasClientTest :
                 URI("http://localhost").toURL(),
                 URI("http://localhost").toURL(),
             )
-        "validateToken" should {
-            "return NavUserPrincipal when token verification is successful" {
+
+        "introspectToken" should {
+            "return ValidTokenResponse when token is active" {
                 val mockEngine =
                     MockEngine { request ->
                         request.body.contentType
@@ -69,29 +68,17 @@ class TexasClientTest :
                     }
 
                 val httpClient = with(AppEnv.DEV) { createHttpClient(mockEngine) }
+                val texasClient = TexasClient(httpClient, naisConfig)
 
-                val texasClient =
-                    TexasClient(
-                        httpClient,
-                        naisConfig =
-                        naisConfig,
-                    )
+                val result = texasClient.introspectToken("azuread", "valid-token")
 
-                val result = texasClient.validateToken("valid-token")
-
-                result.shouldBeRight(
-                    ValidatedEntraToken(
-                        "Z123456",
-                        listOf(
-                            "group1",
-                            "group2",
-                            "group3",
-                        ).map(::GroupId).toSet(),
-                    ),
-                )
+                val response = result.shouldBeRight()
+                response.shouldBeTypeOf<ValidateTokenResponse.ValidTokenResponse>()
+                response.NAVident.shouldBeEqual("Z123456")
+                response.groups.shouldBeEqual(listOf("group1", "group2", "group3"))
             }
 
-            "return VerificationError.InvalidToken when token is invalid but response is 200" {
+            "return InvalidTokenResponse when token is inactive" {
                 val mockEngine =
                     MockEngine { request ->
                         request.body.contentType
@@ -125,12 +112,14 @@ class TexasClientTest :
                 val httpClient = with(AppEnv.DEV) { createHttpClient(mockEngine) }
                 val texasClient = TexasClient(httpClient, naisConfig)
 
-                val result = texasClient.validateToken("invalid-token")
+                val result = texasClient.introspectToken("azuread", "invalid-token")
 
-                result.shouldBeLeft(AccessTokenValidator.ValidationError.InvalidToken)
+                val response = result.shouldBeRight()
+                response.shouldBeTypeOf<ValidateTokenResponse.InvalidTokenResponse>()
+                response.error.shouldBeEqual("token is expired")
             }
 
-            "return FailedToValidateToken when token verification fails with non-2xx status code" {
+            "return RequestFailed when introspection fails with non-2xx status" {
                 val mockEngine =
                     MockEngine { _ ->
                         respondError(HttpStatusCode.Unauthorized)
@@ -139,14 +128,14 @@ class TexasClientTest :
                 val httpClient = with(AppEnv.DEV) { createHttpClient(mockEngine) }
                 val texasClient = TexasClient(httpClient, naisConfig)
 
-                val result = texasClient.validateToken("invalid-token")
+                val result = texasClient.introspectToken("azuread", "invalid-token")
 
-                result.shouldBeLeft(AccessTokenValidator.ValidationError.FailedToValidateToken)
+                result.shouldBeLeft(TexasError.RequestFailed)
             }
         }
 
         "exchangeToken" should {
-            "return OboToken when token exchange is successful" {
+            "return TexasTokenResponse when exchange is successful" {
                 val mockEngine =
                     MockEngine { request ->
                         request.body.contentType
@@ -183,12 +172,18 @@ class TexasClientTest :
                 val httpClient = with(AppEnv.DEV) { createHttpClient(mockEngine) }
                 val texasClient = TexasClient(httpClient, naisConfig)
 
-                val result = texasClient.exchangeToken("user-token-123", "api://target-app/.default")
+                val result =
+                    texasClient.exchangeToken(
+                        identityProvider = IdentityProviderJson.ENTRA_ID,
+                        target = "api://target-app/.default",
+                        userToken = "user-token-123",
+                    )
 
-                result.shouldBeRight(OboToken("exchanged-obo-token"))
+                val response = result.shouldBeRight()
+                response.accessToken.shouldBeEqual("exchanged-obo-token")
             }
 
-            "return FailedToExchangeToken when exchange responds with non-200 status" {
+            "return RequestFailed when exchange responds with non-200 status" {
                 val mockEngine =
                     MockEngine { _ ->
                         respondError(HttpStatusCode.Unauthorized)
@@ -197,12 +192,17 @@ class TexasClientTest :
                 val httpClient = with(AppEnv.DEV) { createHttpClient(mockEngine) }
                 val texasClient = TexasClient(httpClient, naisConfig)
 
-                val result = texasClient.exchangeToken("user-token", "api://target")
+                val result =
+                    texasClient.exchangeToken(
+                        identityProvider = IdentityProviderJson.ENTRA_ID,
+                        target = "api://target",
+                        userToken = "user-token",
+                    )
 
-                result.shouldBeLeft(ExchangeTokenError.FailedToExchangeToken)
+                result.shouldBeLeft(TexasError.RequestFailed)
             }
 
-            "return FailedToExchangeToken when exchange responds with 500" {
+            "return RequestFailed when exchange responds with 500" {
                 val mockEngine =
                     MockEngine { _ ->
                         respondError(HttpStatusCode.InternalServerError)
@@ -211,9 +211,71 @@ class TexasClientTest :
                 val httpClient = with(AppEnv.DEV) { createHttpClient(mockEngine) }
                 val texasClient = TexasClient(httpClient, naisConfig)
 
-                val result = texasClient.exchangeToken("user-token", "api://target")
+                val result =
+                    texasClient.exchangeToken(
+                        identityProvider = IdentityProviderJson.ENTRA_ID,
+                        target = "api://target",
+                        userToken = "user-token",
+                    )
 
-                result.shouldBeLeft(ExchangeTokenError.FailedToExchangeToken)
+                result.shouldBeLeft(TexasError.RequestFailed)
+            }
+        }
+
+        "getToken" should {
+            "return TexasTokenResponse when token acquisition is successful" {
+                val mockEngine =
+                    MockEngine { request ->
+                        request.body.contentType
+                            .shouldNotBeNull()
+                            .toString()
+                            .shouldBeEqual("application/json")
+                        request.headers.contains("Accept", "application/json").shouldBeTrue()
+                        val textContent = request.body.shouldBeTypeOf<TextContent>()
+                        textContent.text.shouldEqualJson(
+                            // language=json
+                            """
+                            {
+                                "identity_provider": "maskinporten",
+                                "target": "scope1 scope2"
+                            }
+                            """.trimIndent(),
+                        )
+
+                        respond(
+                            // language=json
+                            """
+                            {
+                                "access_token": "token",
+                                "expires_in": 3600,
+                                "token_type": "Bearer"
+                            }
+                            """.trimIndent(),
+                            headers = headersOf("Content-Type" to listOf("application/json")),
+                        )
+                    }
+
+                val httpClient = with(AppEnv.DEV) { createHttpClient(mockEngine) }
+                val texasClient = TexasClient(httpClient, naisConfig)
+
+                val result = texasClient.getToken("maskinporten", "scope1 scope2")
+
+                val response = result.shouldBeRight()
+                response.accessToken.shouldBeEqual("token")
+            }
+
+            "return RequestFailed when token acquisition fails" {
+                val mockEngine =
+                    MockEngine { _ ->
+                        respondError(HttpStatusCode.InternalServerError)
+                    }
+
+                val httpClient = with(AppEnv.DEV) { createHttpClient(mockEngine) }
+                val texasClient = TexasClient(httpClient, naisConfig)
+
+                val result = texasClient.getToken("maskinporten", "scope1")
+
+                result.shouldBeLeft(TexasError.RequestFailed)
             }
         }
     })

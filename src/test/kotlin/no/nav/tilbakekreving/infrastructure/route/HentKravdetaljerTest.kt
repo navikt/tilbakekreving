@@ -16,6 +16,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.server.auth.authenticate
+import io.ktor.server.plugins.di.dependencies
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.mockk.Called
@@ -27,6 +28,7 @@ import io.mockk.verify
 import kotlinx.datetime.LocalDate
 import no.nav.tilbakekreving.app.HentKravdetaljer
 import no.nav.tilbakekreving.config.AuthenticationConfigName
+import no.nav.tilbakekreving.config.EntraProxyConfig
 import no.nav.tilbakekreving.domain.KravDetalj
 import no.nav.tilbakekreving.domain.Kravdetaljer
 import no.nav.tilbakekreving.domain.KravdetaljerSkyldner
@@ -36,11 +38,11 @@ import no.nav.tilbakekreving.domain.Kravlinje
 import no.nav.tilbakekreving.domain.Oppdragsgiver
 import no.nav.tilbakekreving.infrastructure.audit.AuditLog
 import no.nav.tilbakekreving.infrastructure.auth.AccessTokenValidator
+import no.nav.tilbakekreving.infrastructure.auth.EntraOboTokenExchanger
 import no.nav.tilbakekreving.infrastructure.auth.model.GroupId
 import no.nav.tilbakekreving.infrastructure.auth.model.OboToken
 import no.nav.tilbakekreving.infrastructure.auth.model.ValidatedEntraToken
 import no.nav.tilbakekreving.infrastructure.client.entra.proxy.EntraProxyClient
-import no.nav.tilbakekreving.infrastructure.client.texas.TexasClient
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravdetaljerJsonRequest
 import no.nav.tilbakekreving.infrastructure.route.json.KravidentifikatorType
 import no.nav.tilbakekreving.setup.configureEntraAuthentication
@@ -62,12 +64,18 @@ class HentKravdetaljerTest :
                 groupIds = setOf(GroupId("les-krav")),
             ).right()
 
-        val texasClient = mockk<TexasClient>()
-        coEvery { texasClient.exchangeToken("valid-token", any()) } returns OboToken("obo-token").right()
+        val entraOboTokenExchanger = mockk<EntraOboTokenExchanger>()
+        coEvery { entraOboTokenExchanger.exchange("valid-token", any()) } returns OboToken("obo-token").right()
 
         val entraProxyClient = mockk<EntraProxyClient>()
         coEvery { entraProxyClient.hentEnheter(OboToken("obo-token")) } returns
             emptySet<no.nav.tilbakekreving.infrastructure.auth.model.Enhetsnummer>().right()
+
+        val entraProxyConfig =
+            EntraProxyConfig(
+                baseUrl = java.net.URI("http://localhost").toURL(),
+                apiTarget = "api://test/.default",
+            )
 
         // Reset audit mocks for å kunne telle kall per test
         afterTest { clearMocks(auditLog) }
@@ -75,6 +83,12 @@ class HentKravdetaljerTest :
         val client =
             specWideTestApplication {
                 application {
+                    dependencies {
+                        provide<AccessTokenValidator<ValidatedEntraToken>> { accessTokenValidator }
+                        provide<EntraOboTokenExchanger> { entraOboTokenExchanger }
+                        provide<EntraProxyClient> { entraProxyClient }
+                        provide<EntraProxyConfig> { entraProxyConfig }
+                    }
                     configureSerialization()
                     configureEntraAuthentication()
                     routing {
