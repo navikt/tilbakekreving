@@ -26,7 +26,7 @@ class TexasClient(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     suspend fun getToken(
-        identityProvider: String,
+        identityProvider: IdentityProviderJson,
         target: String,
     ): Either<TexasError, TexasTokenResponse> =
         either {

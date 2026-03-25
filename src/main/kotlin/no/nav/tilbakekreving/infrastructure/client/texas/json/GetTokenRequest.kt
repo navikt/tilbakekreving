@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GetTokenRequest(
-    @SerialName("identity_provider") val identityProvider: String,
+    @SerialName("identity_provider") val identityProvider: IdentityProviderJson,
     val target: String,
 )

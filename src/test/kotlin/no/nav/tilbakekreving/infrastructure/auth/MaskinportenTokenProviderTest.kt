@@ -11,6 +11,7 @@ import no.nav.tilbakekreving.infrastructure.auth.model.MaskinportenToken
 import no.nav.tilbakekreving.infrastructure.auth.model.Scope
 import no.nav.tilbakekreving.infrastructure.client.texas.TexasClient
 import no.nav.tilbakekreving.infrastructure.client.texas.TexasError
+import no.nav.tilbakekreving.infrastructure.client.texas.json.IdentityProviderJson
 import no.nav.tilbakekreving.infrastructure.client.texas.json.TexasTokenResponse
 
 class MaskinportenTokenProviderTest :
@@ -21,7 +22,7 @@ class MaskinportenTokenProviderTest :
         "getAccessToken" should {
             "return access token when Texas returns successfully" {
                 coEvery {
-                    texasClient.getToken("maskinporten", "scope1 scope2")
+                    texasClient.getToken(IdentityProviderJson.MASKINPORTEN, "scope1 scope2")
                 } returns
                     TexasTokenResponse(
                         accessToken = "token",
@@ -36,7 +37,7 @@ class MaskinportenTokenProviderTest :
 
             "return FailedToGetAccessToken when Texas request fails" {
                 coEvery {
-                    texasClient.getToken("maskinporten", "scope1")
+                    texasClient.getToken(IdentityProviderJson.MASKINPORTEN, "scope1")
                 } returns TexasError.RequestFailed.left()
 
                 val result = provider.getAccessToken(setOf(Scope("scope1")))

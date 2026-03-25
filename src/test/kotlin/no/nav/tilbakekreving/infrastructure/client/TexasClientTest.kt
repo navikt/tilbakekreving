@@ -258,7 +258,7 @@ class TexasClientTest :
                 val httpClient = with(AppEnv.DEV) { createHttpClient(mockEngine) }
                 val texasClient = TexasClient(httpClient, naisConfig)
 
-                val result = texasClient.getToken("maskinporten", "scope1 scope2")
+                val result = texasClient.getToken(IdentityProviderJson.MASKINPORTEN, "scope1 scope2")
 
                 val response = result.shouldBeRight()
                 response.accessToken.shouldBeEqual("token")
@@ -273,7 +273,7 @@ class TexasClientTest :
                 val httpClient = with(AppEnv.DEV) { createHttpClient(mockEngine) }
                 val texasClient = TexasClient(httpClient, naisConfig)
 
-                val result = texasClient.getToken("maskinporten", "scope1")
+                val result = texasClient.getToken(IdentityProviderJson.MASKINPORTEN, "scope1")
 
                 result.shouldBeLeft(TexasError.RequestFailed)
             }

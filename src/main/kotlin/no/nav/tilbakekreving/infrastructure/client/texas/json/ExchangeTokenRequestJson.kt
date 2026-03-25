@@ -5,12 +5,11 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+@OptIn(ExperimentalSerializationApi::class)
 @Serializable
-data class ExchangeTokenRequestJson
-    @OptIn(ExperimentalSerializationApi::class)
-    constructor(
-        @SerialName("identity_provider") val identityProvider: IdentityProviderJson,
-        @EncodeDefault @SerialName("skip_cache") val skipCache: Boolean? = false,
-        val target: String,
-        @SerialName("user_token") val userToken: String,
+data class ExchangeTokenRequestJson(
+    @SerialName("identity_provider") val identityProvider: IdentityProviderJson,
+    @EncodeDefault @SerialName("skip_cache") val skipCache: Boolean? = false,
+    val target: String,
+    @SerialName("user_token") val userToken: String,
 )
