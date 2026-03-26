@@ -6,6 +6,7 @@ import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import no.nav.tilbakekreving.AppEnv
@@ -30,9 +31,7 @@ fun createHttpClient(
                     AppEnv.LOCAL, AppEnv.DEV -> LogLevel.ALL
                     else -> LogLevel.INFO
                 }
-            filter { request ->
-                request.url.build().encodedPath !in setOf("/api/v1/introspect", "/api/v1/token")
-            }
+            sanitizeHeader { header -> header == HttpHeaders.Authorization }
         }
         httpClientConfig()
     }
