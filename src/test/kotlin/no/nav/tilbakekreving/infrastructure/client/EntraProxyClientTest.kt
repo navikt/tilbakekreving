@@ -31,8 +31,8 @@ class EntraProxyClientTest :
                             // language=json
                             """
                             [
-                                { "enhetsnummer": "1234", "navn": "NAV Arbeid og ytelser" },
-                                { "enhetsnummer": "5678", "navn": "NAV Klageinstans" }
+                                { "enhetnummer": "1234", "navn": "NAV Arbeid og ytelser" },
+                                { "enhetnummer": "5678", "navn": "NAV Klageinstans" }
                             ]
                             """.trimIndent(),
                             headers = headersOf("Content-Type" to listOf("application/json")),
