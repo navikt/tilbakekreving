@@ -28,10 +28,38 @@ kover {
     }
 }
 
+val generatedDir: Provider<Directory> = layout.buildDirectory.dir("generated/source/kravtype/main/kotlin")
+
 kotlin {
     compilerOptions {
         freeCompilerArgs.add("-Xcontext-parameters")
     }
+}
+
+sourceSets {
+    main {
+        java.srcDir(generatedDir)
+    }
+}
+
+val generateKravtype by tasks.registering(GenerateKravtypeTask::class) {
+    description = "Generates DefinertKravtype enum class from Tilganger-kravtyper CSV"
+    group = "code generation"
+    csvFile.set(file("src/main/resources/Tilganger-kravtyper(Kravtyper).csv"))
+    outputDir.set(generatedDir)
+}
+
+val generateEnhetKravtypeMapping by tasks.registering(GenerateEnhetKravtypeMappingTask::class) {
+    description = "Generates enhet-to-DefinertKravtype mapping from EnheterKravtyper CSV"
+    group = "code generation"
+    csvFile.set(file("src/main/resources/Tilganger-kravtyper(EnheterKravtyper).csv"))
+    outputDir.set(generatedDir)
+}
+
+val generateAll by tasks.registering {
+    description = "Generates code for Kravtype and EnhetKravtypeMapping"
+    group = "code generation"
+    dependsOn(generateKravtype, generateEnhetKravtypeMapping)
 }
 
 group = "no.nav"
@@ -129,6 +157,16 @@ ktor {
 }
 
 tasks {
+    generateEnhetKravtypeMapping {
+        finalizedBy(runKtlintFormatOverMainSourceSet)
+    }
+    generateKravtype {
+        finalizedBy(runKtlintFormatOverMainSourceSet)
+    }
+    compileKotlin {
+        dependsOn(generateAll)
+    }
+
     test {
         useJUnitPlatform()
         testLogging {
