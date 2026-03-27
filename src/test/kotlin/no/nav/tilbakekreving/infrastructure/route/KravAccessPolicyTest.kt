@@ -30,8 +30,8 @@ class KravAccessPolicyTest :
                 gjenståendeBeløp = 1000.0,
             )
 
-        val kravtypeA = Kravtype("TYPE_A")
-        val kravtypeB = Kravtype("TYPE_B")
+        val kravtypeA = Kravtype.TILBAKEKREVING_BARNETRYGD
+        val kravtypeB = Kravtype.TILBAKEKREVING_DAGPENGER
         val kravA = krav(kravtypeA)
         val kravB = krav(kravtypeB)
         val enhetAccess =

@@ -69,11 +69,11 @@ abstract class GenerateEnhetKravtypeMappingTask : DefaultTask() {
 
     private fun buildFileSpec(mapping: Map<String, Set<String>>): FileSpec {
         val enhetsnummerCn = ClassName(AUTH_MODEL_PKG, "Enhetsnummer")
-        val definertKravtypeCn = ClassName(DOMAIN_PKG, "DefinertKravtype")
+        val kravtypeCn = ClassName(DOMAIN_PKG, "Kravtype")
         val mapType =
             Map::class.asClassName().parameterizedBy(
                 enhetsnummerCn,
-                Set::class.asClassName().parameterizedBy(definertKravtypeCn),
+                Set::class.asClassName().parameterizedBy(kravtypeCn),
             )
 
         val mapEntries =
@@ -81,7 +81,7 @@ abstract class GenerateEnhetKravtypeMappingTask : DefaultTask() {
                 .map { (enhet, kravkodes) ->
                     val setBlock =
                         kravkodes
-                            .map { CodeBlock.of("%T.%L", definertKravtypeCn, it) }
+                            .map { CodeBlock.of("%T.%L", kravtypeCn, it) }
                             .joinToCode(prefix = "setOf(", suffix = ")")
                     CodeBlock.of("%T(%S) to %L", enhetsnummerCn, enhet, setBlock)
                 }.joinToCode(prefix = "mapOf(\n⇥", suffix = ",\n⇤)", separator = ",\n")

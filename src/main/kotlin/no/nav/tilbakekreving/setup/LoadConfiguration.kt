@@ -20,7 +20,6 @@ fun loadConfiguration(): TilbakekrevingConfig {
                 AppEnv.PROD -> null
             },
             "/application.conf",
-            "/enheter-acl.conf",
         )
     return ConfigLoaderBuilder
         .default()

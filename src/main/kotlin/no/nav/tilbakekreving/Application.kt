@@ -23,6 +23,7 @@ import no.nav.tilbakekreving.infrastructure.auth.abac.policy.LesKravAccessPolicy
 import no.nav.tilbakekreving.infrastructure.auth.abac.policy.lesKravAccessPolicy
 import no.nav.tilbakekreving.infrastructure.auth.model.MaskinportenToken
 import no.nav.tilbakekreving.infrastructure.auth.model.ValidatedEntraToken
+import no.nav.tilbakekreving.infrastructure.auth.model.enhetKravtypeMapping
 import no.nav.tilbakekreving.infrastructure.client.entra.proxy.EntraProxyClient
 import no.nav.tilbakekreving.infrastructure.client.skatteetaten.SkatteetatenInnkrevingsoppdragHttpClient
 import no.nav.tilbakekreving.infrastructure.client.texas.TexasClient
@@ -111,7 +112,7 @@ suspend fun Application.module() {
             provide<LesKravAccessPolicy> {
                 context(resolve<FeatureToggle>(), LoggerFactory.getLogger(LesKravAccessPolicy::class.java)) {
                     val config = resolve<TilbakekrevingConfig>()
-                    lesKravAccessPolicy(config.kravTilgangsgruppe, config.kravtypeAcl)
+                    lesKravAccessPolicy(config.kravTilgangsgruppe, enhetKravtypeMapping)
                 }
             }
         }

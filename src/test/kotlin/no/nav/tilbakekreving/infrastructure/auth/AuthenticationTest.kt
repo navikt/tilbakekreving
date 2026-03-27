@@ -49,7 +49,7 @@ class AuthenticationTest :
             context(StubFeatureToggle(), LoggerFactory.getLogger(this::class.java)) {
                 lesKravAccessPolicy(
                     GroupId("tilgang_til_krav"),
-                    mapOf(Enhetsnummer("1111") to setOf(Kravtype("TYPE_A"))),
+                    mapOf(Enhetsnummer("1111") to setOf(Kravtype.TILBAKEKREVING_BARNETRYGD)),
                 )
             }
 
@@ -59,7 +59,7 @@ class AuthenticationTest :
             EntraProxyConfig(
                 baseUrl = java.net.URI("http://localhost").toURL(),
                 apiTarget = "api://test/.default",
-        )
+            )
         val client =
             specWideTestApplication {
                 application {
@@ -85,7 +85,7 @@ class AuthenticationTest :
                                         skeKravidentifikator = Kravidentifikator.Skatteetaten("skatte-123"),
                                         navKravidentifikator = Kravidentifikator.Nav("123"),
                                         navReferanse = null,
-                                        kravtype = Kravtype("TYPE_A"),
+                                        kravtype = Kravtype.TILBAKEKREVING_BARNETRYGD,
                                         kravbeskrivelse = listOf(Kravbeskrivelse(Locale.forLanguageTag("nb"), "Test")),
                                         gjenståendeBeløp = 1000.0,
                                     )

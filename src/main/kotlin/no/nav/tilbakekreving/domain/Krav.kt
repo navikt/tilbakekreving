@@ -32,8 +32,3 @@ data class Kravbeskrivelse(
     val locale: Locale,
     val beskrivelse: String,
 )
-
-@JvmInline
-value class Kravtype(
-    val value: String,
-)

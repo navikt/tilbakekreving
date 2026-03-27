@@ -217,7 +217,7 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                                   "krav": [
                                     {
                                       "skatteetatensKravidentifikator": "29ab06ef-9de1-4312-9677-163e4cc586dd",
-                                      "kravtype": "OB04",
+                                      "kravtype": "TILBAKEKREVING_BARNETRYGD",
                                       "kravbeskrivelse": {
                                         "spraakTekst": [
                                           {
@@ -262,7 +262,7 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                         skeKravidentifikator = Kravidentifikator.Skatteetaten("29ab06ef-9de1-4312-9677-163e4cc586dd"),
                         navKravidentifikator = Kravidentifikator.Nav("310ade77-8d45-48e8-b053-72659f53b4eb"),
                         navReferanse = "ref1",
-                        kravtype = Kravtype("OB04"),
+                        kravtype = Kravtype.TILBAKEKREVING_BARNETRYGD,
                         kravbeskrivelse = listOf(Kravbeskrivelse(Locale.forLanguageTag("NB"), "Eksempeltekst")),
                         gjenståendeBeløp = 1000.0,
                     ),

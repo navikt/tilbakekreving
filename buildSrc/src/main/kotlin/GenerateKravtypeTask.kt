@@ -44,7 +44,7 @@ abstract class GenerateKravtypeTask : DefaultTask() {
         val fileSpec = buildFileSpec(grouped)
         fileSpec.writeTo(outputDir.get().asFile)
 
-        println("Generated DefinertKravtype enum with ${grouped.size} entries")
+        println("Generated Kravtype enum with ${grouped.size} entries")
     }
 
     private fun parseCsvToKravtyper(): Map<String, KravtypeEntry> {
@@ -91,7 +91,7 @@ abstract class GenerateKravtypeTask : DefaultTask() {
 
         val enumBuilder =
             TypeSpec
-                .enumBuilder("DefinertKravtype")
+                .enumBuilder("Kravtype")
                 .primaryConstructor(
                     FunSpec
                         .constructorBuilder()
@@ -127,7 +127,7 @@ abstract class GenerateKravtypeTask : DefaultTask() {
         }
 
         return FileSpec
-            .builder(DOMAIN_PKG, "DefinertKravtype")
+            .builder(DOMAIN_PKG, "Kravtype")
             .addFileComment("Generated from Tilganger-kravtyper(Kravtyper).csv — do not edit manually.")
             .addAnnotation(
                 AnnotationSpec

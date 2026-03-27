@@ -49,7 +49,7 @@ class HentKravoversiktTest :
             context(StubFeatureToggle(default = true), LoggerFactory.getLogger(this::class.java)) {
                 lesKravAccessPolicy(
                     GroupId("tilgang_til_krav"),
-                    mapOf(Enhetsnummer("1111") to setOf(Kravtype("Kravtype"))),
+                    mapOf(Enhetsnummer("1111") to setOf(Kravtype.TILBAKEKREVING_BARNETRYGD)),
                 )
             }
         val client =
@@ -90,7 +90,7 @@ class HentKravoversiktTest :
                                     skeKravidentifikator = Kravidentifikator.Skatteetaten("skatte-123456789"),
                                     navKravidentifikator = Kravidentifikator.Nav("123456789"),
                                     navReferanse = "ref1",
-                                    kravtype = Kravtype("Kravtype"),
+                                    kravtype = Kravtype.TILBAKEKREVING_BARNETRYGD,
                                     kravbeskrivelse =
                                         listOf(
                                             Kravbeskrivelse(
@@ -134,7 +134,7 @@ class HentKravoversiktTest :
                               "skeKravidentifikator": "skatte-123456789",
                               "navKravidentifikator": "123456789",
                               "navReferanse": "ref1",
-                              "kravtype": "Kravtype",
+                              "kravtype": "TILBAKEKREVING_BARNETRYGD",
                               "kravbeskrivelse": [
                                 {
                                   "språk": "nb",
@@ -198,7 +198,7 @@ class HentKravoversiktTest :
                                     skeKravidentifikator = Kravidentifikator.Skatteetaten("skatte-123456789"),
                                     navKravidentifikator = Kravidentifikator.Nav("123456789"),
                                     navReferanse = "ref1",
-                                    kravtype = Kravtype("Kravtype"),
+                                    kravtype = Kravtype.TILBAKEKREVING_BARNETRYGD,
                                     kravbeskrivelse =
                                         listOf(
                                             Kravbeskrivelse(
@@ -206,13 +206,13 @@ class HentKravoversiktTest :
                                                 "Test beskrivelse",
                                             ),
                                         ),
-                                    gjenståendeBeløp = 1000.0,
+                                    `gjenståendeBeløp` = 1000.0,
                                 ),
                                 Krav(
                                     skeKravidentifikator = Kravidentifikator.Skatteetaten("skatte-987654321"),
                                     navKravidentifikator = Kravidentifikator.Nav("987654321"),
                                     navReferanse = "ref2",
-                                    kravtype = Kravtype("Kravtype1"),
+                                    kravtype = Kravtype.TILBAKEKREVING_DAGPENGER,
                                     kravbeskrivelse =
                                         listOf(
                                             Kravbeskrivelse(
@@ -256,7 +256,7 @@ class HentKravoversiktTest :
                                     "skeKravidentifikator": "skatte-123456789",
                                     "navKravidentifikator": "123456789",
                                     "navReferanse": "ref1",
-                                    "kravtype": "Kravtype",
+                                    "kravtype": "TILBAKEKREVING_BARNETRYGD",
                                     "kravbeskrivelse": [
                                         {
                                             "språk": "nb",

@@ -54,7 +54,7 @@ data class KravResponseJson(
                 skeKravidentifikator = krav.skeKravidentifikator?.id,
                 navKravidentifikator = krav.navKravidentifikator.id,
                 navReferanse = krav.navReferanse,
-                kravtype = krav.kravtype.value,
+                kravtype = krav.kravtype.name,
                 kravbeskrivelse = krav.kravbeskrivelse.map(KravbeskrivelseJson::fromDomain).toTypedArray(),
                 gjenståendeBeløp = krav.gjenståendeBeløp,
             )

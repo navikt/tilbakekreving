@@ -30,7 +30,7 @@ data class SkeHentKravoversiktResponseJson(
 @Serializable
 data class SkeKravJson(
     val skatteetatensKravidentifikator: String?,
-    val kravtype: String,
+    val kravtype: Kravtype,
     val kravbeskrivelse: SkeMultiSpråkTekstJson,
     val kravgrunnlag: SkeKravgrunnlagJson,
     @SerialName("gjenstaaendeBeloep") val gjenståendeBeløp: Double,
@@ -40,7 +40,7 @@ data class SkeKravJson(
             skeKravidentifikator = skatteetatensKravidentifikator?.let { Kravidentifikator.Skatteetaten(it) },
             navKravidentifikator = Kravidentifikator.Nav(kravgrunnlag.oppdragsgiversKravidentifikator),
             navReferanse = kravgrunnlag.oppdragsgiversReferanse,
-            kravtype = Kravtype(kravtype),
+            kravtype = kravtype,
             kravbeskrivelse = kravbeskrivelse.toDomain(),
             gjenståendeBeløp = gjenståendeBeløp,
         )
