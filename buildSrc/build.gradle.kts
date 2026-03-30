@@ -8,5 +8,5 @@ repositories {
 
 dependencies {
     implementation("com.squareup:kotlinpoet:2.3.0")
-    implementation("org.apache.commons:commons-csv:1.14.0")
+    implementation("org.apache.commons:commons-csv:1.14.1")
 }
