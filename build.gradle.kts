@@ -82,7 +82,7 @@ repositories {
 }
 
 dependencies {
-    val ktorVersion = "3.4.1"
+    val ktorVersion = "3.4.2"
     implementation("io.ktor:ktor-server-core:$ktorVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-server-config-yaml:$ktorVersion")
