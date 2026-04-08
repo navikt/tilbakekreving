@@ -11,13 +11,15 @@ import no.nav.tilbakekreving.infrastructure.auth.model.GroupId
 import org.slf4j.Logger
 
 /**
- * Tilgangskontroll for krav.
+ * Tilgangskontroll for å se krav.
  *
- * Brukeren må alltid ha [lesKravAccessGroup] for å se krav.
+ * Brukeren må være i gruppen 0000-CA-Tilbakekreving_Les_krav for å se krav. IDen til denne gruppen sendes inn
+ * med [lesKravAccessGroup].
  *
  * Når feature toggle [Toggle.KRAVTYPE_ENHET_TILGANGSKONTROLL] er aktivert, filtreres kravene
- * i tillegg basert på brukerens enhetsgrupper. Brukeren ser da kun krav der kravtypen
- * er knyttet til en enhet brukeren har tilgang til via [enhetAccess].
+ * basert på brukerens enhetsgrupper. Brukeren ser da kun krav der kravtypen
+ * er knyttet til en enhet brukeren har tilgang til. Mappingen over hvilke enheter som har tilgang til hvilke kravtyper
+ * finnes i [no.nav.tilbakekreving.infrastructure.auth.model.enhetKravtypeMapping] og sendes inn med [enhetAccess].
  *
  * Når toggle er deaktivert, ser brukeren alle krav så lenge de har [lesKravAccessGroup].
  */

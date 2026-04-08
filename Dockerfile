@@ -4,6 +4,6 @@ WORKDIR /tilbakekreving
 
 COPY build/install/tilbakekreving/lib/ lib/
 
-ENTRYPOINT ["java"]
+ENTRYPOINT ["java", "-cp", "/tilbakekreving/lib/*", "no.nav.tilbakekreving.ApplicationKt"]
 
-CMD ["-Dlogback.configurationFile=logback-app.xml", "-cp", "/tilbakekreving/lib/*", "no.nav.tilbakekreving.ApplicationKt"]
+CMD ["-Dlogback.configurationFile=logback-app.xml"]

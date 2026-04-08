@@ -19,6 +19,9 @@ import no.nav.tilbakekreving.infrastructure.client.texas.json.ValidateTokenReque
 import no.nav.tilbakekreving.infrastructure.client.texas.json.ValidateTokenResponse
 import org.slf4j.LoggerFactory
 
+/**
+ * Klient for å kommunisere med [Texas (token exchange as a service)](https://doc.nav.cloud.nais.io/auth/explanations/?h=texas#texas).
+ */
 class TexasClient(
     private val httpClient: HttpClient,
     private val naisConfig: NaisConfig,

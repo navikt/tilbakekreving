@@ -6,6 +6,9 @@ import io.ktor.server.application.install
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import kotlinx.serialization.json.Json
 
+/**
+ * Konfigurerer serialisering og deserialisering for kall mot Ktor-serveren.
+ */
 fun Application.configureSerialization() {
     install(ContentNegotiation) {
         json(

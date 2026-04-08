@@ -16,6 +16,10 @@ import no.nav.tilbakekreving.infrastructure.auth.model.ValidatedEntraToken
 import no.nav.tilbakekreving.infrastructure.client.entra.proxy.EntraProxyClient
 import org.slf4j.LoggerFactory
 
+/**
+ * Validerer Entra-token for saksbehandlere i NAV. Henter også inn enhetene saksbehandleren tilhører
+ * og tilgjengeligjør [NavUserPrincipal] via [io.ktor.server.auth.principal].
+ */
 fun Application.configureEntraAuthentication() {
     val authenticationConfigName = AuthenticationConfigName.ENTRA_ID
     val accessTokenValidator: AccessTokenValidator<ValidatedEntraToken> by dependencies

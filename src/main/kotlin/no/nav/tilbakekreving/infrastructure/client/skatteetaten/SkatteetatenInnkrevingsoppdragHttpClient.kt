@@ -27,6 +27,9 @@ import org.slf4j.LoggerFactory
 
 private const val KLIENTID = "NAV/2.0"
 
+/**
+ * Klient for å kommunisere med Skatteetatens [innkrevingsoppdrag API](https://app.swaggerhub.com/apis-docs/skatteetaten/oppdragsinnkreving-api).
+ */
 class SkatteetatenInnkrevingsoppdragHttpClient(
     private val baseUrl: String,
     private val client: HttpClient,

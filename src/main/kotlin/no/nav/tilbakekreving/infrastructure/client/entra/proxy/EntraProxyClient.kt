@@ -14,6 +14,19 @@ import no.nav.tilbakekreving.infrastructure.client.entra.proxy.json.EnhetRespons
 import org.slf4j.LoggerFactory
 import java.net.URL
 
+/**
+ * Klient for å kommunisere med [Entra-proxy](https://github.com/navikt/entra-proxy).
+ *
+ * Entra-proxy forenkler kommunikasjon med Entra-APIet og tilbyr å hente ut diverse data om Entra-brukere.
+ *
+ * Kan brukes for å hente:
+ * - Ansatts tematilganger
+ * - Ansatts enhetstilhørighet
+ * - Medlemmer i en bestemt enhet
+ * - Medlemmer i en bestemt arkivtema-gruppe
+ * - Hente utvidet informasjon om ansatt basert på navIdent eller T-ident
+ * - Hente Ansattes grupper (bare SecEnabled)
+ */
 class EntraProxyClient(
     private val httpClient: HttpClient,
     private val baseUrl: URL,
