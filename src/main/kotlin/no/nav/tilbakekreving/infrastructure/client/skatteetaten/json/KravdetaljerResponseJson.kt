@@ -37,6 +37,7 @@ data class SkeKravResponseJson(
     val forfallsdato: LocalDate?,
     val foreldelsesdato: LocalDate?,
     val fastsettelsesdato: LocalDate?,
+    @Serializable(with = KravtypeSerializer::class)
     val kravtype: Kravtype,
     @SerialName("opprinneligBeloep") val opprinneligBeløp: Double,
     @SerialName("gjenstaaendeBeloep") val gjenståendeBeløp: Double,

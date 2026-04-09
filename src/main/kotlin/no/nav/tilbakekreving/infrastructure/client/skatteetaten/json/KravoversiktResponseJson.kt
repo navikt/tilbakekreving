@@ -30,6 +30,7 @@ data class SkeHentKravoversiktResponseJson(
 @Serializable
 data class SkeKravJson(
     val skatteetatensKravidentifikator: String?,
+    @Serializable(with = KravtypeSerializer::class)
     val kravtype: Kravtype,
     val kravbeskrivelse: SkeMultiSpråkTekstJson,
     val kravgrunnlag: SkeKravgrunnlagJson,

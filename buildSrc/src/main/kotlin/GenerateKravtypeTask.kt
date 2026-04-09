@@ -126,6 +126,23 @@ abstract class GenerateKravtypeTask : DefaultTask() {
             )
         }
 
+        enumBuilder.addEnumConstant(
+            "ALLE",
+            TypeSpec
+                .anonymousClassBuilder()
+                .addSuperclassConstructorParameter("emptyList()")
+                .addSuperclassConstructorParameter("%S", "Alle kravtyper")
+                .build(),
+        )
+        enumBuilder.addEnumConstant(
+            "UKJENT",
+            TypeSpec
+                .anonymousClassBuilder()
+                .addSuperclassConstructorParameter("emptyList()")
+                .addSuperclassConstructorParameter("%S", "Ukjent kravtype")
+                .build(),
+        )
+
         return FileSpec
             .builder(DOMAIN_PKG, "Kravtype")
             .addFileComment("Generated from Tilganger-kravtyper(Kravtyper).csv — do not edit manually.")

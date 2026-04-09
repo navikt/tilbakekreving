@@ -131,6 +131,54 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                 result.shouldBeRight(kravdetaljer)
             }
 
+            "deserialisere ukjent kravtype til UKJENT" {
+                val mockEngine =
+                    MockEngine {
+                        respond(
+                            // language=json
+                            content =
+                                """
+                                {
+                                  "krav": {
+                                    "forfallsdato": "2025-01-01",
+                                    "foreldelsesdato": "2030-01-01",
+                                    "fastsettelsesdato": "2024-01-01",
+                                    "kravtype": "EN_HELT_NY_KRAVTYPE",
+                                    "opprinneligBeloep": 100.0,
+                                    "gjenstaaendeBeloep": 50.0,
+                                    "skatteetatensKravidentifikator": "skatte-123",
+                                    "kravlinjer": [],
+                                    "kravgrunnlag": {
+                                      "oppdragsgiversKravidentifikator": "123",
+                                      "oppdragsgiversReferanse": "ref-123"
+                                    }
+                                  },
+                                  "oppdragsgiver": {
+                                    "organisasjonsnummer": "123456789",
+                                    "organisasjonsnavn": "Test Org"
+                                  },
+                                  "skyldner": {
+                                    "identifikator": "12345678901",
+                                    "skyldnersNavn": "Test Person"
+                                  }
+                                }
+                                """.trimIndent(),
+                            status = HttpStatusCode.OK,
+                            headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                        )
+                    }
+
+                val client = with(AppEnv.DEV) { createHttpClient(mockEngine) }
+                val skatteetatenClient = SkatteetatenInnkrevingsoppdragHttpClient("http://localhost:8080", client)
+
+                val result = skatteetatenClient.hentKravdetaljer(Kravidentifikator.Nav("123"))
+
+                result
+                    .shouldBeRight()
+                    .krav.kravtype
+                    .shouldBeEqual(Kravtype.UKJENT)
+            }
+
             "returnere FantIkkeKravdetaljer ved 404" {
                 val mockEngine =
                     MockEngine {
@@ -267,6 +315,57 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                         gjenståendeBeløp = 1000.0,
                     ),
                 )
+            }
+
+            "deserialisere ukjent kravtype til UKJENT i kravoversikt" {
+                val mockEngine =
+                    MockEngine {
+                        respond(
+                            // language=json
+                            content =
+                                """
+                                {
+                                  "oppdragsgiver": {
+                                    "organisasjonsnummer": "123456789",
+                                    "organisasjonsnavn": "Test Org"
+                                  },
+                                  "krav": [
+                                    {
+                                      "skatteetatensKravidentifikator": "abc-123",
+                                      "kravtype": "FINNES_IKKE_I_ENUM",
+                                      "kravbeskrivelse": {
+                                        "spraakTekst": [
+                                          {
+                                            "tekst": "Ukjent",
+                                            "spraak": "NB"
+                                          }
+                                        ]
+                                      },
+                                      "kravgrunnlag": {
+                                        "oppdragsgiversKravidentifikator": "def-456"
+                                      },
+                                      "gjenstaaendeBeloep": 500.0
+                                    }
+                                  ],
+                                  "gjenstaaendeBeloepForSkyldner": 500.0,
+                                  "skyldner": {
+                                    "identifikator": "12345678901",
+                                    "skyldnersNavn": "Test Person"
+                                  }
+                                }
+                                """.trimIndent(),
+                            status = HttpStatusCode.OK,
+                            headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                        )
+                    }
+
+                val client = with(AppEnv.DEV) { createHttpClient(mockEngine) }
+                val skatteetatenClient = SkatteetatenInnkrevingsoppdragHttpClient("http://localhost:8080", client)
+
+                val result = skatteetatenClient.søk(Skyldnersøk(Skyldner(SkyldnerId("12345678901")), Kravfilter.ALLE))
+
+                result
+                    .shouldBeRight().krav.first().kravtype.shouldBeEqual(Kravtype.UKJENT)
             }
 
             "returnere feil ved uventet statuskode" {
