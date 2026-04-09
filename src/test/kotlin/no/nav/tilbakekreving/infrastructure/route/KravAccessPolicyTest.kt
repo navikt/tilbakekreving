@@ -127,5 +127,56 @@ class KravAccessPolicyTest :
 
                 policy.filter(subject, kravList) shouldBe kravList
             }
+
+            "allow access to any kravtype when enhet is mapped to Kravtype.ALLE" {
+                val enhetAccessWithAlle = mapOf(enhetA to setOf(Kravtype.ALLE))
+                val policy =
+                    context(enabledFeatureToggle, logger) {
+                        lesKravAccessPolicy(
+                            kravAccessGroup,
+                            enhetAccessWithAlle,
+                        )
+                    }
+
+                val subject = NavSaksbehandler(setOf(kravAccessGroup), setOf(enhetA))
+                policy.isAllowed(subject, kravA) shouldBe true
+                policy.isAllowed(subject, kravB) shouldBe true
+            }
+
+            "filter returns all krav when enhet is mapped to Kravtype.ALLE" {
+                val enhetAccessWithAlle = mapOf(enhetA to setOf(Kravtype.ALLE))
+                val policy =
+                    context(enabledFeatureToggle, logger) {
+                        lesKravAccessPolicy(
+                            kravAccessGroup,
+                            enhetAccessWithAlle,
+                        )
+                    }
+
+                val subject = NavSaksbehandler(setOf(kravAccessGroup), setOf(enhetA))
+                val kravList = listOf(kravA, kravB)
+
+                policy.filter(subject, kravList) shouldBe kravList
+            }
+
+            "allow all krav when one enhet has Kravtype.ALLE even if another has specific kravtype" {
+                val mixedEnhetAccess =
+                    mapOf(
+                        enhetA to setOf(Kravtype.ALLE),
+                        enhetB to setOf(kravtypeB),
+                    )
+                val policy =
+                    context(enabledFeatureToggle, logger) {
+                        lesKravAccessPolicy(
+                            kravAccessGroup,
+                            mixedEnhetAccess,
+                        )
+                    }
+
+                val subject = NavSaksbehandler(setOf(kravAccessGroup), setOf(enhetA, enhetB))
+                val kravList = listOf(kravA, kravB)
+
+                policy.filter(subject, kravList) shouldBe kravList
+            }
         }
     })

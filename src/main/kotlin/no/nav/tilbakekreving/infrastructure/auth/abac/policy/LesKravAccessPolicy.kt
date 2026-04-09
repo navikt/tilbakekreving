@@ -35,7 +35,10 @@ fun lesKravAccessPolicy(
 
         require {
             if (featureToggle.isEnabled(Toggle.KRAVTYPE_ENHET_TILGANGSKONTROLL)) {
-                subject.enheter.any { enhetAccess[it]?.contains(resource.kravtype) == true }
+                subject.enheter.any {
+                    enhetAccess[it]?.contains(Kravtype.ALLE) == true ||
+                        enhetAccess[it]?.contains(resource.kravtype) == true
+                }
             } else {
                 true
             }

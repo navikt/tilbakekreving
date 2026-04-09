@@ -1,5 +1,8 @@
 ﻿Enhetsnummer;Enhetsnavn;Stønadstype;Stønadsnavn;Kravtype;Ekstern kravkode;Fortsatt behov
 0587;Nav tiltak Innlandet;HJ AU;0;0;#N/A;Ja
+4291;Klageinstans Oslo;ALLE;Alle;Alle;ALLE;
+4293;Klageinstans Tønsberg;ALLE;Alle;Alle;ALLE;
+4295;Klageinstans Tromsø;ALLE;Alle;Alle;ALLE;
 4461;Nav arbeid og ytelser grunn- og hjelpestønad;GH GS;Grunn hjelpestønad grunnst.;Tilbakekreving av feilutbetalt grunnstønad;TILBAKEKREVING_GRUNNSTOENAD;
 4461;Nav arbeid og ytelser grunn- og hjelpestønad;GH HS;Grunn hjelpestønad hjelpest.;Tilbakekreving av feilutbetalt hjelpestønad;TILBAKEKREVING_HJELPESTOENAD;
 4483;Nav arbeid og ytelser egne ansatte;GH GS;Grunn hjelpestønad grunnst.;Tilbakekreving av feilutbetalt grunnstønad;TILBAKEKREVING_GRUNNSTOENAD;
@@ -9,7 +12,7 @@
 4483;Nav arbeid og ytelser egne ansatte;HJ M2;Stønad til motorkjøretøy gr 2;Tilbakekreving av stønad til motorkjøretøy gruppe 2;TILBAKEKREVING_STOENAD_MOTORKJOERETOEY_GR2;
 4483;Nav arbeid og ytelser egne ansatte;HJ AR;Hjelpemidler i arbeidsliv;0;#N/A;
 4483;Nav arbeid og ytelser egne ansatte;HJ AK;Akt.hjelpemidler over 26 år;0;#N/A;
-4483;Nav arbeid og ytelser egne ansatte;HJ SL;Hjelpemiddel selvst. lån;0;#N/A;
+4483;Nav arbeid og ytelser egne ansatte;HJ SL;Hjelpemiddel selvst. lån;Kari-Lise sjekker;0;
 4483;Nav arbeid og ytelser egne ansatte;HJ ST;Hjelpemiddel selvst. tilskudd;0;#N/A;
 4483;Nav arbeid og ytelser egne ansatte;HJ AU;Hjelpemiddel arb. og utd. reiser;0;#N/A;
 4483;Nav arbeid og ytelser egne ansatte;HJ HØ;Høreapparat;0;#N/A;
@@ -43,7 +46,7 @@
 4485;Nav arbeid og ytelser - hjelpemidler;HJ M2;Stønad til motorkjøretøy gr 2;Tilbakekreving av stønad til motorkjøretøy gruppe 2;TILBAKEKREVING_STOENAD_MOTORKJOERETOEY_GR2;
 4485;Nav arbeid og ytelser - hjelpemidler;HJ AR;Hjelpemidler i arbeidsliv;0;#N/A;
 4485;Nav arbeid og ytelser - hjelpemidler;HJ AK;Akt.hjelpemidler over 26 år;0;#N/A;
-4485;Nav arbeid og ytelser - hjelpemidler;HJ SL;Hjelpemiddel selvst. lån;0;#N/A;
+4485;Nav arbeid og ytelser - hjelpemidler;HJ SL;Hjelpemiddel selvst. lån;Kari-Lise sjekker;0;
 4485;Nav arbeid og ytelser - hjelpemidler;HJ ST;Hjelpemiddel selvst. tilskudd;0;#N/A;
 4485;Nav arbeid og ytelser - hjelpemidler;HJ AU;Hjelpemiddel arb. og utd. reiser;0;#N/A;
 4485;Nav arbeid og ytelser - hjelpemidler;HJ HØ;Høreapparat;0;#N/A;
@@ -140,8 +143,18 @@
 4833;Nav familie- og pensjonsytelser Oslo 1;;#N/A;#N/A;#N/A;
 4842;Nav familie- og pensjonsytelser Stord;;#N/A;#N/A;#N/A;
 4849;Nav familie- og pensjonsytelser Tromsø;;#N/A;#N/A;#N/A;
-4867;Nav familie- og pensjonsytelser foreldrepenger;;#N/A;#N/A;#N/A;
 4883;Nav familie- og pensjonsytelser egne ansatte;;#N/A;#N/A;#N/A;
-4293;Klageinstans Tønsberg;ALLE;#N/A;#N/A;#N/A;
-4295;Klageinstans Tromsø;ALLE;#N/A;#N/A;#N/A;
-4291;Klageinstans Oslo;ALLE;#N/A;#N/A;#N/A;
+4449;Nav arbeid og ytelser dagpenger og lønnsgaranti;EØ DP;EØS Dagpenger;Krav om refusjon av dagpenger EØS;0;
+4867;Nav familie- og pensjonsytelser foreldrepenger;FA FØ;Foreldrepenger fødsel;Tilbakekreving av feilutbetalte foreldrepenger;TILBAKEKREVING_FORELDREPENGER;
+4867;Nav familie- og pensjonsytelser foreldrepenger;FA FE;Fødselsengangsstønad;Tilbakekreving av feilutbetalt engangsstønad ved fødsel;TILBAKEKREVING_ENGANGSSTOENAD_VED_FOEDSEL;
+4867;Nav familie- og pensjonsytelser foreldrepenger;BS OP;Opplæringspenger;Tilbakekreving av feilutbetalte opplæringspenger;TILBAKEKREVING_OPPLAERINGSPENGER;
+4867;Nav familie- og pensjonsytelser foreldrepenger;BS PN;Pleiepenger ny ordning;Tilbakekreving av feilutbetalte pleiepenger - ny ordning;TILBAKEKREVING_PLEIEPENGER_BARN;
+4817;Nav familie- og pensjonsytelser Steinkjer;FA FØ;Foreldrepenger fødsel;Tilbakekreving av feilutbetalte foreldrepenger;TILBAKEKREVING_FORELDREPENGER;
+4817;Nav familie- og pensjonsytelser Steinkjer;FA FE;Fødselsengangsstønad;Tilbakekreving av feilutbetalt engangsstønad ved fødsel;TILBAKEKREVING_ENGANGSSTOENAD_VED_FOEDSEL;
+4817;Nav familie- og pensjonsytelser Steinkjer;BS OP;Opplæringspenger;Tilbakekreving av feilutbetalte opplæringspenger;TILBAKEKREVING_OPPLAERINGSPENGER;
+4817;Nav familie- og pensjonsytelser Steinkjer;BS PN;Pleiepenger ny ordning;Tilbakekreving av feilutbetalte pleiepenger - ny ordning;TILBAKEKREVING_PLEIEPENGER_BARN;
+4487;Nav arbeid og ytelser - sykdom i familien;BS OM;Omsorgspenger;Tilbakekreving av feilutbetalte omsorgspenger;TILBAKEKREVING_OMSORGSPENGER;
+4487;Nav arbeid og ytelser - sykdom i familien;BS OP;Opplæringspenger;Tilbakekreving av feilutbetalte opplæringspenger;TILBAKEKREVING_OPPLAERINGSPENGER;
+4487;Nav arbeid og ytelser - sykdom i familien;BS PB;Pleiepenger pleie sykt barn;OBS! Benytt BS PN. Ikke eget oppsett;TILBAKEKREVING_PLEIEPENGER_BARN;
+4487;Nav arbeid og ytelser - sykdom i familien;BS PP;Pleiepenger, pleie pårørende;Tilbakekreving av feilutbetalte pleiepenger;TILBAKEKREVING_PLEIEPENGER_NAERSTAAENDE;
+4487;Nav arbeid og ytelser - sykdom i familien;BS PN;Pleiepenger ny ordning;Tilbakekreving av feilutbetalte pleiepenger - ny ordning;TILBAKEKREVING_PLEIEPENGER_BARN;
