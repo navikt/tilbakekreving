@@ -29,8 +29,8 @@ fun Route.hentKravoversikt(søkEtterInnkrevingskrav: SøkEtterInnkrevingskrav) {
                 return@authenticatedPost
             }
 
-        val filteredKrav =
-            kravAccessPolicy.filter(NavSaksbehandler(principal.groupIds, principal.enheter), kravoversikt.krav)
+        val subject = NavSaksbehandler(principal.groupIds, principal.enheter)
+        val filteredKrav = kravoversikt.krav.filter { kravAccessPolicy.isAllowed(subject, it.kravtype) }
         val filteredKravoversikt = kravoversikt.copy(krav = filteredKrav)
 
         call.respond(HttpStatusCode.OK, HentKravoversiktJsonResponse.fromDomain(filteredKravoversikt))

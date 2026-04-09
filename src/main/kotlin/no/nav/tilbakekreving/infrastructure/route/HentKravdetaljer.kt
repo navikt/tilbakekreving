@@ -7,11 +7,13 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import no.nav.tilbakekreving.app.HentKravdetaljer
 import no.nav.tilbakekreving.infrastructure.audit.AuditLog
+import no.nav.tilbakekreving.infrastructure.auth.abac.policy.LesKravAccessPolicy
+import no.nav.tilbakekreving.infrastructure.auth.abac.policy.NavSaksbehandler
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravdetaljerJsonRequest
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravdetaljerJsonResponse
 import no.nav.tilbakekreving.infrastructure.route.util.authenticatedPost
 
-context(auditLog: AuditLog)
+context(auditLog: AuditLog, kravAccessPolicy: LesKravAccessPolicy)
 fun Route.hentKravdetaljerRoute(hentKravdetaljer: HentKravdetaljer) {
     authenticatedPost { principal ->
         val kravidentifikator = call.receive<HentKravdetaljerJsonRequest>().toDomain()
@@ -34,6 +36,18 @@ fun Route.hentKravdetaljerRoute(hentKravdetaljer: HentKravdetaljer) {
                 }
                 return@authenticatedPost
             }
+
+        if (!kravAccessPolicy.isAllowed(
+                NavSaksbehandler(principal.groupIds, principal.enheter),
+                kravdetaljer.krav.kravtype,
+            )
+        ) {
+            call.respond(
+                HttpStatusCode.Unauthorized,
+                "Du har ikke tilgang til å se detaljer om dette kravet",
+            )
+            return@authenticatedPost
+        }
 
         auditLog.info(
             AuditLog.Message(

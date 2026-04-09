@@ -20,9 +20,4 @@ class AccessPolicy<Subject, Resource>(
         if (denyRules.any { context.it() }) return false
         return requireRules.all { context.it() }
     }
-
-    fun filter(
-        subject: Subject,
-        resources: List<Resource>,
-    ): List<Resource> = resources.filter { isAllowed(subject, it) }
 }

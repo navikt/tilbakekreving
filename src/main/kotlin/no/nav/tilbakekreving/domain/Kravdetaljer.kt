@@ -13,7 +13,7 @@ data class KravDetalj(
     val forfallsdato: LocalDate?,
     val foreldelsesdato: LocalDate?,
     val fastsettelsesdato: LocalDate?,
-    val kravtype: String,
+    val kravtype: Kravtype,
     val opprinneligBeløp: Double,
     val gjenståendeBeløp: Double,
     val skatteetatensKravidentifikator: String?,

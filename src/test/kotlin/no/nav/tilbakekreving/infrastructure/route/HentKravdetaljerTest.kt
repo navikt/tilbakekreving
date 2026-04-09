@@ -36,25 +36,37 @@ import no.nav.tilbakekreving.domain.KravdetaljerSkyldner
 import no.nav.tilbakekreving.domain.Kravgrunnlag
 import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravlinje
+import no.nav.tilbakekreving.domain.Kravtype
 import no.nav.tilbakekreving.domain.Oppdragsgiver
 import no.nav.tilbakekreving.infrastructure.audit.AuditLog
 import no.nav.tilbakekreving.infrastructure.auth.AccessTokenValidator
 import no.nav.tilbakekreving.infrastructure.auth.EntraOboTokenExchanger
+import no.nav.tilbakekreving.infrastructure.auth.abac.policy.lesKravAccessPolicy
+import no.nav.tilbakekreving.infrastructure.auth.model.Enhetsnummer
 import no.nav.tilbakekreving.infrastructure.auth.model.GroupId
 import no.nav.tilbakekreving.infrastructure.auth.model.OboToken
 import no.nav.tilbakekreving.infrastructure.auth.model.ValidatedEntraToken
 import no.nav.tilbakekreving.infrastructure.client.entra.proxy.EntraProxyClient
 import no.nav.tilbakekreving.infrastructure.route.json.HentKravdetaljerJsonRequest
 import no.nav.tilbakekreving.infrastructure.route.json.KravidentifikatorType
+import no.nav.tilbakekreving.infrastructure.unleash.StubFeatureToggle
 import no.nav.tilbakekreving.setup.configureEntraAuthentication
 import no.nav.tilbakekreving.setup.configureSerialization
 import no.nav.tilbakekreving.util.specWideTestApplication
+import org.slf4j.LoggerFactory
 
 class HentKravdetaljerTest :
     WordSpec({
         val authenticationConfigName = AuthenticationConfigName.ENTRA_ID
         val hentKravdetaljer = mockk<HentKravdetaljer>()
         val auditLog = mockk<AuditLog>(relaxed = true)
+        val kravAccessPolicy =
+            context(StubFeatureToggle(default = true), LoggerFactory.getLogger(this::class.java)) {
+                lesKravAccessPolicy(
+                    GroupId("les-krav"),
+                    mapOf(Enhetsnummer("1111") to setOf(Kravtype.TILBAKEKREVING_BARNETRYGD)),
+                )
+            }
 
         val accessTokenValidator = mockk<AccessTokenValidator<ValidatedEntraToken>>()
         coEvery { accessTokenValidator.validateToken(any()) } returns
@@ -70,7 +82,7 @@ class HentKravdetaljerTest :
 
         val entraProxyClient = mockk<EntraProxyClient>()
         coEvery { entraProxyClient.hentEnheter(OboToken("obo-token")) } returns
-            emptySet<no.nav.tilbakekreving.infrastructure.auth.model.Enhetsnummer>().right()
+            setOf(Enhetsnummer("1111")).right()
 
         val entraProxyConfig =
             EntraProxyConfig(
@@ -96,7 +108,7 @@ class HentKravdetaljerTest :
                     routing {
                         authenticate(authenticationConfigName.configName) {
                             route("/kravdetaljer") {
-                                context(auditLog) {
+                                context(auditLog, kravAccessPolicy) {
                                     hentKravdetaljerRoute(hentKravdetaljer)
                                 }
                             }
@@ -112,7 +124,7 @@ class HentKravdetaljerTest :
                         forfallsdato = LocalDate(2025, 2, 1),
                         foreldelsesdato = LocalDate(2030, 1, 1),
                         fastsettelsesdato = LocalDate(2024, 12, 1),
-                        kravtype = "OB04",
+                        kravtype = Kravtype.TILBAKEKREVING_BARNETRYGD,
                         opprinneligBeløp = 1000.0,
                         gjenståendeBeløp = 500.0,
                         skatteetatensKravidentifikator = "skatte-123",
@@ -165,7 +177,7 @@ class HentKravdetaljerTest :
                                 "forfallsdato": "2025-02-01",
                                 "foreldelsesdato": "2030-01-01",
                                 "fastsettelsesdato": "2024-12-01",
-                                "kravtype": "OB04",
+                                "kravtype": "TILBAKEKREVING_BARNETRYGD",
                                 "opprinneligBeløp": 1000.0,
                                 "gjenståendeBeløp": 500.0,
                                 "skatteetatensKravidentifikator": "skatte-123",
@@ -270,6 +282,30 @@ class HentKravdetaljerTest :
                         )
                         bearerAuth("valid-token")
                     }.shouldHaveStatus(HttpStatusCode.InternalServerError)
+
+                coVerify { auditLog wasNot Called }
+            }
+            "returnere 401 når bruker ikke har tilgang til kravtypen" {
+                val dagpengerKravdetaljer =
+                    kravdetaljer.copy(
+                        krav = kravdetaljer.krav.copy(kravtype = Kravtype.TILBAKEKREVING_DAGPENGER),
+                    )
+                coEvery { hentKravdetaljer.hentKravdetaljer(kravidentifikator) } returns dagpengerKravdetaljer.right()
+
+                client
+                    .post("/kravdetaljer") {
+                        contentType(ContentType.Application.Json)
+                        setBody(
+                            // language=json
+                            """
+                            {
+                                "id": "${kravidentifikator.id}",
+                                "type": "${KravidentifikatorType.NAV}"
+                            }
+                            """.trimIndent(),
+                        )
+                        bearerAuth("valid-token")
+                    }.shouldHaveStatus(HttpStatusCode.Unauthorized)
 
                 coVerify { auditLog wasNot Called }
             }

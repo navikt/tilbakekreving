@@ -9,6 +9,7 @@ import no.nav.tilbakekreving.domain.InnbetalingPlassertMotKrav
 import no.nav.tilbakekreving.domain.KravDetalj
 import no.nav.tilbakekreving.domain.Kravdetaljer
 import no.nav.tilbakekreving.domain.KravdetaljerSkyldner
+import no.nav.tilbakekreving.domain.Kravtype
 import no.nav.tilbakekreving.domain.Oppdragsgiver
 import no.nav.tilbakekreving.domain.PeriodeMedTvangsmulkt
 import no.nav.tilbakekreving.domain.Tilbakekrevingsperiode
@@ -36,7 +37,7 @@ data class SkeKravResponseJson(
     val forfallsdato: LocalDate?,
     val foreldelsesdato: LocalDate?,
     val fastsettelsesdato: LocalDate?,
-    val kravtype: String,
+    val kravtype: Kravtype,
     @SerialName("opprinneligBeloep") val opprinneligBeløp: Double,
     @SerialName("gjenstaaendeBeloep") val gjenståendeBeløp: Double,
     val skatteetatensKravidentifikator: String?,

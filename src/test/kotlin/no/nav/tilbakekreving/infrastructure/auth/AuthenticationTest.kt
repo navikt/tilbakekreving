@@ -20,9 +20,6 @@ import io.mockk.mockk
 import no.nav.tilbakekreving.AppEnv
 import no.nav.tilbakekreving.config.AuthenticationConfigName
 import no.nav.tilbakekreving.config.EntraProxyConfig
-import no.nav.tilbakekreving.domain.Krav
-import no.nav.tilbakekreving.domain.Kravbeskrivelse
-import no.nav.tilbakekreving.domain.Kravidentifikator
 import no.nav.tilbakekreving.domain.Kravtype
 import no.nav.tilbakekreving.infrastructure.auth.abac.policy.NavSaksbehandler
 import no.nav.tilbakekreving.infrastructure.auth.abac.policy.lesKravAccessPolicy
@@ -37,7 +34,6 @@ import no.nav.tilbakekreving.infrastructure.unleash.StubFeatureToggle
 import no.nav.tilbakekreving.setup.configureEntraAuthentication
 import no.nav.tilbakekreving.util.specWideTestApplication
 import org.slf4j.LoggerFactory
-import java.util.Locale
 
 class AuthenticationTest :
     WordSpec({
@@ -80,24 +76,15 @@ class AuthenticationTest :
 
                             get("/protected-krav") {
                                 val principal = call.principal<NavUserPrincipal>()
-                                val krav =
-                                    Krav(
-                                        skeKravidentifikator = Kravidentifikator.Skatteetaten("skatte-123"),
-                                        navKravidentifikator = Kravidentifikator.Nav("123"),
-                                        navReferanse = null,
-                                        kravtype = Kravtype.TILBAKEKREVING_BARNETRYGD,
-                                        kravbeskrivelse = listOf(Kravbeskrivelse(Locale.forLanguageTag("nb"), "Test")),
-                                        gjenståendeBeløp = 1000.0,
-                                    )
                                 val allowed =
                                     kravAccessPolicy
-                                        .filter(
+                                        .isAllowed(
                                             NavSaksbehandler(
                                                 principal?.groupIds ?: emptySet(),
                                                 principal?.enheter ?: emptySet(),
                                             ),
-                                            listOf(krav),
-                                        ).isNotEmpty()
+                                            Kravtype.TILBAKEKREVING_BARNETRYGD,
+                                        )
                                 if (allowed) {
                                     call.respond(HttpStatusCode.OK)
                                 } else {

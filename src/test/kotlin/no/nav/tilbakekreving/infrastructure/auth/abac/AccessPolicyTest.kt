@@ -55,33 +55,5 @@ class AccessPolicyTest :
                     }
                 policy.isAllowed(User("admin", "IT"), Document("x", true)) shouldBe false
             }
-
-            "filter resources based on policy" {
-                val policy =
-                    accessPolicy<User, Document> {
-                        require { subject.role == "admin" }
-                    }
-                val docs =
-                    listOf(
-                        Document("a", false),
-                        Document("b", true),
-                    )
-                policy.filter(User("admin", "IT"), docs) shouldBe docs
-                policy.filter(User("user", "IT"), docs) shouldBe emptyList()
-            }
-
-            "filter resources using resource attributes" {
-                val policy =
-                    accessPolicy<User, Document> {
-                        deny { resource.confidential && subject.role != "admin" }
-                    }
-                val docs =
-                    listOf(
-                        Document("a", false),
-                        Document("b", true),
-                    )
-                policy.filter(User("user", "IT"), docs) shouldBe listOf(Document("a", false))
-                policy.filter(User("admin", "IT"), docs) shouldBe docs
-            }
         }
     })

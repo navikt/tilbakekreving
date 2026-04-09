@@ -2,7 +2,6 @@ package no.nav.tilbakekreving.infrastructure.auth.abac.policy
 
 import no.nav.tilbakekreving.app.FeatureToggle
 import no.nav.tilbakekreving.app.Toggle
-import no.nav.tilbakekreving.domain.Krav
 import no.nav.tilbakekreving.domain.Kravtype
 import no.nav.tilbakekreving.infrastructure.auth.abac.AccessPolicy
 import no.nav.tilbakekreving.infrastructure.auth.abac.accessPolicy
@@ -36,8 +35,8 @@ fun lesKravAccessPolicy(
         require {
             if (featureToggle.isEnabled(Toggle.KRAVTYPE_ENHET_TILGANGSKONTROLL)) {
                 subject.enheter.any {
-                    enhetAccess[it]?.contains(Kravtype.ALLE) == true ||
-                        enhetAccess[it]?.contains(resource.kravtype) == true
+                    val kravtyper = enhetAccess[it].orEmpty()
+                    Kravtype.ALLE in kravtyper || resource in kravtyper
                 }
             } else {
                 true
@@ -46,7 +45,7 @@ fun lesKravAccessPolicy(
     }
 }
 
-typealias LesKravAccessPolicy = AccessPolicy<NavSaksbehandler, Krav>
+typealias LesKravAccessPolicy = AccessPolicy<NavSaksbehandler, Kravtype>
 
 data class NavSaksbehandler(
     val groupIds: Set<GroupId>,

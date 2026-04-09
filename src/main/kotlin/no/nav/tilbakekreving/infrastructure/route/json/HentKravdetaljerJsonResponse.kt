@@ -10,6 +10,7 @@ import no.nav.tilbakekreving.domain.Kravdetaljer
 import no.nav.tilbakekreving.domain.KravdetaljerSkyldner
 import no.nav.tilbakekreving.domain.Kravgrunnlag
 import no.nav.tilbakekreving.domain.Kravlinje
+import no.nav.tilbakekreving.domain.Kravtype
 import no.nav.tilbakekreving.domain.Oppdragsgiver
 import no.nav.tilbakekreving.domain.PeriodeMedTvangsmulkt
 import no.nav.tilbakekreving.domain.Tilbakekrevingsperiode
@@ -39,7 +40,7 @@ data class KravDetaljResponseJson(
     val forfallsdato: LocalDate?,
     val foreldelsesdato: LocalDate?,
     val fastsettelsesdato: LocalDate?,
-    val kravtype: String,
+    val kravtype: Kravtype,
     val opprinneligBeløp: Double,
     val gjenståendeBeløp: Double,
     val skatteetatensKravidentifikator: String?,
