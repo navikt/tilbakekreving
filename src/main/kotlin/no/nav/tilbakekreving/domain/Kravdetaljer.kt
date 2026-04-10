@@ -1,5 +1,6 @@
 package no.nav.tilbakekreving.domain
 
+import arrow.core.Either
 import kotlinx.datetime.LocalDate
 
 data class Kravdetaljer(
@@ -13,7 +14,7 @@ data class KravDetalj(
     val forfallsdato: LocalDate?,
     val foreldelsesdato: LocalDate?,
     val fastsettelsesdato: LocalDate?,
-    val kravtype: Kravtype,
+    val kravtype: Either<UkjentKravtype, Kravtype>,
     val opprinneligBeløp: Double,
     val gjenståendeBeløp: Double,
     val skatteetatensKravidentifikator: String?,

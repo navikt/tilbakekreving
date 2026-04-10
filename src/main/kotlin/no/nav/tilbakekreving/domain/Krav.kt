@@ -1,5 +1,6 @@
 package no.nav.tilbakekreving.domain
 
+import arrow.core.Either
 import java.util.Locale
 
 data class Kravoversikt(
@@ -13,7 +14,7 @@ data class Krav(
     val skeKravidentifikator: Kravidentifikator.Skatteetaten?,
     val navKravidentifikator: Kravidentifikator.Nav,
     val navReferanse: String?,
-    val kravtype: Kravtype,
+    val kravtype: Either<UkjentKravtype, Kravtype>,
     val kravbeskrivelse: List<Kravbeskrivelse>,
     val gjenståendeBeløp: Double,
 )

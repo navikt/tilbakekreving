@@ -10,7 +10,6 @@ import no.nav.tilbakekreving.domain.Kravdetaljer
 import no.nav.tilbakekreving.domain.KravdetaljerSkyldner
 import no.nav.tilbakekreving.domain.Kravgrunnlag
 import no.nav.tilbakekreving.domain.Kravlinje
-import no.nav.tilbakekreving.domain.Kravtype
 import no.nav.tilbakekreving.domain.Oppdragsgiver
 import no.nav.tilbakekreving.domain.PeriodeMedTvangsmulkt
 import no.nav.tilbakekreving.domain.Tilbakekrevingsperiode
@@ -40,7 +39,7 @@ data class KravDetaljResponseJson(
     val forfallsdato: LocalDate?,
     val foreldelsesdato: LocalDate?,
     val fastsettelsesdato: LocalDate?,
-    val kravtype: Kravtype,
+    val kravtype: String,
     val opprinneligBeløp: Double,
     val gjenståendeBeløp: Double,
     val skatteetatensKravidentifikator: String?,
@@ -55,7 +54,7 @@ data class KravDetaljResponseJson(
                 forfallsdato = krav.forfallsdato,
                 foreldelsesdato = krav.foreldelsesdato,
                 fastsettelsesdato = krav.fastsettelsesdato,
-                kravtype = krav.kravtype,
+                kravtype = krav.kravtype.fold(ifLeft = { it.value }, ifRight = { it.name }),
                 opprinneligBeløp = krav.opprinneligBeløp,
                 gjenståendeBeløp = krav.gjenståendeBeløp,
                 skatteetatensKravidentifikator = krav.skatteetatensKravidentifikator,

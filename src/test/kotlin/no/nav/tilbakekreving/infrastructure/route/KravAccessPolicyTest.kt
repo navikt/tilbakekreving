@@ -1,8 +1,11 @@
 package no.nav.tilbakekreving.infrastructure.route
 
+import arrow.core.left
+import arrow.core.right
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.shouldBe
 import no.nav.tilbakekreving.domain.Kravtype
+import no.nav.tilbakekreving.domain.UkjentKravtype
 import no.nav.tilbakekreving.infrastructure.auth.abac.policy.NavSaksbehandler
 import no.nav.tilbakekreving.infrastructure.auth.abac.policy.lesKravAccessPolicy
 import no.nav.tilbakekreving.infrastructure.auth.model.Enhetsnummer
@@ -37,7 +40,7 @@ class KravAccessPolicyTest :
                         )
                     }
                 val subject = NavSaksbehandler(setOf(kravAccessGroup), emptySet())
-                policy.isAllowed(subject, kravtypeA) shouldBe true
+                policy.isAllowed(subject, kravtypeA.right()) shouldBe true
             }
 
             "deny access when user does not have the krav access group" {
@@ -49,7 +52,7 @@ class KravAccessPolicyTest :
                         )
                     }
                 val subject = NavSaksbehandler(setOf(GroupId("other_group")), emptySet())
-                policy.isAllowed(subject, kravtypeA) shouldBe false
+                policy.isAllowed(subject, kravtypeA.right()) shouldBe false
             }
 
             "allow access to any kravtype when enhetAccess is set but toggle is disabled" {
@@ -62,8 +65,8 @@ class KravAccessPolicyTest :
                     }
                 val subject = NavSaksbehandler(setOf(kravAccessGroup), setOf(enhetA))
 
-                policy.isAllowed(subject, kravtypeA) shouldBe true
-                policy.isAllowed(subject, kravtypeB) shouldBe true
+                policy.isAllowed(subject, kravtypeA.right()) shouldBe true
+                policy.isAllowed(subject, kravtypeB.right()) shouldBe true
             }
         }
 
@@ -81,8 +84,8 @@ class KravAccessPolicyTest :
                 val subjectWithEnhetA = NavSaksbehandler(setOf(kravAccessGroup), setOf(enhetA))
 
                 subjectWithEnhetA.let {
-                    policy.isAllowed(it, kravtypeA) shouldBe true
-                    policy.isAllowed(it, kravtypeB) shouldBe false
+                    policy.isAllowed(it, kravtypeA.right()) shouldBe true
+                    policy.isAllowed(it, kravtypeB.right()) shouldBe false
                 }
             }
 
@@ -96,7 +99,7 @@ class KravAccessPolicyTest :
                     }
 
                 val subject = NavSaksbehandler(setOf(kravAccessGroup), emptySet())
-                policy.isAllowed(subject, kravtypeA) shouldBe false
+                policy.isAllowed(subject, kravtypeA.right()) shouldBe false
             }
 
             "allow all kravtyper when user has all enhetsnummer" {
@@ -110,8 +113,8 @@ class KravAccessPolicyTest :
 
                 val subject = NavSaksbehandler(setOf(kravAccessGroup), setOf(enhetA, enhetB))
 
-                policy.isAllowed(subject, kravtypeA) shouldBe true
-                policy.isAllowed(subject, kravtypeB) shouldBe true
+                policy.isAllowed(subject, kravtypeA.right()) shouldBe true
+                policy.isAllowed(subject, kravtypeB.right()) shouldBe true
             }
 
             "allow access to any kravtype when enhet is mapped to Kravtype.ALLE" {
@@ -125,15 +128,15 @@ class KravAccessPolicyTest :
                     }
 
                 val subject = NavSaksbehandler(setOf(kravAccessGroup), setOf(enhetA))
-                policy.isAllowed(subject, kravtypeA) shouldBe true
-                policy.isAllowed(subject, kravtypeB) shouldBe true
+                policy.isAllowed(subject, kravtypeA.right()) shouldBe true
+                policy.isAllowed(subject, kravtypeB.right()) shouldBe true
             }
 
             "allow all krav when one enhet has Kravtype.ALLE even if another has specific kravtype" {
                 val mixedEnhetAccess =
                     mapOf(
                         enhetA to setOf(Kravtype.ALLE),
-                        enhetB to setOf(kravtypeB),
+                        enhetB to setOf(Kravtype.TILBAKEKREVING_DAGPENGER),
                     )
                 val policy =
                     context(enabledFeatureToggle, logger) {
@@ -144,8 +147,35 @@ class KravAccessPolicyTest :
                     }
 
                 val subject = NavSaksbehandler(setOf(kravAccessGroup), setOf(enhetA, enhetB))
-                policy.isAllowed(subject, kravtypeA) shouldBe true
-                policy.isAllowed(subject, kravtypeB) shouldBe true
+                policy.isAllowed(subject, kravtypeA.right()) shouldBe true
+                policy.isAllowed(subject, kravtypeB.right()) shouldBe true
+            }
+
+            "deny unknown kravtype when enhet does not have ALLE" {
+                val policy =
+                    context(enabledFeatureToggle, logger) {
+                        lesKravAccessPolicy(
+                            kravAccessGroup,
+                            enhetAccess,
+                        )
+                    }
+
+                val subject = NavSaksbehandler(setOf(kravAccessGroup), setOf(enhetA))
+                policy.isAllowed(subject, UkjentKravtype("NY_KRAVTYPE").left()) shouldBe false
+            }
+
+            "allow unknown kravtype when enhet has ALLE" {
+                val enhetAccessWithAlle = mapOf(enhetA to setOf(Kravtype.ALLE))
+                val policy =
+                    context(enabledFeatureToggle, logger) {
+                        lesKravAccessPolicy(
+                            kravAccessGroup,
+                            enhetAccessWithAlle,
+                        )
+                    }
+
+                val subject = NavSaksbehandler(setOf(kravAccessGroup), setOf(enhetA))
+                policy.isAllowed(subject, UkjentKravtype("NY_KRAVTYPE").left()) shouldBe true
             }
         }
     })

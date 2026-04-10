@@ -1,8 +1,10 @@
 package no.nav.tilbakekreving.infrastructure.auth.abac.policy
 
+import arrow.core.Either
 import no.nav.tilbakekreving.app.FeatureToggle
 import no.nav.tilbakekreving.app.Toggle
 import no.nav.tilbakekreving.domain.Kravtype
+import no.nav.tilbakekreving.domain.UkjentKravtype
 import no.nav.tilbakekreving.infrastructure.auth.abac.AccessPolicy
 import no.nav.tilbakekreving.infrastructure.auth.abac.accessPolicy
 import no.nav.tilbakekreving.infrastructure.auth.model.Enhetsnummer
@@ -34,10 +36,18 @@ fun lesKravAccessPolicy(
 
         require {
             if (featureToggle.isEnabled(Toggle.KRAVTYPE_ENHET_TILGANGSKONTROLL)) {
-                subject.enheter.any {
-                    val kravtyper = enhetAccess[it].orEmpty()
-                    Kravtype.ALLE in kravtyper || resource in kravtyper
-                }
+                resource.fold(
+                    ifLeft = {
+                        // Ukjent kravtype kan kun sees av saksbehandlere med rett til å se ALLE krav
+                        subject.enheter.any { Kravtype.ALLE in enhetAccess[it].orEmpty() }
+                    },
+                    ifRight = { kravtype ->
+                        subject.enheter.any {
+                            val kravtyper = enhetAccess[it].orEmpty()
+                            Kravtype.ALLE in kravtyper || kravtype in kravtyper
+                        }
+                    },
+                )
             } else {
                 true
             }
@@ -45,7 +55,7 @@ fun lesKravAccessPolicy(
     }
 }
 
-typealias LesKravAccessPolicy = AccessPolicy<NavSaksbehandler, Kravtype>
+typealias LesKravAccessPolicy = AccessPolicy<NavSaksbehandler, Either<UkjentKravtype, Kravtype>>
 
 data class NavSaksbehandler(
     val groupIds: Set<GroupId>,

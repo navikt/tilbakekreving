@@ -1,5 +1,7 @@
 package no.nav.tilbakekreving.infrastructure.client.skatteetaten
 
+import arrow.core.left
+import arrow.core.right
 import io.kotest.assertions.arrow.core.shouldBeLeft
 import io.kotest.assertions.arrow.core.shouldBeRight
 import io.kotest.assertions.json.shouldEqualJson
@@ -33,6 +35,7 @@ import no.nav.tilbakekreving.domain.Oppdragsgiver
 import no.nav.tilbakekreving.domain.Skyldner
 import no.nav.tilbakekreving.domain.SkyldnerId
 import no.nav.tilbakekreving.domain.Skyldnersøk
+import no.nav.tilbakekreving.domain.UkjentKravtype
 import no.nav.tilbakekreving.setup.createHttpClient
 import java.util.Locale
 
@@ -48,7 +51,7 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                                 forfallsdato = LocalDate.parse("2025-01-01"),
                                 foreldelsesdato = LocalDate.parse("2030-01-01"),
                                 fastsettelsesdato = LocalDate.parse("2024-01-01"),
-                                kravtype = Kravtype.TILBAKEKREVING_BARNETRYGD,
+                                kravtype = Kravtype.TILBAKEKREVING_BARNETRYGD.right(),
                                 opprinneligBeløp = 100.0,
                                 gjenståendeBeløp = 50.0,
                                 skatteetatensKravidentifikator = "skatte-123",
@@ -131,7 +134,7 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                 result.shouldBeRight(kravdetaljer)
             }
 
-            "deserialisere ukjent kravtype til UKJENT" {
+            "deserialisere ukjent kravtype til UkjentKravtype" {
                 val mockEngine =
                     MockEngine {
                         respond(
@@ -176,7 +179,7 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                 result
                     .shouldBeRight()
                     .krav.kravtype
-                    .shouldBeEqual(Kravtype.UKJENT)
+                    .shouldBeEqual(UkjentKravtype("EN_HELT_NY_KRAVTYPE").left())
             }
 
             "returnere FantIkkeKravdetaljer ved 404" {
@@ -310,14 +313,14 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                         skeKravidentifikator = Kravidentifikator.Skatteetaten("29ab06ef-9de1-4312-9677-163e4cc586dd"),
                         navKravidentifikator = Kravidentifikator.Nav("310ade77-8d45-48e8-b053-72659f53b4eb"),
                         navReferanse = "ref1",
-                        kravtype = Kravtype.TILBAKEKREVING_BARNETRYGD,
+                        kravtype = Kravtype.TILBAKEKREVING_BARNETRYGD.right(),
                         kravbeskrivelse = listOf(Kravbeskrivelse(Locale.forLanguageTag("NB"), "Eksempeltekst")),
                         gjenståendeBeløp = 1000.0,
                     ),
                 )
             }
 
-            "deserialisere ukjent kravtype til UKJENT i kravoversikt" {
+            "deserialisere ukjent kravtype til UkjentKravtype i kravoversikt" {
                 val mockEngine =
                     MockEngine {
                         respond(
@@ -365,7 +368,11 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                 val result = skatteetatenClient.søk(Skyldnersøk(Skyldner(SkyldnerId("12345678901")), Kravfilter.ALLE))
 
                 result
-                    .shouldBeRight().krav.first().kravtype.shouldBeEqual(Kravtype.UKJENT)
+                    .shouldBeRight()
+                    .krav
+                    .first()
+                    .kravtype
+                    .shouldBeEqual(UkjentKravtype("FINNES_IKKE_I_ENUM").left())
             }
 
             "returnere feil ved uventet statuskode" {

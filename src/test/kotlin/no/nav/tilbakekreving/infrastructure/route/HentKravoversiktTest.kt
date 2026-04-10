@@ -90,7 +90,7 @@ class HentKravoversiktTest :
                                     skeKravidentifikator = Kravidentifikator.Skatteetaten("skatte-123456789"),
                                     navKravidentifikator = Kravidentifikator.Nav("123456789"),
                                     navReferanse = "ref1",
-                                    kravtype = Kravtype.TILBAKEKREVING_BARNETRYGD,
+                                    kravtype = Kravtype.TILBAKEKREVING_BARNETRYGD.right(),
                                     kravbeskrivelse =
                                         listOf(
                                             Kravbeskrivelse(
@@ -198,7 +198,7 @@ class HentKravoversiktTest :
                                     skeKravidentifikator = Kravidentifikator.Skatteetaten("skatte-123456789"),
                                     navKravidentifikator = Kravidentifikator.Nav("123456789"),
                                     navReferanse = "ref1",
-                                    kravtype = Kravtype.TILBAKEKREVING_BARNETRYGD,
+                                    kravtype = Kravtype.TILBAKEKREVING_BARNETRYGD.right(),
                                     kravbeskrivelse =
                                         listOf(
                                             Kravbeskrivelse(
@@ -206,13 +206,13 @@ class HentKravoversiktTest :
                                                 "Test beskrivelse",
                                             ),
                                         ),
-                                    `gjenståendeBeløp` = 1000.0,
+                                    gjenståendeBeløp = 1000.0,
                                 ),
                                 Krav(
                                     skeKravidentifikator = Kravidentifikator.Skatteetaten("skatte-987654321"),
                                     navKravidentifikator = Kravidentifikator.Nav("987654321"),
                                     navReferanse = "ref2",
-                                    kravtype = Kravtype.TILBAKEKREVING_DAGPENGER,
+                                    kravtype = Kravtype.TILBAKEKREVING_DAGPENGER.right(),
                                     kravbeskrivelse =
                                         listOf(
                                             Kravbeskrivelse(

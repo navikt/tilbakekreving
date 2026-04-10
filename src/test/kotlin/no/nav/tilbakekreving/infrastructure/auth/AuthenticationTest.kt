@@ -83,7 +83,7 @@ class AuthenticationTest :
                                                 principal?.groupIds ?: emptySet(),
                                                 principal?.enheter ?: emptySet(),
                                             ),
-                                            Kravtype.TILBAKEKREVING_BARNETRYGD,
+                                            Kravtype.TILBAKEKREVING_BARNETRYGD.right(),
                                         )
                                 if (allowed) {
                                     call.respond(HttpStatusCode.OK)

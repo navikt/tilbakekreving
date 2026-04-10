@@ -124,7 +124,7 @@ class HentKravdetaljerTest :
                         forfallsdato = LocalDate(2025, 2, 1),
                         foreldelsesdato = LocalDate(2030, 1, 1),
                         fastsettelsesdato = LocalDate(2024, 12, 1),
-                        kravtype = Kravtype.TILBAKEKREVING_BARNETRYGD,
+                        kravtype = Kravtype.TILBAKEKREVING_BARNETRYGD.right(),
                         opprinneligBeløp = 1000.0,
                         gjenståendeBeløp = 500.0,
                         skatteetatensKravidentifikator = "skatte-123",
@@ -288,7 +288,7 @@ class HentKravdetaljerTest :
             "returnere 401 når bruker ikke har tilgang til kravtypen" {
                 val dagpengerKravdetaljer =
                     kravdetaljer.copy(
-                        krav = kravdetaljer.krav.copy(kravtype = Kravtype.TILBAKEKREVING_DAGPENGER),
+                        krav = kravdetaljer.krav.copy(kravtype = Kravtype.TILBAKEKREVING_DAGPENGER.right()),
                     )
                 coEvery { hentKravdetaljer.hentKravdetaljer(kravidentifikator) } returns dagpengerKravdetaljer.right()
 

@@ -1,5 +1,6 @@
 package no.nav.tilbakekreving.infrastructure.client.skatteetaten.json
 
+import arrow.core.Either
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import no.nav.tilbakekreving.domain.Krav
@@ -9,6 +10,7 @@ import no.nav.tilbakekreving.domain.Kravoversikt
 import no.nav.tilbakekreving.domain.KravoversiktSkyldner
 import no.nav.tilbakekreving.domain.Kravtype
 import no.nav.tilbakekreving.domain.Oppdragsgiver
+import no.nav.tilbakekreving.domain.UkjentKravtype
 import java.util.Locale
 
 @Serializable
@@ -31,7 +33,7 @@ data class SkeHentKravoversiktResponseJson(
 data class SkeKravJson(
     val skatteetatensKravidentifikator: String?,
     @Serializable(with = KravtypeSerializer::class)
-    val kravtype: Kravtype,
+    val kravtype: Either<UkjentKravtype, Kravtype>,
     val kravbeskrivelse: SkeMultiSpråkTekstJson,
     val kravgrunnlag: SkeKravgrunnlagJson,
     @SerialName("gjenstaaendeBeloep") val gjenståendeBeløp: Double,
