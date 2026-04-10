@@ -16,8 +16,8 @@
 15;TS TS;Tilleggsstønad;Tilbakekreving av feilutbetalt tilleggsstønad;TILBAKEKREVING_TILLEGGSTOENAD;0;11.3.2026;Maskinell;Ja (duplikat);Nei;Nav;Maskinelt (ny høst 25);Tilbakekreving av feilutbetalt tilleggsstønad
 16;AE AA;Arbeidsavklaringspenger;Tilbakekreving av feilutbetalte arbeidsavklaringspenger;TILBAKEKREVING_ARBEIDSAVKLARINGSPENGER;0;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (arena fil);Tilbakekreving av feilutbetalte arbeidsavklaringspenger
 17;AP AP;Arbeidsavklaringspenger;Tilbakekreving av feilutbetalte arbeidsavklaringspenger;TILBAKEKREVING_ARBEIDSAVKLARINGSPENGER;0;11.3.2026;Maskinell;Ja (duplikat);Nei;Nav;Maskinelt (ny høst 25);Tilbakekreving av feilutbetalte arbeidsavklaringspenger
-18;BA OR;Barnetrygd, ordinær stønad;Tilbakekreving av feilutbetalt barnetrygd;TILBAKEKREVING_BARNETRYGD;0;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalt barnetrygd
-19;BA UT;Barnetrygd, utvidet stønad;Tilbakekreving av feilutbetalt utvidet barnetrygd;TILBAKEKREVING_UTVIDET_BARNETRYGD;0;Nei;Manuell;Ja;Nei;Nav;Maskinelt (infotrygd fil);Tilbakekreving av feilutbetalt utvidet barnetrygd
+18;BA OR;Barnetrygd, ordinær stønad;Tilbakekreving av feilutbetalt barnetrygd;TILBAKEKREVING_BARNETRYGD;4;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalt barnetrygd
+19;BA UT;Barnetrygd, utvidet stønad;Tilbakekreving av feilutbetalt utvidet barnetrygd;TILBAKEKREVING_UTVIDET_BARNETRYGD;4;Nei;Manuell;Ja;Nei;Nav;Maskinelt (infotrygd fil);Tilbakekreving av feilutbetalt utvidet barnetrygd
 20;EF BT;Stønad til barnetilsyn;Tilbakekreving av feilutbetalt stønad til barnetilsyn;TILBAKEKREVING_STOENAD_TIL_BARNETILSYN;0;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalt stønad til barnetilsyn
 21;PE GB;Gjenl. pensj., st. til barnetils.;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Gjenl. pensj., st. til barnetils.
 22;PE EB;Ensl. f., st. til barnetilsyn;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Ensl. f., st. til barnetilsyn
@@ -25,42 +25,42 @@
 24;EF OG;Overgangsstønad;Tilbakekreving av feilutbetalt overgangsstønad - avregning;TILBAKEKREVING_OVERGANGSSTOENAD_AVREGNING;0;Nei;Manuell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalt overgangsstønad - avregning
 25;PE OG;Gjenlev. pensj. overgangsst.;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Gjenlev. pensj. overgangsst.
 26;PE GO;Gjenlevende pensjon overgangsst.;0;0;0;Nei;Manuell;Nei;Nei;Nav;Manuelt i PAK;Gjenlevende pensjon overgangsst.
-27;FA FØ;Foreldrepenger fødsel;Tilbakekreving av feilutbetalte foreldrepenger;TILBAKEKREVING_FORELDREPENGER;2;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalte foreldrepenger
+27;FA FØ;Foreldrepenger fødsel;Tilbakekreving av feilutbetalte foreldrepenger;TILBAKEKREVING_FORELDREPENGER;4;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalte foreldrepenger
 28;FA FU;Foreldrepenger fødsel utl;0;0;0;Nei;Manuell;Nei;Nei;Nav;Maskinelt (infotrygd fil);Foreldrepenger fødsel utl
-29;FA FE;Fødselsengangsstønad;Tilbakekreving av feilutbetalt engangsstønad ved fødsel;TILBAKEKREVING_ENGANGSSTOENAD_VED_FOEDSEL;2;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalt engangsstønad ved fødsel
+29;FA FE;Fødselsengangsstønad;Tilbakekreving av feilutbetalt engangsstønad ved fødsel;TILBAKEKREVING_ENGANGSSTOENAD_VED_FOEDSEL;4;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalt engangsstønad ved fødsel
 30;FA AV;Tilbakekr. fødselspenger fra ag.;0;0;0;Nei;Manuell;Nei;Nei;Nav;Maskinelt (infotrygd fil);Tilbakekr. fødselspenger fra ag.
 31;FA FP;Fødselspenger;0;0;0;Nei;Manuell;Nei;Nei;Nav;Manuelt i PAK;Fødselspenger
 32;FA SV;Svangerskapspenger;Tilbakekreving av feilutbetalte svangerskapspenger;TILBAKEKREVING_SVANGERSKAPSPENGER;0;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalte svangerskapspenger
 33;AE DO;Aetat dom;0;0;0;Nei;Manuell;Nei;Nei;Nav;Manuelt i PAK;Aetat dom
-34;AE LG;Forskotterte lønnsgarantimidler;Krav på refusjon av forskutterte lønnsgarantimidler;FORSKUTTERT_LONNSGARANTI;0;Nei;Manuell;Ja;Nei;Nav;Manuelt i PAK;Krav på refusjon av forskutterte lønnsgarantimidler
+34;AE LG;Forskotterte lønnsgarantimidler;Krav på refusjon av forskutterte lønnsgarantimidler;FORSKUTTERT_LONNSGARANTI;1;Nei;Manuell;Ja;Nei;Nav;Manuelt i PAK;Krav på refusjon av forskutterte lønnsgarantimidler
 35;AE LG;Forskotterte lønnsgarantimidler;0;0;0;Nei;Manuell;Ja;Nei;Nav;Manuelt i PAK;Forskotterte lønnsgarantimidler
 36;AE DP;Dagpenger (ifbm lønnsgaranti);0;0;0;Nei;Manuell;Ja;Nei;Nav;Maskinelt (arena fil);Dagpenger (ifbm lønnsgaranti)
-37;AE DV;Lønnsgaranti dividende;Krav på refusjon av forskutterte lønnsgarantimidler - dividende;FORSKUTTERT_LONNSGARANTI_DIVIDENDE;0;Nei;Manuell;Ja;Nei;Nav;Manuelt i PAK;Krav på refusjon av forskutterte lønnsgarantimidler - dividende
-38;LG PS;Regresskrav personer;Krav på regress mot personlig skyldner, lønnsgaranti;REGRESS_PERSON_LONNSGARANTI;0;Nei;Manuell;Ja;Nei;Nav;Manuelt i PAK;Krav på regress mot personlig skyldner, lønnsgaranti
+37;AE DV;Lønnsgaranti dividende;Krav på refusjon av forskutterte lønnsgarantimidler - dividende;FORSKUTTERT_LONNSGARANTI_DIVIDENDE;1;Nei;Manuell;Ja;Nei;Nav;Manuelt i PAK;Krav på refusjon av forskutterte lønnsgarantimidler - dividende
+38;LG PS;Regresskrav personer;Krav på regress mot personlig skyldner, lønnsgaranti;REGRESS_PERSON_LONNSGARANTI;0;15.04.2026?;Manuell;Ja;Nei;Nav;Manuelt i PAK;Krav på regress mot personlig skyldner, lønnsgaranti
 39;LG PS;Regresskrav personer;Krav på regress mot personlig skyldner, lønnsgaranti dividende;0;0;Nei;Manuell;Ja;Nei;Nav;Manuelt i PAK;Krav på regress mot personlig skyldner, lønnsgaranti dividende
-40;LG VO;Regresskrav virksomhet;Krav på regress etter virksomhetsoverdragelse, lønnsgaranti;REGRESS_VIRKSOMHET_LONNSGARANTI;0;Nei;Manuell;Ja;Nei;Nav;Manuelt i PAK;Krav på regress etter virksomhetsoverdragelse, lønnsgaranti
+40;LG VO;Regresskrav virksomhet;Krav på regress etter virksomhetsoverdragelse, lønnsgaranti;REGRESS_VIRKSOMHET_LONNSGARANTI;0;15.04.2026?;Manuell;Ja;Nei;Nav;Manuelt i PAK;Krav på regress etter virksomhetsoverdragelse, lønnsgaranti
 41;LG VO;Regresskrav virksomhet;Krav på regress etter virksomhetsoverdragelse, lønnsgaranti dividende;0;0;Nei;Manuell;Ja;Nei;Nav;Manuelt i PAK;Krav på regress etter virksomhetsoverdragelse, lønnsgaranti dividende
-42;LG FU;Feilutbetaling;Tilbakekreving av feilutbetalte lønnsgarantimidler;TILBAKEKREVING_FEILUTBETALT_LONNSGARANTI;0;Nei;Manuell;Ja;Nei;Nav;Manuelt i PAK;Tilbakekreving av feilutbetalte lønnsgarantimidler
+42;LG FU;Feilutbetaling;Tilbakekreving av feilutbetalte lønnsgarantimidler;TILBAKEKREVING_FEILUTBETALT_LONNSGARANTI;0;15.04.2026?;Manuell;Ja;Nei;Nav;Manuelt i PAK;Tilbakekreving av feilutbetalte lønnsgarantimidler
 43;LG AN;Andre krav;0;0;0;Nei;Manuell;Nei;Nei;Nav;Manuelt i PAK;Andre krav
 44;AE MS;Mobilitetsfremmende stønader;Tilbakekreving av feilutbetalte mobilitetsfremmende stønader;TILBAKEKREVING_MOBILITETSFREMMENDE_STOENADER;0;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (arena fil);Tilbakekreving av feilutbetalte mobilitetsfremmende stønader
 45;AE PU;Påtaleunnlatelse;0;0;0;Nei;Manuell;Nei;Nei;Nav;Manuelt i PAK;Påtaleunnlatelse
 46;AE SU;Spesialutbetaling;Tilbakekreving av spesialutbetaling arbeidsavklaringspenger;TILBAKEKREVING_SPESIALUTBETALING;0;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (arena fil);Tilbakekreving av spesialutbetaling arbeidsavklaringspenger
 47;AE TM;Tiltaksmidler vs arbeidsgiver;0;0;0;Nei;Manuell;Nei;Nei;Nav;Maskinelt (arena fil);Tiltaksmidler vs arbeidsgiver
-48;TM FU;Tiltaksmidler feilutbetaling;Tilbakekreving av feilutbetalte tiltaksmidler;TILBAKEKREVING_FEILUTBETALTE_TILTAKSMIDLER;0;Nei;Manuell;Ja;Nei;Nav;Manuelt i PAK;Tilbakekreving av feilutbetalte tiltaksmidler
+48;TM FU;Tiltaksmidler feilutbetaling;Tilbakekreving av feilutbetalte tiltaksmidler;TILBAKEKREVING_FEILUTBETALTE_TILTAKSMIDLER;0;15.04.2026?;Manuell;Ja;Nei;Nav;Manuelt i PAK;Tilbakekreving av feilutbetalte tiltaksmidler
 49;AE VL;Ventelønn;0;0;0;Nei;Manuell;Nei;Nei;Nav;Manuelt i PAK;Ventelønn
 50;AE VS;Ventestønad;0;0;0;Nei;Manuell;Nei;Nei;Nav;Maskinelt (arena fil);Ventestønad
 51;RP VT;Rehab.penger, i ventetid;0;0;0;Nei;Manuell;Nei;Nei;Nav;Maskinelt (infotrygd fil);Rehab.penger, i ventetid
 52;AG AV;Etteregning arbeidsgiver;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Etteregning arbeidsgiver
 53;AL DP;Stønad ved arbeidsløshet;0;0;0;Nei;Manuell;Nei;Nei;Nav;Manuelt i PAK;Stønad ved arbeidsløshet
-54;BS OM;Omsorgspenger;Tilbakekreving av feilutbetalte omsorgspenger;TILBAKEKREVING_OMSORGSPENGER;2;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalte omsorgspenger
+54;BS OM;Omsorgspenger;Tilbakekreving av feilutbetalte omsorgspenger;TILBAKEKREVING_OMSORGSPENGER;1;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalte omsorgspenger
 55;PE OM;Omsorgspoeng;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Omsorgspoeng
-56;BS OP;Opplæringspenger;Tilbakekreving av feilutbetalte opplæringspenger;TILBAKEKREVING_OPPLAERINGSPENGER;4;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalte opplæringspenger
+56;BS OP;Opplæringspenger;Tilbakekreving av feilutbetalte opplæringspenger;TILBAKEKREVING_OPPLAERINGSPENGER;2;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalte opplæringspenger
 57;HJ OP;Opplæringspenger;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Opplæringspenger
 58;HJ KO;Stønad til kjøreopplæring;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Stønad til kjøreopplæring
-59;BS PB;Pleiepenger pleie sykt barn;OBS! Benytt BS PN. Ikke eget oppsett;TILBAKEKREVING_PLEIEPENGER_BARN;5;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (infotrygd fil);OBS! Benytt BS PN. Ikke eget oppsett
+59;BS PB;Pleiepenger pleie sykt barn;OBS! Benytt BS PN. Ikke eget oppsett;TILBAKEKREVING_PLEIEPENGER_BARN;2;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (infotrygd fil);OBS! Benytt BS PN. Ikke eget oppsett
 60;BS PI;Pleiepenger;0;0;0;Nei;Manuell;Nei;Nei;Nav;Maskinelt (infotrygd fil);Pleiepenger
-61;BS PP;Pleiepenger, pleie pårørende;Tilbakekreving av feilutbetalte pleiepenger;TILBAKEKREVING_PLEIEPENGER_NAERSTAAENDE;2;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalte pleiepenger
-62;BS PN;Pleiepenger ny ordning;Tilbakekreving av feilutbetalte pleiepenger - ny ordning;TILBAKEKREVING_PLEIEPENGER_BARN;5;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalte pleiepenger - ny ordning
+61;BS PP;Pleiepenger, pleie pårørende;Tilbakekreving av feilutbetalte pleiepenger;TILBAKEKREVING_PLEIEPENGER_NAERSTAAENDE;1;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalte pleiepenger
+62;BS PN;Pleiepenger ny ordning;Tilbakekreving av feilutbetalte pleiepenger - ny ordning;TILBAKEKREVING_PLEIEPENGER_BARN;2;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalte pleiepenger - ny ordning
 63;PE FP;Familiepleier, pensjon;Tilbakekreving av feilutbetalt pensjon til tidligere familiepleier;TILBAKEKREVING_TIDLIGERE_FAMILIEPLEIER_PENSJON;0;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalt pensjon til tidligere familiepleier
 64;PE FP;Familiepleier, pensjon;Tilbakekreving av feilutbetalt pensjon til tidligere familiepleier - avregning;TILBAKEKREVING_TIDLIGERE_FAMILIEPLEIER_PENSJON_AVREGNING;0;Nei;Manuell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalt pensjon til tidligere familiepleier - avregning
 65;PE FO;Familiepleier, overgangsst.;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Familiepleier, overgangsst.
@@ -73,18 +73,18 @@
 72;KS AD;Kontantstøtte adopsjon;0;0;0;Nei;Manuell;Nei;Nei;Nav;Maskinelt (infotrygd fil);Kontantstøtte adopsjon
 73;GE CI;Condictio Indebiti;0;0;0;Nei;Manuell;Nei;Nei;Nav;Manuelt i PAK;Condictio Indebiti
 74;GE SO;Saksomkostninger;0;0;0;Nei;Manuell;Nei;Nei;Nav;Maskinelt (infotrygd fil);Saksomkostninger
-75;TG AA;Gebyr;Overtredelsesgebyr for brudd på meldeplikt til AA-registeret;OVERTREDELSESGEBYR_MELDEPLIKT_AAREG;0;Nei;Manuell;Ja;Nei;Nav;Manuelt i PAK;Overtredelsesgebyr for brudd på meldeplikt til AA-registeret
+75;TG AA;Gebyr;Overtredelsesgebyr for brudd på meldeplikt til AA-registeret;OVERTREDELSESGEBYR_MELDEPLIKT_AAREG;0;15.04.2026?;Manuell;Ja;Nei;Nav;Manuelt i PAK;Overtredelsesgebyr for brudd på meldeplikt til AA-registeret
 76;SS AG;Gebyr - mangl. sykefraværsoppf.;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Gebyr - mangl. sykefraværsoppf.
 77;SS BH;Gebyr - mangl. sykefraværsoppf.;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Gebyr - mangl. sykefraværsoppf.
 78;GH GS;Grunn hjelpestønad grunnst.;Tilbakekreving av feilutbetalt grunnstønad;TILBAKEKREVING_GRUNNSTOENAD;2;Nei;Manuell;Ja;Nei;Nav;Maskinelt (infotrygd fil);Tilbakekreving av feilutbetalt grunnstønad
 79;GH HS;Grunn hjelpestønad hjelpest.;Tilbakekreving av feilutbetalt hjelpestønad;TILBAKEKREVING_HJELPESTOENAD;2;Nei;Manuell;ja;Nei;Nav;Maskinelt (infotrygd fil);Tilbakekreving av feilutbetalt hjelpestønad
 80;PE HS;Hjelpestønad;0;0;0;Nei;Manuell;Nei;Nei;Nav;Manuelt i PAK;Hjelpestønad
-81;GS BT;Båretransport;Tilbakekreving av feilutbetalt stønad til båretransport;TILBAKEKREVING_STOENAD_BAARETRANSPORT;0;Nei;Manuell;Ja;Nei;Nav;Maskinelt (infotrygd fil);Tilbakekreving av feilutbetalt stønad til båretransport
-82;GS GB;Gravferdshjelp, behovsprøvet;Tilbakekreving av feilutbetalt behovsprøvet gravferdshjelp;TILBAKEKREVING_BEHOVSPROEVET_GRAVFERDSHJELP;0;Nei;Manuell;Ja;Nei;Nav;Maskinelt (infotrygd fil);Tilbakekreving av feilutbetalt behovsprøvet gravferdshjelp
+81;GS BT;Båretransport;Tilbakekreving av feilutbetalt stønad til båretransport;TILBAKEKREVING_STOENAD_BAARETRANSPORT;1;Nei;Manuell;Ja;Nei;Nav;Maskinelt (infotrygd fil);Tilbakekreving av feilutbetalt stønad til båretransport
+82;GS GB;Gravferdshjelp, behovsprøvet;Tilbakekreving av feilutbetalt behovsprøvet gravferdshjelp;TILBAKEKREVING_BEHOVSPROEVET_GRAVFERDSHJELP;1;Nei;Manuell;Ja;Nei;Nav;Maskinelt (infotrygd fil);Tilbakekreving av feilutbetalt behovsprøvet gravferdshjelp
 83;GS GU;Gravferdshjelp, utland;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Gravferdshjelp, utland
 84;GS OG;Gravferdshjelp, ordinær;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Gravferdshjelp, ordinær
-85;GS GD;Gravferdstønad;Tilbakekreving av feilutbetalt gravferdsstønad;TILBAKEKREVING_GRAVFERDSSTOENAD;0;Nei;Manuell;Ja;Nei;Nav;Maskinelt (infotrygd fil);Tilbakekreving av feilutbetalt gravferdsstønad
-86;TK BO;Tilbakekr. behandleroppgjør;Tilbakekreving av feilutbetalt behandleroppgjør til Nav;TILBAKEKREVING_FEILUTBETALT_BEHANDLEROPPGJOR;0;Nei;Manuell;Ja;Nei;Nav;Manuelt i PAK;Tilbakekreving av feilutbetalt behandleroppgjør til Nav
+85;GS GD;Gravferdstønad;Tilbakekreving av feilutbetalt gravferdsstønad;TILBAKEKREVING_GRAVFERDSSTOENAD;1;Nei;Manuell;Ja;Nei;Nav;Maskinelt (infotrygd fil);Tilbakekreving av feilutbetalt gravferdsstønad
+86;TK BO;Tilbakekr. behandleroppgjør;Tilbakekreving av feilutbetalt behandleroppgjør til Nav;TILBAKEKREVING_FEILUTBETALT_BEHANDLEROPPGJOR;0;15.04.2026?;Manuell;Ja;Nei;Nav;Manuelt i PAK;Tilbakekreving av feilutbetalt behandleroppgjør til Nav
 87;YS TS;Tannbehandling skoleskade;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Tannbehandling skoleskade
 88;HT BD;Helsetjenester bidrag;0;0;0;Nei;Manuell;Nei;Nei;Nav;Manuelt i PAK;Helsetjenester bidrag
 89;HT ER;Helsetjenester, EU refusjon;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Helsetjenester, EU refusjon
@@ -110,7 +110,7 @@
 109;PE XP;Avtalefestet pensjon;Tilbakekreving av for mye utbetalt avtalefestet pensjon - etteroppgjør;TILBAKEKREVING_AVTALEFESTET_PENSJON_ETTEROPPGJOER;0;Nei;Manuell;Ja;Nei;Nav;Pesys;Tilbakekreving av for mye utbetalt avtalefestet pensjon - etteroppgjør
 110;PE XP;Avtalefestet pensjon;Tilbakekreving av for mye utbetalt avtalefestet pensjon;TILBAKEKREVING_AVTALEFESTET_PENSJON;0;11.3.2026;Maskinell;Ja;Nei;Nav;Pesys;Tilbakekreving av for mye utbetalt avtalefestet pensjon
 111;PE AF;Avtalefestet pensjon;Tilbakekreving av feilutbetalt avtalefestet pensjon;TILBAKEKREVING_AVTALEFESTET_PENSJON_PRIVATSEKTOR;0;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalt avtalefestet pensjon
-112;TV AA;Tvangsmulkt ;Tvangsmulkt for brudd på meldeplikt til AA-registeret;TVANGSMULKT_MELDEPLIKT_AAREG;0;Nei;Manuell;Ja;Nei;Nav;Manuelt i PAK;Tvangsmulkt for brudd på meldeplikt til AA-registeret
+112;TV AA;Tvangsmulkt ;Tvangsmulkt for brudd på meldeplikt til AA-registeret;TVANGSMULKT_MELDEPLIKT_AAREG;0;15.04.2026?;Manuell;Ja;Nei;Nav;Manuelt i PAK;Tvangsmulkt for brudd på meldeplikt til AA-registeret
 113;UT TY;Tidsbegrenset uførestønad;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Tidsbegrenset uførestønad
 114;UT TU;Tidsbegrenset uførestønad;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Tidsbegrenset uførestønad
 115;UY TU;Tidsbegrenset uførestønad;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Tidsbegrenset uførestønad
@@ -135,9 +135,9 @@
 134;PE YS;Yrkesskade gml lov;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Yrkesskade gml lov
 135;YS RE;Renter yrkesskade;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Renter yrkesskade
 136;YS TY;Tannbehandling yrkesskade;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Tannbehandling yrkesskade
-137;YS YE;Yrkesskadeerstatning;Tilbakekreving av feilutbetalt menerstatning ved yrkesskade;TILBAKEKREVING_MENERSTATNING_YRKESSKADE;0;Nei;Manuell;Ja;Nei;Nav;Maskinelt (infotrygd fil);Tilbakekreving av feilutbetalt menerstatning ved yrkesskade
-138;YS YF;Refusjon yrkesskade;Krav om refusjon av trygdeutgifter ved yrkesskade;REFUSJON_TRYGDEUTGIFTER_YRKESSKADE;0;Nei;Manuell;Ja;Nei;Nav;Manuelt i PAK;Krav om refusjon av trygdeutgifter ved yrkesskade
-139;YS YS;Yrkessykdom;Tilbakekreving av feilutbetalt menerstatning ved yrkessykdom ;TILBAKEKREVING_MENERSTATNING_YRKESSYKDOM;0;Nei;Manuell;Ja;Nei;Nav;Maskinelt (infotrygd fil);Tilbakekreving av feilutbetalt menerstatning ved yrkessykdom 
+137;YS YE;Yrkesskadeerstatning;Tilbakekreving av feilutbetalt menerstatning ved yrkesskade;TILBAKEKREVING_MENERSTATNING_YRKESSKADE;3;Nei;Manuell;Ja;Nei;Nav;Maskinelt (infotrygd fil);Tilbakekreving av feilutbetalt menerstatning ved yrkesskade
+138;YS YF;Refusjon yrkesskade;Krav om refusjon av trygdeutgifter ved yrkesskade;REFUSJON_TRYGDEUTGIFTER_YRKESSKADE;0;15.04.2026?;Manuell;Ja;Nei;Nav;Manuelt i PAK;Krav om refusjon av trygdeutgifter ved yrkesskade
+139;YS YS;Yrkessykdom;Tilbakekreving av feilutbetalt menerstatning ved yrkessykdom ;TILBAKEKREVING_MENERSTATNING_YRKESSYKDOM;3;Nei;Manuell;Ja;Nei;Nav;Maskinelt (infotrygd fil);Tilbakekreving av feilutbetalt menerstatning ved yrkessykdom 
 140;PE GY;Gammel yrkesskade;Tilbakebetaling av gammel yrkesskadepensjon;TILBAKEKREVING_GAMMEL_YRKESSKADEPENSJON;0;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakebetaling av gammel yrkesskadepensjon
 141;RP AT;Rehab.penger, arbeidstrening;0;0;0;Nei;Manuell;Nei;Nei;Nav;Maskinelt (infotrygd fil);Rehab.penger, arbeidstrening
 142;RP AY;Rehab.penger, avbrudd  yrkesr.;0;0;0;Nei;Manuell;Nei;Nei;Nav;Maskinelt (infotrygd fil);Rehab.penger, avbrudd  yrkesr.
@@ -146,8 +146,8 @@
 145;RP MS;Rehab.penger, med sykepengerett;0;0;0;Nei;Manuell;Nei;Nei;Nav;Maskinelt (infotrygd fil);Rehab.penger, med sykepengerett
 146;RP TF;Rehab.penger, tilbakefall;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Rehab.penger, tilbakefall
 147;RP US;Rehab.penger, uten sp.rett;0;0;0;Nei;Manuell;Nei;Nei;Nav;Maskinelt (infotrygd fil);Rehab.penger, uten sp.rett
-148;KS EU;Kontantstøtte, utland;Tilbakekreving av feilutbetalt kontantstøtte utland;TILBAKEKREVING_KONTANTSTOETTE_UTLAND;0;Nei;Manuell;Ja;Nei;Nav;Maskinelt (infotrygd fil);Tilbakekreving av feilutbetalt kontantstøtte utland
-149;KS KS;Kontantstøtte;Tilbakekreving av feilutbetalt kontantstøtte;TILBAKEKREVING_KONTANTSTOETTE;0;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalt kontantstøtte
+148;KS EU;Kontantstøtte, utland;Tilbakekreving av feilutbetalt kontantstøtte utland;TILBAKEKREVING_KONTANTSTOETTE_UTLAND;5;Nei;Manuell;Ja;Nei;Nav;Maskinelt (infotrygd fil);Tilbakekreving av feilutbetalt kontantstøtte utland
+149;KS KS;Kontantstøtte;Tilbakekreving av feilutbetalt kontantstøtte;TILBAKEKREVING_KONTANTSTOETTE;2;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalt kontantstøtte
 150;PE KP;Krigspensjon;Tilbakekreving av feilutbetalt krigspensjon;TILBAKEKREVING_KRIGSPENSJON;0;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalt krigspensjon
 151;PE KS;Krigspensjon, sivil;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Krigspensjon, sivil
 152;PE KM;Krigspensjon militær;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Krigspensjon militær
@@ -155,21 +155,21 @@
 154;PE AP;Alderspensjon;Tilbakekreving av feilutbetalt alderspensjon - avregning;TILBAKEKREVING_ALDERSPENSJON_AVREGNING;0;Nei;Manuell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalt alderspensjon - avregning
 155;PE AB;Aldersp., forsørgingst. barn;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Aldersp., forsørgingst. barn
 156;PE AE;Aldersp.,forsørgingst.ektefelle;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Aldersp.,forsørgingst.ektefelle
-157;SP SP;Sykepenger ;OBS! Benytt KT SP. Ikke eget oppsett;TILBAKEKREVING_SYKEPENGER;1;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (infotrygd fil);OBS! Benytt KT SP. Ikke eget oppsett
+157;SP SP;Sykepenger ;OBS! Benytt KT SP. Ikke eget oppsett;TILBAKEKREVING_SYKEPENGER;2;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (infotrygd fil);OBS! Benytt KT SP. Ikke eget oppsett
 158;SP RT;Sykepenger reisetilskudd;0;0;0;Nei;Manuell;Nei;Nei;Nav;Maskinelt (infotrygd fil);Sykepenger reisetilskudd
-159;KT SP;Sykepenger;Tilbakekreving av feilutbetalte sykepenger;TILBAKEKREVING_SYKEPENGER;1;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalte sykepenger
+159;KT SP;Sykepenger;Tilbakekreving av feilutbetalte sykepenger;TILBAKEKREVING_SYKEPENGER;2;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalte sykepenger
 160;SP AV;Tilbakekr. sykepenger fra ag;0;0;0;Nei;Manuell;Nei;Nei;Nav;Maskinelt (infotrygd fil);Tilbakekr. sykepenger fra ag
 161;PE BP;Barnepensjon;Tilbakekreving av feilutbetalt barnepensjon;TILBAKEKREVING_BARNEPENSJON;0;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalt barnepensjon
 162;PE BB;Barnepensj. ved  foreldres død;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Barnepensj. ved  foreldres død
 163;PE BE;Barnepensjon, en foreldres død;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;Barnepensjon, en foreldres død
-164;SU EV;Supplerende stønad enslig ;Tilbakekreving av feilutbetalt supplerende stønad enslig voksen;TILBAKEKREVING_SUPPLERENDE_STOENAD_ENSLIG_VOKSEN;0;Nei;Manuell;Ja;Nei;Nav;Maskinelt (infotrygd fil);Tilbakekreving av feilutbetalt supplerende stønad enslig voksen
+164;SU EV;Supplerende stønad enslig ;Tilbakekreving av feilutbetalt supplerende stønad enslig voksen;TILBAKEKREVING_SUPPLERENDE_STOENAD_ENSLIG_VOKSEN;1;Nei;Manuell;Ja;Nei;Nav;Maskinelt (infotrygd fil);Tilbakekreving av feilutbetalt supplerende stønad enslig voksen
 165;SU EN;Supplerende stønad, til enslig;"Tilbakekreving av feilutbetalt supplerende stønad enslig mindreårig
-";TILBAKEKREVING_SUPPLERENDE_STOENAD_ENSLIG_MINDREAARIG;0;Nei;Manuell;Ja;Nei;Nav;Maskinelt (infotrygd fil);"Tilbakekreving av feilutbetalt supplerende stønad enslig mindreårig
+";TILBAKEKREVING_SUPPLERENDE_STOENAD_ENSLIG_MINDREAARIG;1;Nei;Manuell;Ja;Nei;Nav;Maskinelt (infotrygd fil);"Tilbakekreving av feilutbetalt supplerende stønad enslig mindreårig
 "
 166;SU EO;Supplerende stønad ektefelle;"Tilbakekreving av feilutbetalt supplerende stønad ektefelle over 67 år
-";TILBAKEKREVING_SUPPLERENDE_STOENAD_EKTEFELLE_OVER_67;0;Nei;Manuell;Ja;Nei;Nav;Maskinelt (infotrygd fil);"Tilbakekreving av feilutbetalt supplerende stønad ektefelle over 67 år
+";TILBAKEKREVING_SUPPLERENDE_STOENAD_EKTEFELLE_OVER_67;1;Nei;Manuell;Ja;Nei;Nav;Maskinelt (infotrygd fil);"Tilbakekreving av feilutbetalt supplerende stønad ektefelle over 67 år
 "
-167;SU EU;Supplerende stønad;Tilbakekreving av feilutbetalt supplerende stønad ektefelle under 67 år;TILBAKEKREVING_SUPPLERENDE_STOENAD_EKTEFELLE_UNDER_67;0;Nei;Manuell;Ja;Nei;Nav;Maskinelt (infotrygd fil);Tilbakekreving av feilutbetalt supplerende stønad ektefelle under 67 år
+167;SU EU;Supplerende stønad;Tilbakekreving av feilutbetalt supplerende stønad ektefelle under 67 år;TILBAKEKREVING_SUPPLERENDE_STOENAD_EKTEFELLE_UNDER_67;1;Nei;Manuell;Ja;Nei;Nav;Maskinelt (infotrygd fil);Tilbakekreving av feilutbetalt supplerende stønad ektefelle under 67 år
 168;SU UF;Supplerende stønad;Tilbakekreving av feilutbetalt supplerende stønad uførepensjon;TILBAKEKREVING_SUPPLERENDE_STOENAD_UFOEREPENSJON;0;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalt supplerende stønad uførepensjon
 169;SU AP;Supplerende stønad;Tilbakekreving av feilutbetalt supplerende stønad alderspensjon;TILBAKEKREVING_SUPPLERENDE_STOENAD_ALDERSPENSJON;0;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalt supplerende stønad alderspensjon
 170;OM OM;Omstillingsstønad;Tilbakekreving av feilutbetalt omstillingsstønad ;TILBAKEKREVING_OMSTILLINGSSTOENAD;0;11.3.2026;Maskinell;Ja;Nei;Nav;Maskinelt (OB04);Tilbakekreving av feilutbetalt omstillingsstønad 
@@ -192,7 +192,7 @@
 187;RP VS;ikke gyldig, gammel kode;0;0;0;Nei;Manuell;Nei;Nei;Nav;?;ikke gyldig, gammel kode
 188;PE GE;Generell;0;0;0;Nei;Manuell;Nei;Nei;Nav;Pesys;Generell
 189;XX XX;"Trygdeytelse
-OBS: Dom, se ""Avklaringer Nav""";Krav fra Nav på erstatning fastsatt ved dom ;ERSTATNING_DOM_NAV;0;Nei;Manuell;Ja;Nei;Nav;Manuelt i PAK;Krav fra Nav på erstatning fastsatt ved dom 
+OBS: Dom, se ""Avklaringer Nav""";Krav fra Nav på erstatning fastsatt ved dom ;ERSTATNING_DOM_NAV;0;15.04.2026?;Manuell;Ja;Nei;Nav;Manuelt i PAK;Krav fra Nav på erstatning fastsatt ved dom 
 190;AE FO;Erstatning vanlig forelegg;0;0;0;Nei;Manuell;Nei;Nei;Nav;Manuelt i PAK;Erstatning vanlig forelegg
 191;NA RE;NAV Regress;Krav på regress fra Nav;0;0;Nei;Manuell;Ja;Nei;Nav;Manuelt i PAK;Krav på regress fra Nav
 192;FO YN;Frivillig yrkesskadetrygd;0;0;0;Nei;Manuell;Nei;Nei;Nav;Manuelt i PAK;Frivillig yrkesskadetrygd
@@ -203,7 +203,7 @@ OBS: Dom, se ""Avklaringer Nav""";Krav fra Nav på erstatning fastsatt ved dom ;
 197;4;Jordbruker;0;0;0;Nei;Manuell;Nei;Ja;Nav;Infotrygd fil (forsikring);Jordbruker
 198;5;Frilanser;0;0;0;Nei;Manuell;Nei;Ja;Nav;Infotrygd fil (forsikring);Frilanser
 199;S;Forsikring arbeidsgiverperioden;0;0;0;Nei;Manuell;Nei;Nei;Nav;Infotrygd fil (forsikring);Forsikring arbeidsgiverperioden
-200;SP AV;§8-22 – fødsels- og sykepenger i arbeidsgiverperioden;Tilbakekreving av forskutterte sykepenger i arbeidsgiverperioden;TILBAKEKREVING_FORSKUTTERTE_SYKEPENGER;0;Nei;Manuell;Nei;Nei;Nav;Maskinelt (infotrygd fil);Tilbakekreving av forskutterte sykepenger i arbeidsgiverperioden
+200;SP AV;§8-22 – fødsels- og sykepenger i arbeidsgiverperioden;Tilbakekreving av forskutterte sykepenger i arbeidsgiverperioden;TILBAKEKREVING_FORSKUTTERTE_SYKEPENGER;0;15.04.2026?;Manuell;Nei;Nei;Nav;Maskinelt (infotrygd fil);Tilbakekreving av forskutterte sykepenger i arbeidsgiverperioden
 201;FA AV;§8-22 – fødsels- og sykepenger i arbeidsgiverperioden;0;0;0;Nei;Manuell;Nei;Nei;Nav;Maskinelt (infotrygd fil);§8-22 – fødsels- og sykepenger i arbeidsgiverperioden
 202;Oppgis i skjema;Andre krav fra NØS;Tilbakekreving av feilutbetalt beløp fra Nav Økonomi;0;0;Nei;Manuell;Ja;Nei;Nav;Manuelt i PAK (regnskap);Tilbakekreving av feilutbetalt beløp fra Nav Økonomi
 203;GFF;GFF;Krav på pliktig medlemspremie i pensjonstrygden for fiskere;0;0;Nei;Manuell;Ja;Nei;GFF;GFF;Krav på pliktig medlemspremie i pensjonstrygden for fiskere
@@ -234,4 +234,3 @@ OBS: Dom, se ""Avklaringer Nav""";Krav fra Nav på erstatning fastsatt ved dom ;
 228;TK BO;Tilbakekr. behandleroppgjør;0;0;0;Nei;Manuell;Ja;Nei;Nav;Manuelt i PAK;Tilbakekr. behandleroppgjør
 229;TK BO;Dom helfo;0;0;0;Nei;Manuell;Ja;Nei;Nav;Manuelt i PAK;Dom helfo
 230;SE DT;Trygdeavgift EØS;0;0;0;Nei;Manuell;Ja;Nei;Utenlandsk myndighet;Manuelt i PAK;Trygdeavgift EØS
-999;ALLE;Alle;Alle;ALLE;3;-;-;-;-;-;-;Alle

@@ -24,6 +24,13 @@ Hvilke kravtyper og hvilke kravtyper en enhet har tilgang til blir for øyeblikk
 Dette regnearket brukes som kilde for å generer opp kravtypene som en enum, samt en mapping over hvilke
 kravtyper en enhet har tilgang til.
 
+Tilgang til regnearket kan man få ved å spørre
+i [Slack-kanalen til NFI-teamet](https://nav-it.slack.com/archives/C0AR206LR9C).
+
+Man kan så laste ned Kravtyper-arket og EnheterKravtyper-arket som ´CSV UTF-8´ og flytte dem
+til [/src/main/resources](/src/main/resources).
+Etter å ha lagt inn de nye filene kan man kjøre `./gradlew generateAll` for å generere koden på nytt.
+
 Scriptene for kodegenereringen ligger under [/buildSrc](/buildSrc).
 
 ## CI/CD
