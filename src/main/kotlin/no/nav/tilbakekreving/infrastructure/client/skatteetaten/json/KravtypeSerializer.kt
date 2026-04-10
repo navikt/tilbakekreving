@@ -24,7 +24,8 @@ object KravtypeSerializer : KSerializer<Either<UkjentKravtype, Kravtype>> {
         return try {
             Kravtype.valueOf(value).right()
         } catch (_: IllegalArgumentException) {
-            logger.error("Mottok ukjent kravtype fra Skatteetaten: {}", value)
+            // Rapporter ukjente kravtyper til Team NFI (https://nav-it.slack.com/archives/C0AR206LR9C)
+            logger.warn("Mottok ukjent kravtype fra Skatteetaten: {}", value)
             UkjentKravtype(value).left()
         }
     }
