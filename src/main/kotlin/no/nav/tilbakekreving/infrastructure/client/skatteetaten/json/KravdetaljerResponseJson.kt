@@ -46,7 +46,7 @@ data class SkeKravResponseJson(
     val skatteetatensKravidentifikator: String?,
     val kravlinjer: List<SkeKravlinjeResponseJson> = emptyList(),
     val kravgrunnlag: SkeKravgrunnlagResponseJson,
-    val innbetalingerPlassertMotKrav: List<SkeInnbetalingPlassertMotKravResponseJson> = emptyList(),
+    val innbetalingerPlassertMotKrav: List<SkeInnbetalingPlassertMotKravResponseJson>? = emptyList(),
     val tilleggsinformasjon: SkeTilleggsinformasjonResponseJson?,
 ) {
     fun toDomain(): KravDetalj =
@@ -60,7 +60,7 @@ data class SkeKravResponseJson(
             skatteetatensKravidentifikator = skatteetatensKravidentifikator,
             kravlinjer = kravlinjer.map(SkeKravlinjeResponseJson::toDomain),
             kravgrunnlag = kravgrunnlag.toDomain(),
-            innbetalingerPlassertMotKrav = innbetalingerPlassertMotKrav.map { it.toDomain() },
+            innbetalingerPlassertMotKrav = innbetalingerPlassertMotKrav?.map { it.toDomain() } ?: emptyList(),
             tilleggsinformasjon = tilleggsinformasjon?.toDomain(),
         )
 }
