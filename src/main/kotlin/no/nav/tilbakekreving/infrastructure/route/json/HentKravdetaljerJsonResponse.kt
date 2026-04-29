@@ -61,11 +61,11 @@ data class KravDetaljResponseJson(
                 kravlinjer = krav.kravlinjer.map { KravlinjeResponseJson.fromDomain(it) },
                 kravgrunnlag = KravgrunnlagResponseJson.fromDomain(krav.kravgrunnlag),
                 innbetalingerPlassertMotKrav =
-                    krav.innbetalingerPlassertMotKrav.map {
+                    krav.innbetalingerPlassertMotKrav?.map {
                         InnbetalingPlassertMotKravResponseJson.fromDomain(
                             it,
                         )
-                    },
+                    } ?: emptyList(),
                 tilleggsinformasjon = krav.tilleggsinformasjon?.let { TilleggsinformasjonResponseJson.fromDomain(it) },
             )
     }

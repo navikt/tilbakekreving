@@ -60,6 +60,7 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                                         Kravlinje("testtype", 100.0, 50.0, emptyMap()),
                                     ),
                                 kravgrunnlag = Kravgrunnlag("123", "ref-123"),
+                                innbetalingerPlassertMotKrav = emptyList()
                             ),
                         oppdragsgiver = Oppdragsgiver("123456789", "Test Org"),
                         skyldner = KravdetaljerSkyldner("12345678901", "Test Person"),
@@ -105,7 +106,8 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                                     "kravgrunnlag": {
                                       "oppdragsgiversKravidentifikator": "123",
                                       "oppdragsgiversReferanse": "ref-123"
-                                    }
+                                    },
+                                    "innbetalingerPlassertMotKrav": null
                                   },
                                   "oppdragsgiver": {
                                     "organisasjonsnummer": "123456789",
