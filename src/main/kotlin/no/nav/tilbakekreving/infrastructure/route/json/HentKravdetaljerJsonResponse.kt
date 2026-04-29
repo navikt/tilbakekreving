@@ -45,7 +45,7 @@ data class KravDetaljResponseJson(
     val skatteetatensKravidentifikator: String?,
     val kravlinjer: List<KravlinjeResponseJson> = emptyList(),
     val kravgrunnlag: KravgrunnlagResponseJson,
-    val innbetalingerPlassertMotKrav: List<InnbetalingPlassertMotKravResponseJson> = emptyList(),
+    val innbetalingerPlassertMotKrav: List<InnbetalingPlassertMotKravResponseJson>? = emptyList(),
     val tilleggsinformasjon: TilleggsinformasjonResponseJson? = null,
 ) {
     companion object {
