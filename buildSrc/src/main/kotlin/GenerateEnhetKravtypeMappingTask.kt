@@ -58,7 +58,7 @@ abstract class GenerateEnhetKravtypeMappingTask : DefaultTask() {
                 .asSequence()
                 .filter { record ->
                     val kode = record["Ekstern kravkode"]
-                    !kode.isNullOrBlank() && kode != "0" && kode != "#N/A"
+                    !kode.isNullOrBlank() && kode != "0" && kode != "#N/A" && kode != "#I/T"
                 }.groupBy(
                     keySelector = { it["Enhetsnummer"] },
                     valueTransform = { it["Ekstern kravkode"] },
