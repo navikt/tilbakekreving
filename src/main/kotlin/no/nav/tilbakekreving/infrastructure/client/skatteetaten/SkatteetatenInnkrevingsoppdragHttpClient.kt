@@ -79,6 +79,10 @@ class SkatteetatenInnkrevingsoppdragHttpClient(
                     httpResponse.body<SkeHentKravoversiktResponseJson>().toDomain()
                 }
 
+                HttpStatusCode.NotFound -> {
+                    raise(SøkEtterInnkrevingskrav.Feil.SøkeEtterInnkrevingskravIkkeFunnet)
+                }
+
                 else -> {
                     logger.error(
                         "Feil ved søk etter innkrevingskrav: {} - {}",

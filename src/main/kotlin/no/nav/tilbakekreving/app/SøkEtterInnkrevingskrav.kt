@@ -9,5 +9,7 @@ interface SøkEtterInnkrevingskrav {
 
     sealed class Feil {
         data object SøkEtterInnkrevingskravFeil : Feil()
+
+        data object SøkeEtterInnkrevingskravIkkeFunnet : Feil()
     }
 }

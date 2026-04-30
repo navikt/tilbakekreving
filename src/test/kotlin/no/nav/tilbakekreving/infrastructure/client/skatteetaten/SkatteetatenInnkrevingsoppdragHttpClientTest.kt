@@ -8,6 +8,7 @@ import io.kotest.assertions.json.shouldEqualJson
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.ktor.client.engine.mock.MockEngine
@@ -393,6 +394,25 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                 val result = skatteetatenClient.søk(Skyldnersøk(Skyldner(SkyldnerId("12345678901")), Kravfilter.ALLE))
 
                 result.shouldBeLeft(SøkEtterInnkrevingskrav.Feil.SøkEtterInnkrevingskravFeil)
+            }
+
+            "returnere ikke funnet hvis statuskode er ikke funnet" {
+                val mockEngine =
+                    MockEngine {
+                        respond(
+                            content = """Oversikt ikke funnet""",
+                            status = HttpStatusCode.NotFound,
+                            headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                        )
+                    }
+
+                val client = with(AppEnv.DEV) { createHttpClient(mockEngine) }
+                val skatteetatenClient = SkatteetatenInnkrevingsoppdragHttpClient("http://localhost:8080", client)
+
+                val result = skatteetatenClient.søk(Skyldnersøk(Skyldner(SkyldnerId("12345678901")), Kravfilter.ALLE))
+
+                result.shouldBeLeft(SøkEtterInnkrevingskrav.Feil.SøkeEtterInnkrevingskravIkkeFunnet)
+
             }
         }
     })

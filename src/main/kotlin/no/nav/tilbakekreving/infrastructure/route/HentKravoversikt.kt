@@ -25,6 +25,13 @@ fun Route.hentKravoversikt(søkEtterInnkrevingskrav: SøkEtterInnkrevingskrav) {
                             "Feil ved henting av kravoversikt",
                         )
                     }
+
+                    SøkEtterInnkrevingskrav.Feil.SøkeEtterInnkrevingskravIkkeFunnet -> {
+                        call.respond(
+                            HttpStatusCode.NotFound,
+                            "Krav ikke funnet",
+                        )
+                    }
                 }
                 return@authenticatedPost
             }
