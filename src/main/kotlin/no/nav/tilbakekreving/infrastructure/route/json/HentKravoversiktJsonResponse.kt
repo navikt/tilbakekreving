@@ -41,8 +41,8 @@ data class KravbeskrivelseJson(
 
 @Serializable
 data class KravResponseJson(
-    val skeKravidentifikator: String?,
-    val navKravidentifikator: String,
+    val skeKravidentifikator: String,
+    val navKravidentifikator: String?,
     val navReferanse: String?,
     val kravtype: String,
     val kravbeskrivelse: Array<KravbeskrivelseJson>,
@@ -51,8 +51,8 @@ data class KravResponseJson(
     companion object {
         fun from(krav: Krav): KravResponseJson =
             KravResponseJson(
-                skeKravidentifikator = krav.skeKravidentifikator?.id,
-                navKravidentifikator = krav.navKravidentifikator.id,
+                skeKravidentifikator = krav.skeKravidentifikator.id,
+                navKravidentifikator = krav.navKravidentifikator?.id,
                 navReferanse = krav.navReferanse,
                 kravtype = krav.kravtype.fold(ifLeft = { it.value }, ifRight = { it.name }),
                 kravbeskrivelse = krav.kravbeskrivelse.map(KravbeskrivelseJson::fromDomain).toTypedArray(),

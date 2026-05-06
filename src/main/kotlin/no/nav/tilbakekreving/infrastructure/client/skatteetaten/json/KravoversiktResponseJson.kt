@@ -31,7 +31,7 @@ data class SkeHentKravoversiktResponseJson(
 
 @Serializable
 data class SkeKravJson(
-    val skatteetatensKravidentifikator: String?,
+    val skatteetatensKravidentifikator: String,
     @Serializable(with = KravtypeSerializer::class)
     val kravtype: Either<UkjentKravtype, Kravtype>,
     val kravbeskrivelse: SkeMultiSpråkTekstJson,
@@ -40,8 +40,8 @@ data class SkeKravJson(
 ) {
     fun toDomain(): Krav =
         Krav(
-            skeKravidentifikator = skatteetatensKravidentifikator?.let { Kravidentifikator.Skatteetaten(it) },
-            navKravidentifikator = Kravidentifikator.Nav(kravgrunnlag.oppdragsgiversKravidentifikator),
+            skeKravidentifikator = skatteetatensKravidentifikator.let { Kravidentifikator.Skatteetaten(it) },
+            navKravidentifikator = kravgrunnlag.oppdragsgiversKravidentifikator?.let { Kravidentifikator.Nav(it) },
             navReferanse = kravgrunnlag.oppdragsgiversReferanse,
             kravtype = kravtype,
             kravbeskrivelse = kravbeskrivelse.toDomain(),
@@ -51,7 +51,7 @@ data class SkeKravJson(
 
 @Serializable
 data class SkeKravgrunnlagJson(
-    val oppdragsgiversKravidentifikator: String,
+    val oppdragsgiversKravidentifikator: String?,
     val oppdragsgiversReferanse: String? = null,
 )
 

@@ -8,7 +8,6 @@ import io.kotest.assertions.json.shouldEqualJson
 import io.kotest.core.spec.style.WordSpec
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldContain
-import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.ktor.client.engine.mock.MockEngine
@@ -316,6 +315,88 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                         skeKravidentifikator = Kravidentifikator.Skatteetaten("29ab06ef-9de1-4312-9677-163e4cc586dd"),
                         navKravidentifikator = Kravidentifikator.Nav("310ade77-8d45-48e8-b053-72659f53b4eb"),
                         navReferanse = "ref1",
+                        kravtype = Kravtype.TILBAKEKREVING_BARNETRYGD.right(),
+                        kravbeskrivelse = listOf(Kravbeskrivelse(Locale.forLanguageTag("NB"), "Eksempeltekst")),
+                        gjenståendeBeløp = 1000.0,
+                    ),
+                )
+            }
+
+            "takle at oppdragsgiversKravoversikt er null" {
+                val mockEngine =
+                    MockEngine { request ->
+                        request.headers.contains("Klientid", "NAV/2.0").shouldBeTrue()
+                        request.headers.contains(HttpHeaders.Accept, "application/json").shouldBeTrue()
+                        request.body.contentType
+                            .shouldNotBeNull()
+                            .shouldBeEqual(ContentType.Application.Json)
+                        request.body.toByteArray().decodeToString().shouldEqualJson(
+                            // language=json
+                            """
+                        {
+                            "skyldner": "12345678901",
+                            "kravfilter": "alle"
+                        }
+                        """.trimIndent(),
+                        )
+
+                        respond(
+                            // language=json
+                            content =
+                                """
+                            {
+                              "oppdragsgiver": {
+                                "organisasjonsnummer": "123456789",
+                                "organisasjonsnavn": "Test Org"
+                              },
+                              "krav": [
+                                {
+                                  "skatteetatensKravidentifikator": "29ab06ef-9de1-4312-9677-163e4cc586dd",
+                                  "kravtype": "TILBAKEKREVING_BARNETRYGD",
+                                  "kravbeskrivelse": {
+                                    "spraakTekst": [
+                                      {
+                                        "tekst": "Eksempeltekst",
+                                        "spraak": "NB"
+                                      }
+                                    ]
+                                  },
+                                  "kravgrunnlag": {
+                                    "oppdragsgiversKravidentifikator": null,
+                                    "oppdragsgiversReferanse": null
+                                  },
+                                  "gjenstaaendeBeloep": 1000.0
+                                }
+                              ],
+                              "gjenstaaendeBeloepForSkyldner": 1000.0,
+                              "skyldner": {
+                                "identifikator": "12345678901",
+                                "skyldnersNavn": "Test Person"
+                              }
+                            }
+                            """.trimIndent(),
+                            status = HttpStatusCode.OK,
+                            headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                        )
+                    }
+
+                val client = with(AppEnv.DEV) { createHttpClient(mockEngine) }
+                val skatteetatenInnkrevingsoppdragHttpClient =
+                    SkatteetatenInnkrevingsoppdragHttpClient("http://localhost:8080", client)
+
+                val result =
+                    skatteetatenInnkrevingsoppdragHttpClient.søk(
+                        Skyldnersøk(
+                            Skyldner(SkyldnerId("12345678901")),
+                            Kravfilter.ALLE,
+                        ),
+                    )
+
+                result.shouldBeRight().krav.shouldContain(
+                    Krav(
+                        skeKravidentifikator = Kravidentifikator.Skatteetaten("29ab06ef-9de1-4312-9677-163e4cc586dd"),
+                        navKravidentifikator = null,
+                        navReferanse = null,
                         kravtype = Kravtype.TILBAKEKREVING_BARNETRYGD.right(),
                         kravbeskrivelse = listOf(Kravbeskrivelse(Locale.forLanguageTag("NB"), "Eksempeltekst")),
                         gjenståendeBeløp = 1000.0,
