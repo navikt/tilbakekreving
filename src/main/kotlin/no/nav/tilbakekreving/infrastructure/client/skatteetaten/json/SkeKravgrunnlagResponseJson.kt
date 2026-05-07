@@ -5,7 +5,7 @@ import no.nav.tilbakekreving.domain.Kravgrunnlag
 
 @Serializable
 data class SkeKravgrunnlagResponseJson(
-    val oppdragsgiversKravidentifikator: String,
+    val oppdragsgiversKravidentifikator: String?,
     val oppdragsgiversReferanse: String?,
 ) {
     fun toDomain(): Kravgrunnlag =
