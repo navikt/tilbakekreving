@@ -43,7 +43,7 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
     WordSpec({
         "hent kravdetaljer" should {
             "returnerere kravdetaljer når alt er ok" {
-                val kravidentifikator = "123"
+                val kravidentifikatorSKE = "skatte-123"
                 val kravdetaljer =
                     Kravdetaljer(
                         krav =
@@ -77,7 +77,7 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
                             """
                             {
                                 "krav": {
-                                    "oppdragsgiversKravidentifikator": "123"
+                                    "skatteetatensKravidentifikator": "skatte-123"
                                 }
                             }
                             """.trimIndent(),
@@ -130,7 +130,7 @@ class SkatteetatenInnkrevingsoppdragHttpClientTest :
 
                 val result =
                     skatteetatenInnkrevingsoppdragHttpClient.hentKravdetaljer(
-                        Kravidentifikator.Nav(kravidentifikator),
+                        Kravidentifikator.Skatteetaten(kravidentifikatorSKE),
                     )
 
                 result.shouldBeRight(kravdetaljer)
