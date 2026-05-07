@@ -42,7 +42,7 @@ data class KravDetaljResponseJson(
     val kravtype: String,
     val opprinneligBeløp: Double,
     val gjenståendeBeløp: Double,
-    val skatteetatensKravidentifikator: String?,
+    val skatteetatensKravidentifikator: String,
     val kravlinjer: List<KravlinjeResponseJson> = emptyList(),
     val kravgrunnlag: KravgrunnlagResponseJson,
     val innbetalingerPlassertMotKrav: List<InnbetalingPlassertMotKravResponseJson>? = emptyList(),

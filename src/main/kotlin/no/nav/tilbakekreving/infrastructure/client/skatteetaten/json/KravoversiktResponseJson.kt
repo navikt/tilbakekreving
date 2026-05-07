@@ -40,7 +40,7 @@ data class SkeKravJson(
 ) {
     fun toDomain(): Krav =
         Krav(
-            skeKravidentifikator = skatteetatensKravidentifikator.let { Kravidentifikator.Skatteetaten(it) },
+            skeKravidentifikator = Kravidentifikator.Skatteetaten(skatteetatensKravidentifikator),
             navKravidentifikator = kravgrunnlag.oppdragsgiversKravidentifikator?.let { Kravidentifikator.Nav(it) },
             navReferanse = kravgrunnlag.oppdragsgiversReferanse,
             kravtype = kravtype,

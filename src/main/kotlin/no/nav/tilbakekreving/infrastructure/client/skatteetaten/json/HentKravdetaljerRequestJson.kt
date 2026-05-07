@@ -17,14 +17,11 @@ data class SkeHentKravdetaljerRequestJson(
 
 @Serializable
 data class SkeKravRequestJson(
-    val skatteetatensKravidentifikator: String? = null,
+    val skatteetatensKravidentifikator: String,
     val oppdragsgiversKravidentifikator: String? = null,
 ) {
     companion object {
         fun from(kravidentifikator: Kravidentifikator): SkeKravRequestJson =
-            when (kravidentifikator) {
-                is Kravidentifikator.Nav -> SkeKravRequestJson(oppdragsgiversKravidentifikator = kravidentifikator.id)
-                is Kravidentifikator.Skatteetaten -> SkeKravRequestJson(skatteetatensKravidentifikator = kravidentifikator.id)
-            }
+            SkeKravRequestJson(skatteetatensKravidentifikator = kravidentifikator.id)
     }
 }

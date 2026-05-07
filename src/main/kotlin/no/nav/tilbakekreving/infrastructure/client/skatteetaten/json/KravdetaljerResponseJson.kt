@@ -43,7 +43,7 @@ data class SkeKravResponseJson(
     val kravtype: Either<UkjentKravtype, Kravtype>,
     @SerialName("opprinneligBeloep") val opprinneligBeløp: Double,
     @SerialName("gjenstaaendeBeloep") val gjenståendeBeløp: Double,
-    val skatteetatensKravidentifikator: String?,
+    val skatteetatensKravidentifikator: String,
     val kravlinjer: List<SkeKravlinjeResponseJson> = emptyList(),
     val kravgrunnlag: SkeKravgrunnlagResponseJson,
     val innbetalingerPlassertMotKrav: List<SkeInnbetalingPlassertMotKravResponseJson>? = emptyList(),

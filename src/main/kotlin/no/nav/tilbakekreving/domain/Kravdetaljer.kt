@@ -17,7 +17,7 @@ data class KravDetalj(
     val kravtype: Either<UkjentKravtype, Kravtype>,
     val opprinneligBeløp: Double,
     val gjenståendeBeløp: Double,
-    val skatteetatensKravidentifikator: String?,
+    val skatteetatensKravidentifikator: String,
     val kravlinjer: List<Kravlinje>,
     val kravgrunnlag: Kravgrunnlag,
     val innbetalingerPlassertMotKrav: List<InnbetalingPlassertMotKrav> = emptyList(),
