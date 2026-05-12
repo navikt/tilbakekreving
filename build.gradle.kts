@@ -114,7 +114,7 @@ dependencies {
     implementation("no.nav.common:audit-log:3.2026.04.08_08.37-229807cc181a")
     implementation("io.opentelemetry.instrumentation:opentelemetry-logback-mdc-1.0:2.26.0-alpha")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1-0.6.x-compat")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.8.0-0.6.x-compat")
 
     implementation("io.getunleash:unleash-client-java:12.2.1")
     constraints {
