@@ -98,7 +98,7 @@
 4817;Nav familie- og pensjonsytelser Steinkjer;FPY;BS PN;Pleiepenger ny ordning;Tilbakekreving av feilutbetalte pleiepenger - ny ordning;TILBAKEKREVING_PLEIEPENGER_BARN;;
 4817;Nav familie- og pensjonsytelser Steinkjer;FPY;FA FE;Fødselsengangsstønad;Tilbakekreving av feilutbetalt engangsstønad ved fødsel;TILBAKEKREVING_ENGANGSSTOENAD_VED_FOEDSEL;;
 4817;Nav familie- og pensjonsytelser Steinkjer;FPY;FA FØ;Foreldrepenger fødsel;Tilbakekreving av feilutbetalte foreldrepenger;TILBAKEKREVING_FORELDREPENGER;;
-4819;Nav økonomi pensjon;FPY;ALLE;#I/T;#I/T;#I/T;;
+4819;Nav økonomi pensjon;FPY;ALLE;#I/T;#I/T;ALLE;;
 4820;Nav familie- og pensjonsytelser Vadsø;FPY;BA OR;Barnetrygd, ordinær stønad;Tilbakekreving av feilutbetalt barnetrygd;TILBAKEKREVING_BARNETRYGD;;
 4820;Nav familie- og pensjonsytelser Vadsø;FPY;BA UT;Barnetrygd, utvidet stønad;Tilbakekreving av feilutbetalt utvidet barnetrygd;TILBAKEKREVING_UTVIDET_BARNETRYGD;;
 4820;Nav familie- og pensjonsytelser Vadsø;FPY;KS EU;Kontantstøtte, utland;Tilbakekreving av feilutbetalt kontantstøtte utland;TILBAKEKREVING_KONTANTSTOETTE_UTLAND;;
