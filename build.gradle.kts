@@ -102,7 +102,7 @@ dependencies {
 
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
-    implementation("ch.qos.logback:logback-classic:1.5.34")
+    implementation("ch.qos.logback:logback-classic:1.5.38")
     implementation("net.logstash.logback:logstash-logback-encoder:9.0")
     constraints {
         implementation("tools.jackson.core:jackson-core") {
