@@ -8,7 +8,7 @@ plugins {
     id("io.ktor.plugin") version "3.5.1"
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
     id("com.github.ben-manes.versions") version "0.54.0"
-    id("org.jetbrains.kotlinx.kover") version "0.9.8"
+    id("org.jetbrains.kotlinx.kover") version "0.9.9"
 }
 
 ktlint {
