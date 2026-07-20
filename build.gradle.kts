@@ -116,7 +116,7 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.8.0-0.6.x-compat")
 
-    implementation("io.getunleash:unleash-client-java:12.2.2")
+    implementation("io.getunleash:unleash-client-java:12.2.3")
     constraints {
         implementation("com.squareup.okio:okio") {
             version {
