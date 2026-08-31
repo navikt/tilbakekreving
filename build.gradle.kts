@@ -112,7 +112,7 @@ dependencies {
         }
     }
     implementation("no.nav.common:audit-log:4.2026.07.17_11.36-f5bba2c96561")
-    implementation("io.opentelemetry.instrumentation:opentelemetry-logback-mdc-1.0:2.31.0-alpha")
+    implementation("io.opentelemetry.instrumentation:opentelemetry-logback-mdc-1.0:2.31.1-alpha")
 
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.8.0-0.6.x-compat")
 
