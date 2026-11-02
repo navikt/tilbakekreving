@@ -5,7 +5,7 @@ val kotlinVersion = "2.4.21"
 plugins {
     kotlin("jvm") version "2.4.21"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.4.21"
-    id("io.ktor.plugin") version "3.6.0"
+    id("io.ktor.plugin") version "3.6.1"
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
     id("com.github.ben-manes.versions") version "0.66.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.11"
