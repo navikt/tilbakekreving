@@ -144,7 +144,7 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-ktor:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-arrow:$kotestVersion")
 
-    val mockkVersion = "1.14.11"
+    val mockkVersion = "1.14.12"
     testImplementation("io.mockk:mockk:$mockkVersion")
 }
 
